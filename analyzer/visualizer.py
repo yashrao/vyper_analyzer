@@ -64,37 +64,48 @@ class Visualizer:
       # Each node 
       for node in nodes:
         with self._graph.subgraph(name='cluster_' + node['name']) as sg:
-          node_label = self.get_func_label(node['args']['args'], 
-            node['decorator_list'], 
-            node['name']) 
-        for line in node['body']:
-            #TODO: Try/Except for debug/error handling
-            try:
-                if 'target' in line.keys():
-                    sg.attr(label=node_label, 
-                        style='dashed', 
-                        color='black', 
-                        labelloc='t', 
-                        rank='same')
-                    sg.node(node['name'], 'ENTRY', shape='Mdiamond')
-                    node_struct_str = '{ '
-                    ast_type = line['ast_type']
-                    body = node['body']
-                    node_struct_str = self.get_variable(line, body)
-                        
-                    node_struct_str += '}'
-                    sg.node_attr = {'shape': 'record'}
-                    #make sure its formatted as a raw string
-                    sg.node('struct_' + node['name'], 
-                      r'{}'.format(node_struct_str)) 
-                   
-                    sg.node(node['name'] + '_exit', 'EXIT', shape='Mdiamond')
-                    sg.edge(node['name'], 'struct_' + node['name'])
-                    sg.edge('struct_' + node['name'], node['name'] + '_exit')
-                    sg.edge_attr.update(color='blue', weight='100')
-            except KeyError as e:
-                pprint(line)
-                raise e
+            node_label = self.get_func_label(node['args']['args'], 
+                node['decorator_list'], 
+                node['name']) 
+            for line in node['body']:
+                #TODO: Try/Except for debug/error handling
+                try:
+                    if 'target' in line.keys():
+                        sg.attr(label=node_label, 
+                            style='dashed', 
+                            color='black', 
+                            labelloc='t', 
+                            rank='same')
+                        sg.node(node['name'], 
+                            'ENTRY', 
+                            shape='Mdiamond', 
+                            fillcolor='white')
+                        node_struct_str = '{ '
+                        ast_type = line['ast_type']
+                        body = node['body']
+                        node_struct_str = self.get_variable(line, body)
+                            
+                        node_struct_str += '}'
+                        sg.node_attr = {
+                            'shape': 'record', 
+                            'style':'filled',
+                            'fillcolor':'lightgrey'
+                        }
+                        #make sure its formatted as a raw string
+                        sg.node('struct_' + node['name'], 
+                          r'{}'.format(node_struct_str)) 
+                       
+                        sg.node(node['name'] + '_exit', 
+                            'EXIT', 
+                            shape='Mdiamond', 
+                            fillcolor='white')
+                        sg.edge(node['name'], 'struct_' + node['name'])
+                        sg.edge('struct_' + node['name'], 
+                            node['name'] + '_exit')
+                        sg.edge_attr.update(color='blue', weight='100')
+                except KeyError as e:
+                    pprint(line)
+                    raise e
               
       self._graph.view() # TODO: Remove
 
