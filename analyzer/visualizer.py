@@ -36,11 +36,20 @@ class Visualizer:
         ast_type = line['ast_type']
         node_struct_str = ''
         if ast_type == 'Assign':
+            target = line['target']
+            value = line['value']
             if line['value']['ast_type'] == 'Name':
-                node_struct_str += '{} {} {}'.format(
-                    line['target']['attr'], 
-                    AST_TYPES[ast_type], 
-                    line['value']['id']) 
+                if line['target']['ast_type'] == 'Subscript':
+                    node_struct_str += '{}[{}] {} {}'.format(
+                        line['target']['value']['attr'], 
+                        line['target']['slice']['value']['attr'], 
+                        AST_TYPES[ast_type], 
+                        line['value']['attr'])
+                else:
+                    node_struct_str += '{} {} {}'.format(
+                        line['target']['attr'], 
+                        AST_TYPES[ast_type], 
+                        line['value']['id']) 
             elif line['value']['ast_type'] == 'Attribute':
                 # TODO: Change this for attributes of attributes
                 node_struct_str += '{} {} {}.{}'.format(
@@ -52,9 +61,16 @@ class Visualizer:
                 node_struct_str += ' |'
         elif ast_type == 'AugAssign':
             op = AST_TYPES['AugAssign'][line['op']['ast_type']]
-            node_struct_str += '{} {} {}'.format(
-                line['target']['attr'], 
-                op, line['value']['value']) 
+            if line['target']['ast_type'] == 'Subscript':
+                node_struct_str += '{}[{}] {} {}'.format(
+                    line['target']['value']['attr'], 
+                    line['target']['slice']['value']['attr'], 
+                    AST_TYPES[ast_type], 
+                    line['value']['attr'])
+            else:
+                node_struct_str += '{} {} {}'.format(
+                    line['target']['attr'], 
+                    op, line['value']['value']) 
             if len(body) > 1:
                 node_struct_str += ' |'
         return node_struct_str
