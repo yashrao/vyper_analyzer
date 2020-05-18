@@ -74,6 +74,13 @@ class Visualizer:
             if len(body) > 1:
                 node_struct_str += ' |'
         return node_struct_str
+
+    def get_target(self, target: dict) -> str:
+        pass
+
+    def get_value(self, value: dict) -> str:
+        pass
+    
     ##
     # Pass a list of FunctionDef nodes
     def visualize_cfg(self, nodes: list):
