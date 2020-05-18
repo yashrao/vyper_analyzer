@@ -1,3 +1,4 @@
+*.pyc
 .vscode/
 G.gv
 G.gv.pdf
