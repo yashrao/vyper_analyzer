@@ -99,6 +99,7 @@ class Visualizer:
         return statements
 
     def parse_statements(self, statement: dict):
+        # TODO: handle AnnAssign nodes here
         ast_type = self.get_ast_type(statement)
         if ast_type == 'FunctionDef':
             body = self.parse_body(statement['body']) # Returns a list of statements 
@@ -126,15 +127,15 @@ class Visualizer:
             try:
                 if ast_type == 'Assign':
                     statements.append('{} {} {}'.format(
-                            self.get_left(statement, ast_type), 
+                            self.get_left(statement['target'], statement['target']['ast_type']), 
                             AST_TYPES['Assign'],
-                            self.get_right(statement, ast_type)))
+                            self.get_right(statement['value'], statement['value']['ast_type'])))
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
                     statements.append('{} {} {}'.format(
-                            self.get_left(statement, ast_type), 
+                            self.get_left(statement['target'], statement['target']['ast_type']), 
                             AST_TYPES['AugAssign'][op],
-                            self.get_right(statement, ast_type)))
+                            self.get_right(statement['value'], statement['value']['ast_type'])))
                 elif ast_type == 'Return':
                     statements.append('return {}'.format(statement['value']['attr']))
             except KeyError as e:
@@ -153,42 +154,22 @@ class Visualizer:
         return AST_TYPES['AugAssign'][ast_type] 
 
     # Get left hand side of a assignment
-    def get_left(self, statement: dict, ast_type: str) -> str:
+    def get_left(self, left: dict, ast_type: str) -> str:
         ## TODO: make get_left take statement['target]
-        left = statement['target']
-        ast_type = left['ast_type']
         if ast_type == 'Subscript':
             return left['value']['attr'] + '[' + left['slice']['value']['attr'] + ']'
         return left['attr']
 
     # Get right hand side of an assignment
     ## TODO: Get rid of ast_type if statements
-    def get_right(self, statement: dict, ast_type: str) -> str:
-        if ast_type == 'AnnAssign':
-            return statement['annotation']['id']
+    def get_right(self, right: dict, ast_type: str) -> str:
         if ast_type == 'Name':
-            return statement['id']
+            return right['id']
         elif ast_type == 'Attribute':
-            return statement['attr'] 
-        else:
-            value = statement['value']
+            return right['attr'] 
+        elif ast_type == 'Int':
+            return right['value']
         ## TODO: change this entirely
-        if ast_type == 'Assign':
-            if value['ast_type'] == 'BinOp':
-                return self.get_right(value['left'], value['left']['ast_type'])       \
-                    + OPERATORS[value['op']['ast_type']]                              \
-                    + self.get_right(value['right'], value['right']['ast_type'])
-            elif value['ast_type'] == 'Attribute':
-                return value['value']['id'] + '.' + value['attr']
-            elif statement['value'] == 'Int': ##TODO: replace with value/ast_type
-                return value['value']
-            else:
-                return value['id']
-        elif ast_type == 'AugAssign':
-            if value['ast_type'] == 'Int':
-                return value['value']
-            else:
-                return value['id']
 
     def get_variable(self, line: dict, body: list):
         pass
@@ -211,9 +192,16 @@ class Visualizer:
                 sg.attr(label=node_label)
                 sg.node(node_label, 'ENTRY', shape='Mdiamond', fillcolor='white')
 
-                node_struct_str = '{ '
-                for line in node.get_body():
-                    node_struct_str += line 
+                node_struct_str = '{'
+                print(node.get_body())
+                body = node.get_body()
+                for i in range(len(body)):
+                    node_struct_str += '{'
+                    node_struct_str += body[i]
+                    if i != len(body) - 1:
+                        node_struct_str += '}|'
+                    else:
+                        node_struct_str += '}'
 
                 node_struct_str += '}'
 
@@ -236,9 +224,7 @@ class Visualizer:
                 sg.edge('struct_' + node.get_name(), 
                     node.get_name() + '_exit')
                 sg.edge_attr.update(color='blue', weight='100')
-                  
-        self._graph.view()
-                    
+        self._graph.render('test')
 
     ##
     def save_to_png(self):

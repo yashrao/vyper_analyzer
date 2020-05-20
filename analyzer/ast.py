@@ -25,8 +25,8 @@ class AstWalker:
 
 #TODO: remove
 if __name__ == '__main__':
-    #ast = AstWalker('example_vyper_contracts/open_auction.vy')
-    ast = AstWalker('example_vyper_contracts/storage.vy')
+    ast = AstWalker('example_vyper_contracts/open_auction.vy')
+    #ast = AstWalker('example_vyper_contracts/storage.vy')
     nodes = []
     ast.walk(ast._ast, nodes)
     visualizer = Visualizer(ast._contract_name)
