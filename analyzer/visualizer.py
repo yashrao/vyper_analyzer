@@ -28,6 +28,14 @@ OPERATORS = {
   'Modulo': ' % ',
 }
 
+COMPARITORS = {
+    'Lt': '\<',
+    'LtE': '\<=',
+    'Gt': '\>',
+    'GtE': '\>=',
+    'Not': 'not',
+}
+
 class FunctionNode:
     def __init__(self, name: str, body: list, is_public: bool, decorators: list, args: list, returns: str):
         self._name = name
@@ -75,6 +83,7 @@ class Visualizer:
                 label= filename, 
                 color='black', 
                 labelloc='t')
+        self._filename = filename
                 
     def get_func_label(self, node_name: str, 
             decorator_list: list, 
@@ -127,15 +136,30 @@ class Visualizer:
             try:
                 if ast_type == 'Assign':
                     statements.append('{} {} {}'.format(
-                            self.get_left(statement['target'], statement['target']['ast_type']), 
+                            self.get_left(statement['target']), 
                             AST_TYPES['Assign'],
-                            self.get_right(statement['value'], statement['value']['ast_type'])))
+                            self.get_right(statement['value'])))
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
                     statements.append('{} {} {}'.format(
-                            self.get_left(statement['target'], statement['target']['ast_type']), 
+                            self.get_left(statement['target']), 
                             AST_TYPES['AugAssign'][op],
-                            self.get_right(statement['value'], statement['value']['ast_type'])))
+                            self.get_right(statement['value'])))
+                elif ast_type == 'AnnAssign':
+                    statements.append('{}:{} = {}'.format(self.get_left(statement['target']), \
+                        statement['annotation']['id'],                                        \
+                        self.get_right(statement['value'])))
+                elif ast_type == 'Expr':
+                    statements.append('{}({})'.format(statement['value']['func']['id'],                                        \
+                        self.get_func_args(statement['value']['args'])))
+                elif ast_type == 'Assert':
+                    if statement['test']['ast_type'] == 'Compare':
+                        statements.append('assert {} {} {}'.format(self.get_left(statement['test']['left']),
+                            COMPARITORS[statement['test']['op']['ast_type']],
+                            self.get_right(statement['test']['right'])))
+                    elif statement['test']['ast_type'] == 'UnaryOp':
+                        statements.append('assert {} {}'.format(COMPARITORS[statement['test']['op']['ast_type']],
+                            self.get_right(statement['test']['operand'])))
                 elif ast_type == 'Return':
                     statements.append('return {}'.format(statement['value']['attr']))
             except KeyError as e:
@@ -144,32 +168,59 @@ class Visualizer:
         print(statements)
         return statements
 
-    def get_ast_type(self, statement: dict):
+    def get_func_args(self, arg_list: list) -> str:
+        ret = ''
+        for i in range(len(arg_list) - 1):
+            ret += self.get_right(arg_list[i])
+            ret += ', '
+        if len(arg_list) > 0:
+            ret += self.get_right(arg_list[-1])
+        return ret
+
+    def get_ast_type(self, statement: dict) -> str:
         return statement['ast_type']
 
-    def get_op(self, statement: dict):
+    def get_op(self, statement: dict) -> str:
         return statement['op']['ast_type']
 
     def get_aug_operator(self, ast_type: str) -> str:
         return AST_TYPES['AugAssign'][ast_type] 
 
     # Get left hand side of a assignment
-    def get_left(self, left: dict, ast_type: str) -> str:
+    def get_left(self, left: dict) -> str:
         ## TODO: make get_left take statement['target]
+        ast_type = left['ast_type']
         if ast_type == 'Subscript':
-            return left['value']['attr'] + '[' + left['slice']['value']['attr'] + ']'
-        return left['attr']
+            return self.get_left(left['value']) +  \
+                '[' + self.get_right(left['slice']['value']) + ']'
+        elif ast_type == 'Attribute':
+            return left['value']['id'] + '.' + left['attr']
+        elif ast_type == 'Name':
+            return left['id']
+        #return left['attr']
 
     # Get right hand side of an assignment
     ## TODO: Get rid of ast_type if statements
-    def get_right(self, right: dict, ast_type: str) -> str:
+    def get_right(self, right: dict) -> str:
+        ast_type = right['ast_type']
         if ast_type == 'Name':
             return right['id']
         elif ast_type == 'Attribute':
-            return right['attr'] 
+            return right['value']['id'] + '.' + right['attr'] 
         elif ast_type == 'Int':
             return right['value']
-        ## TODO: change this entirely
+        elif ast_type == 'NameConstant':
+            return right['value']
+        elif ast_type == 'BinOp':
+            print(ast_type)
+            print(right)
+            return self.get_right(right['left']) +                   \
+                OPERATORS[right['op']['ast_type']] +                                            \
+                self.get_right(right['right'])
+        elif ast_type == 'Subscript':
+            return self.get_right(right['value']) +  \
+                '[' + self.get_right(right['slice']['value']) + ']'
+            
 
     def get_variable(self, line: dict, body: list):
         pass
@@ -204,6 +255,7 @@ class Visualizer:
                         node_struct_str += '}'
 
                 node_struct_str += '}'
+                print(node_struct_str)
 
                 sg.node_attr = {
                     'shape': 'record', 
@@ -224,6 +276,7 @@ class Visualizer:
                 sg.edge('struct_' + node.get_name(), 
                     node.get_name() + '_exit')
                 sg.edge_attr.update(color='blue', weight='100')
+        #self._graph.render(self._filename)
         self._graph.render('test')
 
     ##

@@ -5,6 +5,7 @@ from visualizer import Visualizer
 
 class AstWalker:
     def __init__(self, source: str):
+        self._contract_name = '' 
         self._ast = self.get_ast(source)
 
     def walk(self, node, nodes):
@@ -21,6 +22,9 @@ class AstWalker:
         ast = json.loads(vyper_c.communicate()[0].decode('utf-8', 'strict'))
         self._contract_name = ast['contract_name']
         return ast['ast']
+
+    def get_contract_name(self):
+        return self._contract_name
     
 
 #TODO: remove
@@ -29,6 +33,6 @@ if __name__ == '__main__':
     #ast = AstWalker('example_vyper_contracts/storage.vy')
     nodes = []
     ast.walk(ast._ast, nodes)
-    visualizer = Visualizer(ast._contract_name)
+    visualizer = Visualizer(ast.get_contract_name())
     parsed_ast = visualizer.parse_ast(ast._ast)
     visualizer.visualize_cfg(parsed_ast)
