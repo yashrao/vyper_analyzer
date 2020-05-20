@@ -2,27 +2,85 @@ from graphviz import Digraph
 from pprint import pprint
 
 AST_TYPES = {
-  'Assign': '=',
-  'AugAssign': {
-    'Add': '+=',
-    'Sub': '-='
-  },
+    'AnnAssign': ':',
+    'Assign': '=',
+    'AugAssign': {
+      'Add': '+=',
+      'Sub': '-=',
+      'Multiply': '*=',
+      'Divide': '/=',
+      'Modulo': '%=',
+      'And': '&=',
+      'Or': '|=',
+      'Xor': '^=',
+      'Shiftleft': '<<=',
+      'Shiftright': '>>=',
+      'Exponent': '**=',
+      'Integerdiv': '//='
+    },
 }
 
+OPERATORS = {
+  'Add': ' + ',
+  'Sub': ' - ',
+  'Multiply': ' * ',
+  'Divide': ' / ',
+  'Modulo': ' % ',
+}
+
+class FunctionNode:
+    def __init__(self, name: str, body: list, is_public: bool, decorators: list, args: list, returns: str):
+        self._name = name
+        self._body = body
+        self._is_public = is_public
+        self._decorators = decorators
+        self._args = args
+        self._returns = returns
+
+    def set_name(self, name: str):
+        self._name = name
+    
+    def get_name(self) -> str:
+        return self._name
+        
+    def set_body(self, body: list):
+        self._body = body
+    
+    def get_body(self) -> list:
+        return self._body
+
+    def set_is_public(self, val: bool):
+        self._is_public = val
+
+    def check_is_public(self) -> bool:
+        return self._is_public
+    
+    def set_decorator_list(self, decorators: list):
+        self._decorators = decorators
+
+    def get_decorator_list(self) -> list:
+        return self._decorators
+    
+    def get_arg_list(self) -> list:
+        return self._args
+    
+    def get_returns(self) -> str:
+        return self._returns
+
 class Visualizer:
-    def __init__(self):
-        self._graph = Digraph('G', filename='test.png')
+    def __init__(self, filename):
+        self._graph = Digraph('G', filename='filename.txt') # TODO: change the filename
         self._graph.attr(overlap='false', 
                 name='cfg', 
-                label= 'filename.txt', 
+                label= filename, 
                 color='black', 
                 labelloc='t')
                 
-    def get_func_label(self, args: list, 
+    def get_func_label(self, node_name: str, 
             decorator_list: list, 
-            node_name: str) -> str:
+            args: list) -> str:
         for decorator in decorator_list:
-            ret = '@{}\n'.format(decorator['id'])
+            ret = '@{}\n'.format(decorator)
         ret += node_name + ' ('
         for arg in args:
             if len(args) > 1:
@@ -32,48 +90,108 @@ class Visualizer:
         ret += ')'
         return ret
 
-    def get_variable(self, line: dict, body: list):
-        ast_type = line['ast_type']
-        node_struct_str = ''
-        if ast_type == 'Assign':
-            target = line['target']
-            value = line['value']
-            if line['value']['ast_type'] == 'Name':
-                if line['target']['ast_type'] == 'Subscript':
-                    node_struct_str += '{}[{}] {} {}'.format(
-                        line['target']['value']['attr'], 
-                        line['target']['slice']['value']['attr'], 
-                        AST_TYPES[ast_type], 
-                        line['value']['attr'])
-                else:
-                    node_struct_str += '{} {} {}'.format(
-                        line['target']['attr'], 
-                        AST_TYPES[ast_type], 
-                        line['value']['id']) 
-            elif line['value']['ast_type'] == 'Attribute':
-                # TODO: Change this for attributes of attributes
-                node_struct_str += '{} {} {}.{}'.format(
-                    line['target']['attr'], 
-                    AST_TYPES[ast_type], 
-                    line['value']['attr'],
-                    line['value']['value']['id']) 
-            if len(body) > 1:
-                node_struct_str += ' |'
-        elif ast_type == 'AugAssign':
-            op = AST_TYPES['AugAssign'][line['op']['ast_type']]
-            if line['target']['ast_type'] == 'Subscript':
-                node_struct_str += '{}[{}] {} {}'.format(
-                    line['target']['value']['attr'], 
-                    line['target']['slice']['value']['attr'], 
-                    AST_TYPES[ast_type], 
-                    line['value']['attr'])
+    def parse_ast(self, ast: dict) -> list:
+        body = ast['body']
+        statements = [] # Empty list of Strings
+        for statement in body:
+            statements.append(self.parse_statements(statement))
+        print(statements)
+        return statements
+
+    def parse_statements(self, statement: dict):
+        ast_type = self.get_ast_type(statement)
+        if ast_type == 'FunctionDef':
+            body = self.parse_body(statement['body']) # Returns a list of statements 
+            decorator_list = statement['decorator_list']
+            decorator_list_res = []
+            for decorator in decorator_list:
+                if decorator['id'] == 'public':
+                    is_public = True
+                elif decorator['id'] == 'private':
+                    is_public = False
+                decorator_list_res.append(decorator['id'])
+            args = statement['args']['args']
+            if statement['returns'] == None:
+                returns = ''
             else:
-                node_struct_str += '{} {} {}'.format(
-                    line['target']['attr'], 
-                    op, line['value']['value']) 
-            if len(body) > 1:
-                node_struct_str += ' |'
-        return node_struct_str
+                returns = statement['returns']['id']
+            name = statement['name']
+            return FunctionNode(name, body, is_public, decorator_list_res, args, returns)
+
+    def parse_body(self, body: list) -> list:
+        statements = []
+        for statement in body:
+            ast_type = self.get_ast_type(statement)
+            print(ast_type) 
+            try:
+                if ast_type == 'Assign':
+                    statements.append('{} {} {}'.format(
+                            self.get_left(statement, ast_type), 
+                            AST_TYPES['Assign'],
+                            self.get_right(statement, ast_type)))
+                elif ast_type == 'AugAssign':
+                    op = self.get_op(statement) 
+                    statements.append('{} {} {}'.format(
+                            self.get_left(statement, ast_type), 
+                            AST_TYPES['AugAssign'][op],
+                            self.get_right(statement, ast_type)))
+                elif ast_type == 'Return':
+                    statements.append('return {}'.format(statement['value']['attr']))
+            except KeyError as e:
+                pprint(statement)
+                raise e
+        print(statements)
+        return statements
+
+    def get_ast_type(self, statement: dict):
+        return statement['ast_type']
+
+    def get_op(self, statement: dict):
+        return statement['op']['ast_type']
+
+    def get_aug_operator(self, ast_type: str) -> str:
+        return AST_TYPES['AugAssign'][ast_type] 
+
+    # Get left hand side of a assignment
+    def get_left(self, statement: dict, ast_type: str) -> str:
+        ## TODO: make get_left take statement['target]
+        left = statement['target']
+        ast_type = left['ast_type']
+        if ast_type == 'Subscript':
+            return left['value']['attr'] + '[' + left['slice']['value']['attr'] + ']'
+        return left['attr']
+
+    # Get right hand side of an assignment
+    ## TODO: Get rid of ast_type if statements
+    def get_right(self, statement: dict, ast_type: str) -> str:
+        if ast_type == 'AnnAssign':
+            return statement['annotation']['id']
+        if ast_type == 'Name':
+            return statement['id']
+        elif ast_type == 'Attribute':
+            return statement['attr'] 
+        else:
+            value = statement['value']
+        ## TODO: change this entirely
+        if ast_type == 'Assign':
+            if value['ast_type'] == 'BinOp':
+                return self.get_right(value['left'], value['left']['ast_type'])       \
+                    + OPERATORS[value['op']['ast_type']]                              \
+                    + self.get_right(value['right'], value['right']['ast_type'])
+            elif value['ast_type'] == 'Attribute':
+                return value['value']['id'] + '.' + value['attr']
+            elif statement['value'] == 'Int': ##TODO: replace with value/ast_type
+                return value['value']
+            else:
+                return value['id']
+        elif ast_type == 'AugAssign':
+            if value['ast_type'] == 'Int':
+                return value['value']
+            else:
+                return value['id']
+
+    def get_variable(self, line: dict, body: list):
+        pass
 
     def get_target(self, target: dict) -> str:
         pass
@@ -81,56 +199,47 @@ class Visualizer:
     def get_value(self, value: dict) -> str:
         pass
     
-    ##
-    # Pass a list of FunctionDef nodes
+    # List of statement nodes and function nodes
     def visualize_cfg(self, nodes: list):
-      # Each node 
-      for node in nodes:
-        with self._graph.subgraph(name='cluster_' + node['name']) as sg:
-            node_label = self.get_func_label(node['args']['args'], 
-                node['decorator_list'], 
-                node['name']) 
-            for line in node['body']:
-                #TODO: Try/Except for debug/error handling
-                try:
-                    if 'target' in line.keys():
-                        sg.attr(label=node_label, 
-                            style='dashed', 
-                            color='black', 
-                            labelloc='t', 
-                            rank='same')
-                        sg.node(node['name'], 
-                            'ENTRY', 
-                            shape='Mdiamond', 
-                            fillcolor='white')
-                        node_struct_str = '{ '
-                        ast_type = line['ast_type']
-                        body = node['body']
-                        node_struct_str = self.get_variable(line, body)
-                            
-                        node_struct_str += '}'
-                        sg.node_attr = {
-                            'shape': 'record', 
-                            'style':'filled',
-                            'fillcolor':'lightgrey'
-                        }
-                        #make sure its formatted as a raw string
-                        sg.node('struct_' + node['name'], 
-                          r'{}'.format(node_struct_str)) 
-                       
-                        sg.node(node['name'] + '_exit', 
-                            'EXIT', 
-                            shape='Mdiamond', 
-                            fillcolor='white')
-                        sg.edge(node['name'], 'struct_' + node['name'])
-                        sg.edge('struct_' + node['name'], 
-                            node['name'] + '_exit')
-                        sg.edge_attr.update(color='blue', weight='100')
-                except KeyError as e:
-                    pprint(line)
-                    raise e
-              
-      self._graph.view() # TODO: Remove
+        for node in nodes:
+            if node is None: # TODO: REMOVE THIS
+                continue
+            with self._graph.subgraph(name='cluster_' + node.get_name()) as sg:
+                node_label = self.get_func_label(node.get_name(), 
+                    node.get_decorator_list(), 
+                    node.get_arg_list()) 
+                sg.attr(label=node_label)
+                sg.node(node_label, 'ENTRY', shape='Mdiamond', fillcolor='white')
 
+                node_struct_str = '{ '
+                for line in node.get_body():
+                    node_struct_str += line 
+
+                node_struct_str += '}'
+
+                sg.node_attr = {
+                    'shape': 'record', 
+                    'style':'filled',
+                    'fillcolor':'lightgrey'
+                }
+                sg.node('struct_' + node.get_name(), 
+                  r'{}'.format(node_struct_str)) 
+                
+                returns = 'None'
+                if node.get_returns() != '':
+                    returns = node.get_returns()
+                sg.node(node.get_name() + '_exit', 
+                    'RETURN: ' + returns, 
+                    shape='Mdiamond', 
+                    fillcolor='white')
+                sg.edge(node_label, 'struct_' + node.get_name())
+                sg.edge('struct_' + node.get_name(), 
+                    node.get_name() + '_exit')
+                sg.edge_attr.update(color='blue', weight='100')
+                  
+        self._graph.view()
+                    
+
+    ##
     def save_to_png(self):
         pass

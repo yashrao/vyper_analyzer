@@ -18,7 +18,9 @@ class AstWalker:
         cmd = 'vyper -f ast %s' % filename
         FNULL = open(os.devnull, 'w')
         vyper_c = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=FNULL)
-        return json.loads(vyper_c.communicate()[0].decode('utf-8', 'strict'))['ast']
+        ast = json.loads(vyper_c.communicate()[0].decode('utf-8', 'strict'))
+        self._contract_name = ast['contract_name']
+        return ast['ast']
     
 
 #TODO: remove
@@ -27,5 +29,6 @@ if __name__ == '__main__':
     ast = AstWalker('example_vyper_contracts/storage.vy')
     nodes = []
     ast.walk(ast._ast, nodes)
-    visualizer = Visualizer()
-    visualizer.visualize_cfg(nodes)
+    visualizer = Visualizer(ast._contract_name)
+    parsed_ast = visualizer.parse_ast(ast._ast)
+    visualizer.visualize_cfg(parsed_ast)
