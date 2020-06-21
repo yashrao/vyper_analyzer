@@ -34,5 +34,7 @@ if __name__ == '__main__':
     nodes = []
     ast.walk(ast._ast, nodes)
     visualizer = Visualizer(ast.get_contract_name())
-    parsed_ast = visualizer.parse_ast(ast._ast)
-    visualizer.visualize_cfg(parsed_ast)
+    #parsed_ast = visualizer.parse_ast(ast._ast)
+    #visualizer.visualize_cfg(parsed_ast)
+    parsed_ast = visualizer.parse_ast_alt(ast._ast)
+    visualizer.visualize_ast(parsed_ast)
