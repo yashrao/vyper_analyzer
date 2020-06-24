@@ -1,6 +1,8 @@
 from graphviz import Digraph
 from pprint import pprint
 
+from nodes import *
+
 AST_TYPES = {
     'AnnAssign': ':',
     'Assign': '=',
@@ -35,139 +37,6 @@ COMPARITORS = {
     'GtE': '\>=',
     'Not': 'not',
 }
-
-class BinaryOperatorNode:
-    def __init__(self, ast_type:str, var_list: list):
-        self._ast_type = ast_type
-        self._var_list = var_list
-
-    def get_var_list(self):
-        return self._var_list
-        
-    def get_ast_type(self):
-        return self._ast_type
-
-class UnaryOperatorNode:
-    def __init__(self, ast_type:str, var_list: list):
-        self._ast_type = ast_type
-        self._var_list = var_list
-
-    def get_var_list(self):
-        return self._var_list
-        
-    def get_ast_type(self):
-        return self._ast_type
-
-class SubscriptNode:
-    def __init__(self, identifier: str, var_type: str, var_dict: dict, subscript: list):
-        """ Used for storing individual variables in a statement """
-        self._identifier = identifier
-        self._var_type = var_type
-        self._var_dict = var_dict
-        self._subscript = subscript
-
-    def get_identifier(self):
-        return self._identifier
-        
-    def get_var_type(self):
-        return self._var_type
-
-    def get_var_dict(self):
-        return self._var_dict
-        
-    def __str__(self):
-        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._identifier, self._var_type, self._subscript)
-
-    def __repr__(self):
-        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._identifier, self._var_type, self._subscript)
-
-class VariableNode:
-    def __init__(self, identifier: str, var_type: str, var_dict: dict):
-        """ Used for storing individual variables in a statement """
-        self._identifier = identifier
-        self._var_type = var_type
-        self._var_dict = var_dict
-
-    def get_identifier(self):
-        return self._identifier
-
-    def get_var_type(self):
-        return self._var_type
-
-    def get_var_dict(self):
-        return self._var_dict
-
-    def __str__(self):
-        return '<class \'VariableNode\'; {}({})>'.format(self._identifier, self._var_type)
-
-    def __repr__(self):
-        return '<class \'VariableNode\'; {}({})>'.format(self._identifier, self._var_type)
-
-class StatementNode:
-    def __init__(self, ast_type, identifier, target, value):
-        self._ast_type = ast_type
-        self._identifier = identifier
-        self._target = target # left
-        self._value = value # right, containing either operator nodes or a single variable node
-    
-    def get_target(self):
-        return self._target
-
-    def get_value(self):
-        return self._value
-
-    def get_identifier(self):
-        return self._identifier
-
-    def __str__(self):
-        return '<class \'StatementNode\'; {}({}), target:{}, value:{}>'.format(self._ast_type, self._identifier, self._target, self._value)
-
-    def __repr__(self):
-        return '<class \'StatementNode\'; {}({}), target:{}, value:{}>'.format(self._ast_type, self._identifier, self._target, self._value)
-
-    ## TODO: return the re-constructed string of the entire line
-    ## Useful for the CFG
-    def get_line_string(self):
-        return ''
-
-class FunctionNode:
-    def __init__(self, name: str, body: list, is_public: bool, decorators: list, args: list, returns: str):
-        self._name = name
-        self._body = body
-        self._is_public = is_public
-        self._decorators = decorators
-        self._args = args
-        self._returns = returns
-
-    def set_name(self, name: str):
-        self._name = name
-    
-    def get_name(self) -> str:
-        return self._name
-        
-    def set_body(self, body: list):
-        self._body = body
-    
-    def get_body(self) -> list:
-        return self._body
-
-    def set_is_public(self, val: bool):
-        self._is_public = val
-
-    def check_is_public(self) -> bool:
-        return self._is_public
-    
-    def set_decorator_list(self, decorators: list):
-        self._decorators = decorators
-
-    def get_decorator_list(self) -> list:
-        return self._decorators
-    
-    def get_arg_list(self) -> list:
-        return self._args
-    
-    def get_returns(self) -> str:
-        return self._returns
 
 class Visualizer:
     def __init__(self, filename):
@@ -240,11 +109,18 @@ class Visualizer:
             decorator_list = statement['decorator_list']
             decorator_list_res = []
             for decorator in decorator_list:
-                if decorator['id'] == 'public':
-                    is_public = True
-                elif decorator['id'] == 'private':
-                    is_public = False
-                decorator_list_res.append(decorator['id'])
+                if decorator['ast_type'] == 'Name':
+                    if decorator['id'] == 'public':
+                        is_public = True
+                    elif decorator['id'] == 'private':
+                        is_public = False
+                    decorator_list_res.append(decorator['id'])
+                elif decorator['ast_type'] == 'Call':
+                    # TODO: make sure this can get all the args for the non-rentrant decorator
+                    decorator_list_res.append(decorator['func']['id']) 
+                else:
+                    print('ERROR: Unknown Decorator')
+                    raise Exception
             args = statement['args']['args']
             if statement['returns'] == None:
                 returns = ''
@@ -265,6 +141,7 @@ class Visualizer:
                     statement_objs.append(StatementNode(ast_type, AST_TYPES['Assign'],                      \
                             self.get_left(statement['target']),                                             \
                             self.get_right(statement['value'])))
+                    print('THIS IS A TEST <><><><> {}'.format(self.__get_right(statement['value'])))
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
                     statement_objs.append(StatementNode(ast_type, AST_TYPES['AugAssign'][op],               \
@@ -288,7 +165,11 @@ class Visualizer:
                             COMPARITORS[statement['test']['op']['ast_type']],                                  \
                             self.get_right(statement['test']['operand'])))
                 elif ast_type == 'Return':
-                    statement_objs.append(StatementNode(ast_type, 'return', None, statement['value']['attr']))
+                    # TODO: Generalize for all constants not just Int
+                    if statement['value']['ast_type'] == "Int":
+                        statement_objs.append(StatementNode(ast_type, 'return', None, statement['value']['value']))
+                    else:
+                        statement_objs.append(StatementNode(ast_type, 'return', None, statement['value']['attr']))
             except KeyError as e:
                 pprint(statement)
                 raise e
@@ -393,32 +274,31 @@ class Visualizer:
         elif ast_type == 'BinOp':
             print(ast_type)
             print(right)
-            return self.get_right(right['left']) +                   \
+            return self.get_right(right['left']) +                                              \
                 OPERATORS[right['op']['ast_type']] +                                            \
                 self.get_right(right['right'])
         elif ast_type == 'Subscript':
-            return self.get_right(right['value']) +  \
+            return self.get_right(right['value']) +                                             \
                 '[' + self.get_right(right['slice']['value']) + ']'
 
     ## TODO: Get rid of ast_type if statements
-    def __get_right(self, right: dict) -> str:
+    def __get_right(self, right: dict):
         ast_type = right['ast_type']
         if ast_type == 'Name':
             return VariableNode(right['id'], ast_type, right)
         elif ast_type == 'Attribute':
             return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right)
         elif ast_type == 'Int':
-            return right['value']
+            return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right)
         elif ast_type == 'NameConstant':
-            return right['value']
+            #return right['value']
+            return ConstantNode(int(right['value']))
         elif ast_type == 'BinOp':
             print(ast_type)
             print(right)
-            return self.get_right(right['left']) +                   \
-                OPERATORS[right['op']['ast_type']] +                                            \
-                self.get_right(right['right'])
+            return BinaryOperatorNode(ast_type, self.__get_right(right['left']), self.__get_right(right['right']))
         elif ast_type == 'Subscript':
-            return self.get_right(right['value']) +  \
+            return self.get_right(right['value']) +                                             \
                 '[' + self.get_right(right['slice']['value']) + ']'
             
 
