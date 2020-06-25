@@ -37,6 +37,17 @@ class UnaryOperatorNode:
         
     def get_ast_type(self):
         return self._ast_type
+
+class ExpressionNode:
+    def __init__(self, call: str, args_list: list):
+        self._call = call
+        self._args_list = args_list
+
+    def get_call(self): 
+        return self._call
+
+    def get_args_list(self):
+        return self._args_list
         
 class VariableNode:
     def __init__(self, identifier: str, var_type: str, var_dict: dict):
