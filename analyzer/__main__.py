@@ -1,5 +1,7 @@
+from interface import Interface
+
 def main():
-    pass
+    Interface()
 
 if __name__ == '__main__':
     main()

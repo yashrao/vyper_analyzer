@@ -2,6 +2,7 @@ from graphviz import Digraph
 from pprint import pprint
 
 from nodes import *
+import os
 
 AST_TYPES = {
     'AnnAssign': ':',
@@ -141,12 +142,13 @@ class Visualizer:
                     statement_objs.append(StatementNode(ast_type, AST_TYPES['Assign'],                      \
                             self.get_left(statement['target']),                                             \
                             self.get_right(statement['value'])))
-                    print('THIS IS A TEST <><><><> {}'.format(self.__get_right(statement['value'])))
+                    print('THIS IS A TEST <><><><> {}{}'.format(self.__get_left(statement['target']), self.__get_right(statement['value'])))
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
                     statement_objs.append(StatementNode(ast_type, AST_TYPES['AugAssign'][op],               \
                             self.get_left(statement['target']),                                             \
                             self.get_right(statement['value'])))
+                    print('THIS IS A TEST <><><><> {}'.format(self.__get_right(statement['value'])))
                 elif ast_type == 'AnnAssign':
                     statement_objs.append(StatementNode(ast_type, statement['annotation']['id'],            \
                             self.get_left(statement['target']),                                             \
@@ -249,14 +251,18 @@ class Visualizer:
     # Get left hand side of a assignment
     def __get_left(self, left: dict) -> list:
         ## TODO: make get_left take statement['target]
+        ## TODO: Add BinOp
         ast_type = left['ast_type']
         if ast_type == 'Subscript':
-            return self.get_left(left['value']) +  \
-                '[' + self.get_right(left['slice']['value']) + ']'
+            #return self.get_left(left['value']) +  \
+            #    '[' + self.get_right(left['slice']['value']) + ']
+            left_ = self.__get_left(left['value'])
+            subscript = self.__get_right(left['slice']['value'])
+            return SubscriptNode(left, ast_type, left, subscript)
         elif ast_type == 'Attribute':
-            return left['value']['id'] + '.' + left['attr']
+            return VariableNode(left['value']['id'] + '.' + left['attr'], ast_type, left)
         elif ast_type == 'Name':
-            return left['id']
+            return VariableNode(left['id'], ast_type, left)
         #return left['attr']
 
     # Get right hand side of an assignment
@@ -283,13 +289,15 @@ class Visualizer:
 
     ## TODO: Get rid of ast_type if statements
     def __get_right(self, right: dict):
+        #TODO: Unary operator needs to be done
         ast_type = right['ast_type']
         if ast_type == 'Name':
             return VariableNode(right['id'], ast_type, right)
         elif ast_type == 'Attribute':
             return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right)
         elif ast_type == 'Int':
-            return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right)
+            #return VariableNode(right['value'], ast_type, right)
+            return ConstantNode(right['value'])
         elif ast_type == 'NameConstant':
             #return right['value']
             return ConstantNode(int(right['value']))
@@ -300,8 +308,6 @@ class Visualizer:
         elif ast_type == 'Subscript':
             return self.get_right(right['value']) +                                             \
                 '[' + self.get_right(right['slice']['value']) + ']'
-            
-
 
     def get_variable(self, line: dict, body: list):
         pass
@@ -312,10 +318,11 @@ class Visualizer:
     def get_value(self, value: dict) -> str:
         pass
     
-    def visualize_ast(self, nodes: list):
+    def visualize_ast(self, nodes: list, filename: str):
         """ Used to visualize the AST into graphviz format
         nodes: list of FunctionNode objects containing a list of StatementNode objects
         """
+        output_folder = self.create_output_folder_ast()
         for node in nodes:
             if node is None:
                 continue
@@ -345,7 +352,16 @@ class Visualizer:
                         sg.edge(node_label + '_start', node_label_statement)
                     count += 1
                 
-        self._graph.render('test_alt')
+        self._graph.render(output_folder + '/' + filename)
+        
+    def create_output_folder_ast(self) -> str:
+        OUTPUT_DIR = 'output'
+        AST_DIR = 'ast'
+        if not os.path.isdir(OUTPUT_DIR):
+            os.makedirs(OUTPUT_DIR)
+        if not os.path.isdir(OUTPUT_DIR + '/' + AST_DIR):
+            os.makedirs(OUTPUT_DIR + '/' + AST_DIR)
+        return OUTPUT_DIR + '/' + AST_DIR
 
     # List of statement nodes and function nodes
     def visualize_cfg(self, nodes: list):

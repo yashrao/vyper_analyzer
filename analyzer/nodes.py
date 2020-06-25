@@ -1,18 +1,29 @@
 class ConstantNode:
+    # TODO Support for multiple types
     def __init__(self, value: int):
         self._value = value
 
     def get_value(self):
         return self._value
 
-class BinaryOperatorNode:
-    def __init__(self, ast_type:str, var_list: list):
-        self._ast_type = ast_type
-        self._var_list = var_list
+    def __str__(self):
+        return '<class \'ConstantNode\'; {}>'.format(self._value)
 
-    def get_var_list(self):
-        return self._var_list
+    def __repr__(self):
+        return '<class \'ConstantNode\'; {}>'.format(self._value)
+
+class BinaryOperatorNode:
+    def __init__(self, ast_type:str, left, right):
+        self._ast_type = ast_type
+        self._left = left
+        self._right = right
+
+    def get_left(self):
+        return self._left
         
+    def get_right(self):
+        return self._right
+
     def get_ast_type(self):
         return self._ast_type
 
@@ -26,29 +37,6 @@ class UnaryOperatorNode:
         
     def get_ast_type(self):
         return self._ast_type
-
-class SubscriptNode:
-    def __init__(self, identifier: str, var_type: str, var_dict: dict, subscript: list):
-        """ Used for storing individual variables in a statement """
-        self._identifier = identifier
-        self._var_type = var_type
-        self._var_dict = var_dict
-        self._subscript = subscript
-
-    def get_identifier(self):
-        return self._identifier
-        
-    def get_var_type(self):
-        return self._var_type
-
-    def get_var_dict(self):
-        return self._var_dict
-        
-    def __str__(self):
-        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._identifier, self._var_type, self._subscript)
-
-    def __repr__(self):
-        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._identifier, self._var_type, self._subscript)
         
 class VariableNode:
     def __init__(self, identifier: str, var_type: str, var_dict: dict):
@@ -67,11 +55,34 @@ class VariableNode:
         return self._var_dict
         
     def __str__(self):
-        return '<class \'VariableNode\'; {}({})>'.format(self._identifier, self._var_type)
+        return '<class \'VariableNode\'; {}:{}>'.format(self._identifier, self._var_type)
 
     def __repr__(self):
-        return '<class \'VariableNode\'; {}({})>'.format(self._identifier, self._var_type)
+        return '<class \'VariableNode\'; {}:{}>'.format(self._identifier, self._var_type)
 
+class SubscriptNode:
+    def __init__(self, left: VariableNode, var_type: str, var_dict: dict, subscript):
+        """ Used for storing individual variables in a statement """
+        self._left = left
+        self._var_type = var_type
+        self._var_dict = var_dict
+        self._subscript = subscript
+
+    def get_left(self):
+        return self._left
+        
+    def get_var_type(self):
+        return self._var_type
+
+    def get_var_dict(self):
+        return self._var_dict
+        
+    def __str__(self):
+        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._left, self._var_type, self._subscript)
+
+    def __repr__(self):
+        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._left, self._var_type, self._subscript)
+        
 class StatementNode:
     def __init__(self, ast_type, identifier, target, value):
         self._ast_type = ast_type

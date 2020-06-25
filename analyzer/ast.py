@@ -6,7 +6,7 @@ from visualizer import Visualizer
 class AstWalker:
     def __init__(self, source: str):
         self._contract_name = '' 
-        self._ast = self.get_ast(source)
+        self._ast = self.__get_ast(source)
 
     def walk(self, node, nodes):
         if 'FunctionDef' in node['ast_type']:
@@ -15,13 +15,21 @@ class AstWalker:
             for child in node["body"]:
                 self.walk(child, nodes)
 
-    def get_ast(self, filename: str) -> dict:
-        cmd = 'vyper -f ast %s' % filename
-        FNULL = open(os.devnull, 'w')
-        vyper_c = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=FNULL)
-        ast = json.loads(vyper_c.communicate()[0].decode('utf-8', 'strict'))
-        self._contract_name = ast['contract_name']
-        return ast['ast']
+    def __get_ast(self, filename: str) -> dict:
+        cmd = 'vyper -f ast {}'.format(filename)
+        try:
+            FNULL = open(os.devnull, 'w')
+            vyper_c = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=FNULL)
+            ast = json.loads(vyper_c.communicate()[0].decode('utf-8', 'strict'))
+            self._contract_name = ast['contract_name']
+            return ast['ast']
+        except json.decoder.JSONDecodeError:
+            if not os.path.isfile(filename):
+                print('Error: The file "{}" does not exist'.format(filename))
+            else:
+                print('Error: Could not parse Vyper file: ({})'.format(filename))
+                vyper_c.communicate()[0].decode('utf-8', 'strict')
+            exit(1)
 
     def get_contract_name(self):
         return self._contract_name

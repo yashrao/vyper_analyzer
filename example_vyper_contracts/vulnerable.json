@@ -1,0 +1,419 @@
+{
+    "contract_name": "example_vyper_contracts/vulnerable.vy",
+    "ast": {
+        "src": "0:972:0",
+        "col_offset": 0,
+        "body": [
+            {
+                "src": "0:18:0",
+                "target": {
+                    "src": "0:4:0",
+                    "col_offset": 0,
+                    "end_col_offset": 4,
+                    "ast_type": "Name",
+                    "lineno": 1,
+                    "node_id": 2,
+                    "end_lineno": 1,
+                    "id": "sent"
+                },
+                "col_offset": 0,
+                "end_lineno": 1,
+                "end_col_offset": 18,
+                "annotation": {
+                    "func": {
+                        "src": "6:6:0",
+                        "col_offset": 6,
+                        "end_col_offset": 12,
+                        "ast_type": "Name",
+                        "lineno": 1,
+                        "node_id": 5,
+                        "end_lineno": 1,
+                        "id": "public"
+                    },
+                    "src": "6:12:0",
+                    "col_offset": 6,
+                    "args": [
+                        {
+                            "src": "13:4:0",
+                            "col_offset": 13,
+                            "end_col_offset": 17,
+                            "ast_type": "Name",
+                            "lineno": 1,
+                            "node_id": 7,
+                            "end_lineno": 1,
+                            "id": "bool"
+                        }
+                    ],
+                    "keyword": null,
+                    "end_col_offset": 18,
+                    "keywords": [],
+                    "lineno": 1,
+                    "node_id": 4,
+                    "end_lineno": 1,
+                    "ast_type": "Call"
+                },
+                "value": null,
+                "lineno": 1,
+                "node_id": 1,
+                "simple": 1,
+                "ast_type": "AnnAssign"
+            },
+            {
+                "src": "160:181:0",
+                "col_offset": 0,
+                "returns": null,
+                "args": {
+                    "src": "240:3:0",
+                    "col_offset": 0,
+                    "args": [],
+                    "default": null,
+                    "defaults": [],
+                    "end_col_offset": 3,
+                    "lineno": 4,
+                    "node_id": 10,
+                    "end_lineno": 4,
+                    "ast_type": "arguments"
+                },
+                "name": "__init__",
+                "body": [
+                    {
+                        "src": "324:17:0",
+                        "target": {
+                            "src": "324:9:0",
+                            "col_offset": 4,
+                            "attr": "sent",
+                            "end_col_offset": 13,
+                            "value": {
+                                "src": "324:4:0",
+                                "col_offset": 4,
+                                "end_col_offset": 8,
+                                "ast_type": "Name",
+                                "lineno": 5,
+                                "node_id": 13,
+                                "end_lineno": 5,
+                                "id": "self"
+                            },
+                            "lineno": 5,
+                            "node_id": 12,
+                            "end_lineno": 5,
+                            "ast_type": "Attribute"
+                        },
+                        "col_offset": 4,
+                        "end_col_offset": 21,
+                        "value": {
+                            "src": "336:5:0",
+                            "col_offset": 16,
+                            "end_col_offset": 21,
+                            "value": false,
+                            "lineno": 5,
+                            "node_id": 16,
+                            "end_lineno": 5,
+                            "ast_type": "NameConstant"
+                        },
+                        "lineno": 5,
+                        "node_id": 11,
+                        "end_lineno": 5,
+                        "ast_type": "Assign"
+                    }
+                ],
+                "pos": null,
+                "end_col_offset": 21,
+                "decorator_list": [
+                    {
+                        "src": "161:6:0",
+                        "col_offset": 1,
+                        "end_col_offset": 7,
+                        "ast_type": "Name",
+                        "lineno": 3,
+                        "node_id": 17,
+                        "end_lineno": 3,
+                        "id": "public"
+                    }
+                ],
+                "doc_string": null,
+                "node_id": 9,
+                "end_lineno": 5,
+                "lineno": 3,
+                "ast_type": "FunctionDef"
+            },
+            {
+                "src": "480:492:0",
+                "col_offset": 0,
+                "returns": {
+                    "src": "669:7:0",
+                    "col_offset": 29,
+                    "end_col_offset": 36,
+                    "ast_type": "Name",
+                    "lineno": 9,
+                    "node_id": 53,
+                    "end_lineno": 9,
+                    "id": "uint256"
+                },
+                "args": {
+                    "src": "653:11:0",
+                    "col_offset": 13,
+                    "args": [
+                        {
+                            "src": "653:11:0",
+                            "col_offset": 13,
+                            "arg": "to",
+                            "end_col_offset": 24,
+                            "annotation": {
+                                "src": "657:7:0",
+                                "col_offset": 17,
+                                "end_col_offset": 24,
+                                "ast_type": "Name",
+                                "lineno": 9,
+                                "node_id": 22,
+                                "end_lineno": 9,
+                                "id": "address"
+                            },
+                            "lineno": 9,
+                            "node_id": 21,
+                            "end_lineno": 9,
+                            "ast_type": "arg"
+                        }
+                    ],
+                    "default": null,
+                    "defaults": [],
+                    "end_col_offset": 24,
+                    "lineno": 9,
+                    "node_id": 20,
+                    "end_lineno": 9,
+                    "ast_type": "arguments"
+                },
+                "name": "sendFunc",
+                "body": [
+                    {
+                        "src": "724:180:0",
+                        "orelse": [],
+                        "col_offset": 4,
+                        "test": {
+                            "src": "727:18:0",
+                            "right": {
+                                "src": "740:5:0",
+                                "col_offset": 20,
+                                "end_col_offset": 25,
+                                "value": false,
+                                "lineno": 10,
+                                "node_id": 31,
+                                "end_lineno": 10,
+                                "ast_type": "NameConstant"
+                            },
+                            "left": {
+                                "src": "727:9:0",
+                                "col_offset": 7,
+                                "attr": "sent",
+                                "end_col_offset": 16,
+                                "value": {
+                                    "src": "727:4:0",
+                                    "col_offset": 7,
+                                    "end_col_offset": 11,
+                                    "ast_type": "Name",
+                                    "lineno": 10,
+                                    "node_id": 27,
+                                    "end_lineno": 10,
+                                    "id": "self"
+                                },
+                                "lineno": 10,
+                                "node_id": 26,
+                                "end_lineno": 10,
+                                "ast_type": "Attribute"
+                            },
+                            "col_offset": 7,
+                            "op": {
+                                "src": "727:18:0",
+                                "col_offset": 7,
+                                "end_col_offset": 25,
+                                "lineno": 10,
+                                "node_id": 30,
+                                "end_lineno": 10,
+                                "ast_type": "Eq"
+                            },
+                            "end_col_offset": 25,
+                            "lineno": 10,
+                            "node_id": 25,
+                            "end_lineno": 10,
+                            "ast_type": "Compare"
+                        },
+                        "body": [
+                            {
+                                "src": "808:11:0",
+                                "col_offset": 8,
+                                "end_col_offset": 19,
+                                "value": {
+                                    "func": {
+                                        "src": "808:4:0",
+                                        "col_offset": 8,
+                                        "end_col_offset": 12,
+                                        "ast_type": "Name",
+                                        "lineno": 11,
+                                        "node_id": 34,
+                                        "end_lineno": 11,
+                                        "id": "send"
+                                    },
+                                    "src": "808:11:0",
+                                    "col_offset": 8,
+                                    "args": [
+                                        {
+                                            "src": "813:2:0",
+                                            "col_offset": 13,
+                                            "end_col_offset": 15,
+                                            "ast_type": "Name",
+                                            "lineno": 11,
+                                            "node_id": 36,
+                                            "end_lineno": 11,
+                                            "id": "to"
+                                        },
+                                        {
+                                            "src": "817:1:0",
+                                            "col_offset": 17,
+                                            "end_col_offset": 18,
+                                            "value": 1,
+                                            "lineno": 11,
+                                            "node_id": 38,
+                                            "end_lineno": 11,
+                                            "ast_type": "Int"
+                                        }
+                                    ],
+                                    "keyword": null,
+                                    "end_col_offset": 19,
+                                    "keywords": [],
+                                    "lineno": 11,
+                                    "node_id": 33,
+                                    "end_lineno": 11,
+                                    "ast_type": "Call"
+                                },
+                                "lineno": 11,
+                                "node_id": 32,
+                                "end_lineno": 11,
+                                "ast_type": "Expr"
+                            },
+                            {
+                                "src": "888:16:0",
+                                "target": {
+                                    "src": "888:9:0",
+                                    "col_offset": 8,
+                                    "attr": "sent",
+                                    "end_col_offset": 17,
+                                    "value": {
+                                        "src": "888:4:0",
+                                        "col_offset": 8,
+                                        "end_col_offset": 12,
+                                        "ast_type": "Name",
+                                        "lineno": 12,
+                                        "node_id": 41,
+                                        "end_lineno": 12,
+                                        "id": "self"
+                                    },
+                                    "lineno": 12,
+                                    "node_id": 40,
+                                    "end_lineno": 12,
+                                    "ast_type": "Attribute"
+                                },
+                                "col_offset": 8,
+                                "end_col_offset": 24,
+                                "value": {
+                                    "src": "900:4:0",
+                                    "col_offset": 20,
+                                    "end_col_offset": 24,
+                                    "value": true,
+                                    "lineno": 12,
+                                    "node_id": 44,
+                                    "end_lineno": 12,
+                                    "ast_type": "NameConstant"
+                                },
+                                "lineno": 12,
+                                "node_id": 39,
+                                "end_lineno": 12,
+                                "ast_type": "Assign"
+                            }
+                        ],
+                        "end_col_offset": 24,
+                        "lineno": 10,
+                        "node_id": 24,
+                        "end_lineno": 12,
+                        "ast_type": "If"
+                    },
+                    {
+                        "src": "964:8:0",
+                        "col_offset": 4,
+                        "end_col_offset": 12,
+                        "value": {
+                            "src": "971:1:0",
+                            "col_offset": 11,
+                            "end_col_offset": 12,
+                            "value": 1,
+                            "lineno": 13,
+                            "node_id": 46,
+                            "end_lineno": 13,
+                            "ast_type": "Int"
+                        },
+                        "lineno": 13,
+                        "node_id": 45,
+                        "end_lineno": 13,
+                        "ast_type": "Return"
+                    }
+                ],
+                "pos": null,
+                "end_col_offset": 12,
+                "decorator_list": [
+                    {
+                        "src": "481:6:0",
+                        "col_offset": 1,
+                        "end_col_offset": 7,
+                        "ast_type": "Name",
+                        "lineno": 7,
+                        "node_id": 47,
+                        "end_lineno": 7,
+                        "id": "public"
+                    },
+                    {
+                        "func": {
+                            "src": "561:12:0",
+                            "col_offset": 1,
+                            "end_col_offset": 13,
+                            "ast_type": "Name",
+                            "lineno": 8,
+                            "node_id": 50,
+                            "end_lineno": 8,
+                            "id": "nonreentrant"
+                        },
+                        "src": "561:26:0",
+                        "col_offset": 1,
+                        "args": [
+                            {
+                                "src": "574:12:0",
+                                "col_offset": 14,
+                                "end_col_offset": 26,
+                                "value": "exampleKey",
+                                "lineno": 8,
+                                "node_id": 52,
+                                "end_lineno": 8,
+                                "ast_type": "Str"
+                            }
+                        ],
+                        "keyword": null,
+                        "end_col_offset": 27,
+                        "keywords": [],
+                        "lineno": 8,
+                        "node_id": 49,
+                        "end_lineno": 8,
+                        "ast_type": "Call"
+                    }
+                ],
+                "doc_string": null,
+                "node_id": 19,
+                "end_lineno": 13,
+                "lineno": 7,
+                "ast_type": "FunctionDef"
+            }
+        ],
+        "end_col_offset": 12,
+        "doc_string": null,
+        "node_id": 0,
+        "end_lineno": 13,
+        "lineno": 1,
+        "ast_type": "Module"
+    }
+}

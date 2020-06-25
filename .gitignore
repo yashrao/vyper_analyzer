@@ -1,7 +1,11 @@
 *.pyc
 .vscode/
-G.gv
-G.gv.pdf
-test.png
-test.png.pdf
+*.gv
+*.gv.pdf
+*.png
+*.pdf
 venv/
+node_modules/
+brownie/
+output/
+test*
