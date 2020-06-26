@@ -1,19 +1,55 @@
+class Node:
+    def __init__(self, ast_type: str):
+        self._ast_type = ast_type
+
+    def __str__(self):
+        return '<class \'Node\';>'
+
+    def __repr(self):
+        return '<class \'Node\';>'
+
+    def get_ast_type(self) -> str:
+        return self._ast_type
+
 class ConstantNode:
     # TODO Support for multiple types
     def __init__(self, value: int):
         self._value = value
 
-    def get_value(self):
+    def get_value(self) -> int:
         return self._value
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '<class \'ConstantNode\'; {}>'.format(self._value)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return '<class \'ConstantNode\'; {}>'.format(self._value)
 
 class BinaryOperatorNode:
-    def __init__(self, ast_type:str, left, right):
+    def __init__(self, ast_type: str, op: str, left, right):
+        self._ast_type = ast_type
+        self._op = op
+        self._left = left
+        self._right = right
+
+    def get_left(self):
+        return self._left
+        
+    def get_right(self):
+        return self._right
+
+    def get_ast_type(self):
+        return self._ast_type
+
+    def __str__(self) -> str:
+        return '<class \'BinaryOpNode\'({}); {} {} {}>'.format(self._ast_type, self._left, self._op, self._right)
+
+    def __repr__(self) -> str:
+        return '<class \'BinaryOpNode\'({}); {} {} {}>'.format(self._ast_type, self._left, self._op, self._right)
+
+class AssignmentNode:
+    #TODO: Add var_type?
+    def __init__(self, ast_type: str, left, right):
         self._ast_type = ast_type
         self._left = left
         self._right = right
@@ -26,6 +62,25 @@ class BinaryOperatorNode:
 
     def get_ast_type(self):
         return self._ast_type
+
+    def __str__(self) -> str:
+        return '<class \'AssignmentNode\'; {} {} {}>'.format(self._ast_type, self._left, self._right)
+        
+    def __repr__(self) -> str:
+        return '<class \'AssignmentNode\'; {} {} {}>'.format(self._ast_type, self._left, self._right)
+
+class AnnAssignmentNode:
+    def __init__(self, ast_type: str, var_type, left, right):
+        self._ast_type = ast_type
+        self._var_type = var_type
+        self._left = left
+        self._right = right
+
+    def __str__(self) -> str:
+        return '<class \'AnnAssignmentNode\'(); {} {} {}>'.format(self._ast_type, self._left, self._right)
+        
+    def __repr__(self) -> str:
+        return '<class \'AnnAssignmentNode\'(); {} {} {}>'.format(self._ast_type, self._left, self._right)
 
 class UnaryOperatorNode:
     def __init__(self, ast_type:str, var_list: list):
@@ -49,17 +104,33 @@ class CallNode:
     def get_args_list(self):
         return self._args_list
 
+    def __str__(self):
+        return '<class \'CallNode\'; {}({})>'.format(self._call, self._args_list)
+
+    def __str__(self):
+        return '<class \'CallNode\'; {}({})>'.format(self._call, self._args_list)
+
 class AssertNode:
     ##TODO: Use Binary node?
-    def __init__(self, left, right):
+    def __init__(self, left, right, comparitor: str):
         self._left = left
         self._right = right
+        self._comparitor = comparitor
         
     def get_left(self):
         return self._left
 
     def get_right(self):
         return self._right
+
+    def get_comparitor(self) -> str:
+        return self._comparitor
+
+    def __str__(self):
+        return '<class \'Assert Node\'; {} ({} {})>'.format(self._comparitor, self._left, self._right)
+
+    def __repr__(self):
+        return '<class \'Assert Node\'; {} ({} {})>'.format(self._comparitor, self._left, self._right)
 
 class VariableNode:
     def __init__(self, identifier: str, var_type: str, var_dict: dict):
@@ -191,7 +262,18 @@ class FunctionNode:
         return self._returns
 
     def __str__(self):
-        return '<class \'FunctionNode\'; {}\n\t{}>'.format(self._name, self._body)
+        ret = '' 
+        for statement in self._body:
+            ret += str(statement) + '\n'
+        return '\n\t<class \'FunctionNode\'; {}\n\t\t{}>'.format(self._name, ret)
 
     def __repr__(self):
-        return '<class \'FunctionNode\'; {}\n\t{}>'.format(self._name, self._body)
+        ret = '' 
+        for statement in self._body:
+            ret += str(statement) + '\n'
+        return '\n\t<class \'FunctionNode\'; {}\n\t\t{}>'.format(self._name, ret)
+
+
+class ArrayType:
+    def __init__(self, index: int):
+        self._index = index

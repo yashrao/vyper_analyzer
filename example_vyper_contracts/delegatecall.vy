@@ -1,3 +1,5 @@
+_test: uint256
+
 @public
 def _swapOneSplit(testADDR: address,
                   fromToken: address,               \
@@ -27,3 +29,4 @@ def _swapOneSplit(testADDR: address,
         gas=msg.gas,
         delegate_call=True
     )
+    self._test = -2
