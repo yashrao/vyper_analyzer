@@ -4,6 +4,8 @@ import json
 from visualizer import Visualizer
 from nodes import *
 
+from pprint import pprint #DEBUG
+
 AST_TYPES = {
     'AnnAssign': ':',
     'Assign': '=',
@@ -72,6 +74,7 @@ class AstWalker:
         return self._contract_name
 
     def parse_ast(self, ast: dict) -> list:
+        #TODO: DELETE THIS WHEN DONE 
         body = ast['body']
         statements = [] # Empty list of Strings
         for statement in body:
@@ -80,12 +83,13 @@ class AstWalker:
         return statements
 
     def parse_ast_alt(self, ast:dict) -> list:
+        #TODO: Change this to just parse_ast
         body = ast['body']
         statements = [] # Empty list of Strings
         for statement in body:
             statements.append(self.__parse_statements(statement))
-        print(statements)
-        return statements
+        main = ContractNode(self._contract_name, statements)
+        return main
 
     def parse_statements(self, statement: dict):
         # TODO: handle AnnAssign nodes here
@@ -138,44 +142,48 @@ class AstWalker:
             name = statement['name']
             return FunctionNode(name, body, is_public, decorator_list_res, args, returns)
         
+    def get_call_args(self, args: list) -> list:
+        ret = []
+        for arg in args:
+            ret.append(self.__get_right(arg))
+        return ret
 
     def __parse_body(self, body: list) -> list:
         # TODO: make it prettier (fix the slashes on the end to be on the same column)
         statement_objs = []
         for statement in body:
             ast_type = self.get_ast_type(statement)
-            print(ast_type) 
             try:
                 if ast_type == 'Assign':
-                    statement_objs.append(StatementNode(ast_type, AST_TYPES['Assign'],                      \
-                            self.get_left(statement['target']),                                             \
-                            self.get_right(statement['value'])))
-                    print('THIS IS A TEST <><><><> {}{}'.format(self.__get_left(statement['target']), self.__get_right(statement['value'])))
+                    node = BinaryOperatorNode(ast_type, self.__get_left(statement['target']), self.__get_right(statement['value']))
+                    statement_objs.append(StatementNode(ast_type, AST_TYPES['Assign'], node))
                 elif ast_type == 'AugAssign':
+                    node = BinaryOperatorNode(ast_type, self.__get_left(statement['target']), self.__get_right(statement['value']))
                     op = self.get_op(statement) 
                     statement_objs.append(StatementNode(ast_type, AST_TYPES['AugAssign'][op],               \
-                            self.get_left(statement['target']),                                             \
-                            self.get_right(statement['value'])))
-                    print('THIS IS A TEST <><><><> {}'.format(self.__get_right(statement['value'])))
+                            node))
                 elif ast_type == 'AnnAssign':
+                    node = BinaryOperatorNode(ast_type, self.__get_left(statement['target']), self.__get_right(statement['value']))
                     statement_objs.append(StatementNode(ast_type, statement['annotation']['id'],            \
-                            self.get_left(statement['target']),                                             \
-                            self.get_right(statement['value'])))
+                            node))
                 elif ast_type == 'Expr':
+                    node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']))
                     statement_objs.append(StatementNode(ast_type, 'Call', 
-                            statement['value']['func']['id'],                                               \
-                            self.get_func_args(statement['value']['args'])))
+                            node))
                 elif ast_type == 'Assert':
                     if statement['test']['ast_type'] == 'Compare':
-                        statement_objs.append(StatementNode(ast_type, self.get_left(statement['test']['left']), \
+                        node = AssertNode(self.__get_left(statement['test']['left']), self.__get_right(statement['test']['right']))
+                        statement_objs.append(StatementNode(ast_type,                                       \
                             COMPARITORS[statement['test']['op']['ast_type']],                                  \
-                            self.get_right(statement['test']['right'])))
+                            node))
                     elif statement['test']['ast_type'] == 'UnaryOp':
-                        statement_objs.append(StatementNode(ast_type, None,                                     \
+                        node = AssertNode(self.__get_left(statement['test']['operand']), None)
+                        statement_objs.append(StatementNode(ast_type,                                     \
                             COMPARITORS[statement['test']['op']['ast_type']],                                  \
-                            self.get_right(statement['test']['operand'])))
+                            node))
                 elif ast_type == 'Return':
                     # TODO: Generalize for all constants not just Int
+                    #TODO: change to nodes
                     if statement['value']['ast_type'] == "Int":
                         statement_objs.append(StatementNode(ast_type, 'return', None, statement['value']['value']))
                     else:

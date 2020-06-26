@@ -48,8 +48,9 @@ class Interface:
             #parsed_ast = visualizer.parse_ast(ast._ast)
             #visualizer.visualize_cfg(parsed_ast)
             parsed_ast = ast.parse_ast_alt(ast._ast)
-            visualizer = Visualizer(ast.get_contract_name())
-            print(filename)
-            visualizer.visualize_ast(parsed_ast, filename)
+            print(parsed_ast)
+            #visualizer = Visualizer(ast.get_contract_name())
+            #print(filename)
+            #visualizer.visualize_ast(parsed_ast, filename)
 
 

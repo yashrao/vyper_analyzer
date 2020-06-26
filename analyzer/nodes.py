@@ -38,7 +38,7 @@ class UnaryOperatorNode:
     def get_ast_type(self):
         return self._ast_type
 
-class ExpressionNode:
+class CallNode:
     def __init__(self, call: str, args_list: list):
         self._call = call
         self._args_list = args_list
@@ -48,7 +48,19 @@ class ExpressionNode:
 
     def get_args_list(self):
         return self._args_list
+
+class AssertNode:
+    ##TODO: Use Binary node?
+    def __init__(self, left, right):
+        self._left = left
+        self._right = right
         
+    def get_left(self):
+        return self._left
+
+    def get_right(self):
+        return self._right
+
 class VariableNode:
     def __init__(self, identifier: str, var_type: str, var_dict: dict):
         """ Used for storing individual variables in a statement """
@@ -82,44 +94,61 @@ class SubscriptNode:
     def get_left(self):
         return self._left
         
-    def get_var_type(self):
+    def get_var_type(self) -> str:
         return self._var_type
 
-    def get_var_dict(self):
+    def get_var_dict(self) -> dict:
         return self._var_dict
         
     def __str__(self):
-        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._left, self._var_type, self._subscript)
+        return '<class \'SubscriptNode\'; {}({})[{}]>'.format(self._left, self._var_type, self._subscript)
 
     def __repr__(self):
-        return '<class \'SubscriptNode\'; {}({}){}>'.format(self._left, self._var_type, self._subscript)
+        return '<class \'SubscriptNode\'; {}({})[{}]>'.format(self._left, self._var_type, self._subscript)
         
 class StatementNode:
-    def __init__(self, ast_type, identifier, target, value):
+    def __init__(self, ast_type, identifier, value):
         self._ast_type = ast_type
         self._identifier = identifier
-        self._target = target # left
-        self._value = value # right, containing either operator nodes or a single variable node
+        self._value = value # Node containing everything 
     
-    def get_target(self):
-        return self._target
-
     def get_value(self):
         return self._value
 
-    def get_identifier(self):
+    def get_identifier(self) -> str:
         return self._identifier
 
     def __str__(self):
-        return '<class \'StatementNode\'; {}({}), target:{}, value:{}>'.format(self._ast_type, self._identifier, self._target, self._value)
+        return '<class \'StatementNode\'; {}({}), Node:{}>'.format(self._ast_type, self._identifier, self._value)
 
     def __repr__(self):
-        return '<class \'StatementNode\'; {}({}), target:{}, value:{}>'.format(self._ast_type, self._identifier, self._target, self._value)
+        return '<class \'StatementNode\'; {}({}), Node:{}>'.format(self._ast_type, self._identifier, self._value)
 
     ## TODO: return the re-constructed string of the entire line
     ## Useful for the CFG
-    def get_line_string(self):
+    def get_line_string(self) -> str:
         return ''
+
+class ContractNode:
+    def __init__(self, name: str, body: list):
+        self._name = name
+        self._body = body
+        self._symbol_table = {}
+
+    def get_contract_name(self) -> str:
+        return self._name
+
+    def get_body(self) -> list:
+        return self._body
+
+    def get_symbol_table(self) -> dict:
+        return self._symbol_table
+
+    def __str__(self):
+        return '<class \'ContractNode\'; {}\n\t{}>'.format(self._name, self._body)
+
+    def __repr__(self):
+        return '<class \'ContractNode\'; {}\n\t{}>'.format(self._name, self._body)
 
 class FunctionNode:
     def __init__(self, name: str, body: list, is_public: bool, decorators: list, args: list, returns: str):
@@ -129,6 +158,7 @@ class FunctionNode:
         self._decorators = decorators
         self._args = args
         self._returns = returns
+        self._symbol_table = {} # an empty dictionary for a symbol table
 
     def set_name(self, name: str):
         self._name = name
@@ -159,3 +189,9 @@ class FunctionNode:
     
     def get_returns(self) -> str:
         return self._returns
+
+    def __str__(self):
+        return '<class \'FunctionNode\'; {}\n\t{}>'.format(self._name, self._body)
+
+    def __repr__(self):
+        return '<class \'FunctionNode\'; {}\n\t{}>'.format(self._name, self._body)
