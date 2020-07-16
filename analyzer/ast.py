@@ -45,7 +45,7 @@ COMPARITORS = {
 class AstWalker:
     def __init__(self, source: str):
         self._contract_name = '' 
-        self._ast = self.__get_ast(source)
+        self._ast = self.get_ast(source)
 
     def walk(self, node, nodes):
         if 'FunctionDef' in node['ast_type']:
@@ -54,7 +54,7 @@ class AstWalker:
             for child in node["body"]:
                 self.walk(child, nodes)
 
-    def __get_ast(self, filename: str) -> dict:
+    def get_ast(self, filename: str) -> dict:
         cmd = 'vyper -f ast {}'.format(filename)
         try:
             FNULL = open(os.devnull, 'w')
@@ -73,52 +73,21 @@ class AstWalker:
     def get_contract_name(self):
         return self._contract_name
 
-    def parse_ast(self, ast: dict) -> list:
-        #TODO: DELETE THIS WHEN DONE 
-        body = ast['body']
-        statements = [] # Empty list of Strings
-        for statement in body:
-            statements.append(self.parse_statements(statement))
-        print(statements)
-        return statements
-
-    def parse_ast_alt(self, ast:dict) -> list:
+    def parse_ast(self, ast:dict) -> list:
         #TODO: Change this to just parse_ast
         body = ast['body']
         statements = [] # Empty list of Strings
         for statement in body:
-            statements.append(self.__parse_statements(statement))
+            statements.append(self.parse_statements(statement))
         main = ContractNode(self._contract_name, statements)
         return main
 
     def parse_statements(self, statement: dict):
         # TODO: handle AnnAssign nodes here
-        # TODO: WORK TO REMVOE THIS
-        ast_type = self.get_ast_type(statement)
-        if ast_type == 'FunctionDef':
-            body = self.__parse_body_cfg(statement['body']) # Returns a list of statements 
-            decorator_list = statement['decorator_list']
-            decorator_list_res = []
-            for decorator in decorator_list:
-                if decorator['id'] == 'public':
-                    is_public = True
-                elif decorator['id'] == 'private':
-                    is_public = False
-                decorator_list_res.append(decorator['id'])
-            args = statement['args']['args']
-            if statement['returns'] == None:
-                returns = ''
-            else:
-                returns = statement['returns']['id']
-            name = statement['name']
-            return FunctionNode(name, body, is_public, decorator_list_res, args, returns)
-
-    def __parse_statements(self, statement: dict):
-        # TODO: handle AnnAssign nodes here
         # TODO: MAKE THIS THE BETTER PARSE_STATMEENTS FUNCTION
         ast_type = self.get_ast_type(statement)
         if ast_type == 'FunctionDef':
-            body = self.__parse_body(statement['body']) # Returns a list of statements 
+            body = self.parse_body(statement['body']) # Returns a list of statements 
             decorator_list = statement['decorator_list']
             decorator_list_res = []
             for decorator in decorator_list:
@@ -143,49 +112,53 @@ class AstWalker:
             return FunctionNode(name, body, is_public, decorator_list_res, args, returns)
         elif ast_type == 'AnnAssign':
             var_type = statement['annotation'] # TODO: turn into a node
-            return AnnAssignmentNode(ast_type, var_type, self.__get_left(statement['target']), self.__get_right(statement['annotation']))
+            return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['annotation']))
         
         
     def get_call_args(self, args: list) -> list:
         ret = []
         for arg in args:
-            ret.append(self.__get_right(arg))
+            ret.append(self.get_right(arg))
         return ret
 
     def get_annotation(self, annotation: dict):
        return '' 
 
-    def __parse_body(self, body: list) -> list:
+    def parse_body(self, body: list) -> list:
         # TODO: make it prettier (fix the slashes on the end to be on the same column)
         statement_objs = []
         for statement in body:
             ast_type = self.get_ast_type(statement)
             try:
                 if ast_type == 'Assign':
-                    node = AssignmentNode(ast_type, self.__get_left(statement['target']), self.__get_right(statement['value']))
+                    node = AssignmentNode(ast_type, self.get_left(statement['target']), self.get_right(statement['value']))
                     statement_objs.append(node)
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
-                    node = BinaryOperatorNode(ast_type, op, self.__get_left(statement['target']), self.__get_right(statement['value']))
+                    node = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']))
                     statement_objs.append(node)
                 elif ast_type == 'AnnAssign':
-                    var_type = statement['annotation']['id']  #TODO: change to a node
-                    node = AnnAssignmentNode(ast_type, var_type, self.__get_left(statement['target']), self.__get_right(statement['value']))
-                    statement_objs.append(StatementNode(ast_type, statement['annotation']['id'],            \
-                            node))
+                    if annotation['ast_type'] != 'Slice':
+                        var_type = statement['annotation']['id']  #TODO: change to a node
+                    else:
+                        var_type = ArrayType(self.get_left(statement['value']),                        \
+                                            statement['slice']['value'])
+                                        )
+                    node = AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']))
+                    statement_objs.append(StatementNode(ast_type, var_type, node))
                 elif ast_type == 'Expr':
                     node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']))
                     statement_objs.append(StatementNode(ast_type, 'Call', 
                             node))
                 elif ast_type == 'Assert':
                     if statement['test']['ast_type'] == 'Compare':
-                        node = AssertNode(self.__get_left(statement['test']['left']), 
-                            self.__get_right(statement['test']['right']),                                   \
+                        node = AssertNode(self.get_left(statement['test']['left']), 
+                            self.get_right(statement['test']['right']),                                   \
                             COMPARITORS[statement['test']['op']['ast_type']])
                         statement_objs.append(node)
                     elif statement['test']['ast_type'] == 'UnaryOp':
                         #TODO: add the COMPARITOR thing to the assert
-                        node = AssertNode(self.__get_left(statement['test']['operand']), 
+                        node = AssertNode(self.get_left(statement['test']['operand']), 
                             None,
                             COMPARITORS[statement['test']['op']['ast_type']])
                         statement_objs.append(node)
@@ -260,28 +233,15 @@ class AstWalker:
         return AST_TYPES['AugAssign'][ast_type] 
 
     # Get left hand side of a assignment
-    def get_left(self, left: dict) -> str:
-        ## TODO: make get_left take statement['target]
-        ast_type = left['ast_type']
-        if ast_type == 'Subscript':
-            return self.get_left(left['value']) +  \
-                '[' + self.get_right(left['slice']['value']) + ']'
-        elif ast_type == 'Attribute':
-            return left['value']['id'] + '.' + left['attr']
-        elif ast_type == 'Name':
-            return left['id']
-        #return left['attr']
-
-    # Get left hand side of a assignment
-    def __get_left(self, left: dict) -> list:
+    def get_left(self, left: dict) -> list:
         ## TODO: make get_left take statement['target]
         ## TODO: Add BinOp
         ast_type = left['ast_type']
         if ast_type == 'Subscript':
             #return self.get_left(left['value']) +  \
             #    '[' + self.get_right(left['slice']['value']) + ']
-            left_var = self.__get_left(left['value'])
-            subscript = self.__get_right(left['slice']['value'])
+            left_var = self.get_left(left['value'])
+            subscript = self.get_right(left['slice']['value'])
             return SubscriptNode(left_var, ast_type, left, subscript)
         elif ast_type == 'Attribute':
             return VariableNode(left['value']['id'] + '.' + left['attr'], ast_type, left)
@@ -289,30 +249,8 @@ class AstWalker:
             return VariableNode(left['id'], ast_type, left)
         #return left['attr']
 
-    # Get right hand side of an assignment
     ## TODO: Get rid of ast_type if statements
-    def get_right(self, right: dict) -> str:
-        ast_type = right['ast_type']
-        if ast_type == 'Name':
-            return right['id']
-        elif ast_type == 'Attribute':
-            return right['value']['id'] + '.' + right['attr'] 
-        elif ast_type == 'Int':
-            return right['value']
-        elif ast_type == 'NameConstant':
-            return right['value']
-        elif ast_type == 'BinOp':
-            print(ast_type)
-            print(right)
-            return self.get_right(right['left']) +                                              \
-                OPERATORS[right['op']['ast_type']] +                                            \
-                self.get_right(right['right'])
-        elif ast_type == 'Subscript':
-            return self.get_right(right['value']) +                                             \
-                '[' + self.get_right(right['slice']['value']) + ']'
-
-    ## TODO: Get rid of ast_type if statements
-    def __get_right(self, right: dict):
+    def get_right(self, right: dict):
         #TODO: Unary operator needs to be done
         ast_type = right['ast_type']
         if ast_type == 'Name':
@@ -327,10 +265,10 @@ class AstWalker:
             return ConstantNode(int(right['value']))
         elif ast_type == 'BinOp':
             op = self.get_op(right) 
-            return BinaryOperatorNode(ast_type, op, self.__get_right(right['left']), self.__get_right(right['right']))
+            return BinaryOperatorNode(ast_type, op, self.get_right(right['left']), self.get_right(right['right']))
         elif ast_type == 'Subscript':
-            left_var = self.__get_left(right['value'])
-            subscript = self.__get_right(right['slice']['value'])
+            left_var = self.get_left(right['value'])
+            subscript = self.get_right(right['slice']['value'])
             return SubscriptNode(left_var, ast_type, right, subscript)
 
     def get_variable(self, line: dict, body: list):
@@ -353,6 +291,6 @@ if __name__ == '__main__':
     ast.walk(ast._ast, nodes)
     #parsed_ast = visualizer.parse_ast(ast._ast)
     #visualizer.visualize_cfg(parsed_ast)
-    parsed_ast = ast.parse_ast_alt(ast._ast)
+    parsed_ast = ast.parse_ast(ast._ast)
     visualizer = Visualizer(ast.get_contract_name())
     visualizer.visualize_ast(parsed_ast)

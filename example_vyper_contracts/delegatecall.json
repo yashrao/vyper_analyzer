@@ -1,0 +1,1312 @@
+{
+    "contract_name": "example_vyper_contracts/delegatecall.vy",
+    "ast": {
+        "col_offset": 0,
+        "body": [
+            {
+                "annotation": {
+                    "col_offset": 7,
+                    "end_lineno": 1,
+                    "id": "uint256",
+                    "lineno": 1,
+                    "node_id": 4,
+                    "end_col_offset": 14,
+                    "src": "7:7:0",
+                    "ast_type": "Name"
+                },
+                "col_offset": 0,
+                "simple": 1,
+                "end_lineno": 1,
+                "value": null,
+                "target": {
+                    "col_offset": 0,
+                    "end_lineno": 1,
+                    "id": "_test",
+                    "lineno": 1,
+                    "node_id": 2,
+                    "end_col_offset": 5,
+                    "src": "0:5:0",
+                    "ast_type": "Name"
+                },
+                "lineno": 1,
+                "node_id": 1,
+                "end_col_offset": 14,
+                "src": "0:14:0",
+                "ast_type": "AnnAssign"
+            },
+            {
+                "body": [
+                    {
+                        "annotation": {
+                            "col_offset": 13,
+                            "end_lineno": 11,
+                            "value": {
+                                "col_offset": 13,
+                                "end_lineno": 11,
+                                "id": "bytes",
+                                "lineno": 11,
+                                "node_id": 37,
+                                "end_col_offset": 18,
+                                "src": "386:5:0",
+                                "ast_type": "Name"
+                            },
+                            "slice": {
+                                "col_offset": 19,
+                                "end_lineno": 11,
+                                "value": {
+                                    "col_offset": 19,
+                                    "end_lineno": 11,
+                                    "value": 4,
+                                    "lineno": 11,
+                                    "node_id": 40,
+                                    "end_col_offset": 20,
+                                    "src": "392:1:0",
+                                    "ast_type": "Int"
+                                },
+                                "lineno": 11,
+                                "node_id": 39,
+                                "end_col_offset": 20,
+                                "src": "392:1:0",
+                                "ast_type": "Index"
+                            },
+                            "lineno": 11,
+                            "node_id": 36,
+                            "end_col_offset": 21,
+                            "src": "386:8:0",
+                            "ast_type": "Subscript"
+                        },
+                        "col_offset": 4,
+                        "simple": 1,
+                        "end_lineno": 11,
+                        "value": {
+                            "col_offset": 24,
+                            "end_lineno": 11,
+                            "keyword": null,
+                            "args": [
+                                {
+                                    "col_offset": 34,
+                                    "end_lineno": 11,
+                                    "value": "swap(address,address,uint256,uint256,uint256[],uint256)",
+                                    "lineno": 11,
+                                    "node_id": 45,
+                                    "end_col_offset": 91,
+                                    "src": "407:57:0",
+                                    "ast_type": "Str"
+                                },
+                                {
+                                    "col_offset": 93,
+                                    "end_lineno": 11,
+                                    "value": {
+                                        "col_offset": 93,
+                                        "end_lineno": 11,
+                                        "id": "bytes",
+                                        "lineno": 11,
+                                        "node_id": 47,
+                                        "end_col_offset": 98,
+                                        "src": "466:5:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "slice": {
+                                        "col_offset": 99,
+                                        "end_lineno": 11,
+                                        "value": {
+                                            "col_offset": 99,
+                                            "end_lineno": 11,
+                                            "value": 4,
+                                            "lineno": 11,
+                                            "node_id": 50,
+                                            "end_col_offset": 100,
+                                            "src": "472:1:0",
+                                            "ast_type": "Int"
+                                        },
+                                        "lineno": 11,
+                                        "node_id": 49,
+                                        "end_col_offset": 100,
+                                        "src": "472:1:0",
+                                        "ast_type": "Index"
+                                    },
+                                    "lineno": 11,
+                                    "node_id": 46,
+                                    "end_col_offset": 101,
+                                    "src": "466:8:0",
+                                    "ast_type": "Subscript"
+                                }
+                            ],
+                            "func": {
+                                "col_offset": 24,
+                                "end_lineno": 11,
+                                "id": "method_id",
+                                "lineno": 11,
+                                "node_id": 43,
+                                "end_col_offset": 33,
+                                "src": "397:9:0",
+                                "ast_type": "Name"
+                            },
+                            "keywords": [],
+                            "lineno": 11,
+                            "node_id": 42,
+                            "end_col_offset": 102,
+                            "src": "397:78:0",
+                            "ast_type": "Call"
+                        },
+                        "target": {
+                            "col_offset": 4,
+                            "end_lineno": 11,
+                            "id": "funcSig",
+                            "lineno": 11,
+                            "node_id": 34,
+                            "end_col_offset": 11,
+                            "src": "377:7:0",
+                            "ast_type": "Name"
+                        },
+                        "lineno": 11,
+                        "node_id": 33,
+                        "end_col_offset": 102,
+                        "src": "377:98:0",
+                        "ast_type": "AnnAssign"
+                    },
+                    {
+                        "annotation": {
+                            "col_offset": 10,
+                            "end_lineno": 12,
+                            "value": {
+                                "col_offset": 10,
+                                "end_lineno": 12,
+                                "id": "bytes",
+                                "lineno": 12,
+                                "node_id": 56,
+                                "end_col_offset": 15,
+                                "src": "486:5:0",
+                                "ast_type": "Name"
+                            },
+                            "slice": {
+                                "col_offset": 16,
+                                "end_lineno": 12,
+                                "value": {
+                                    "col_offset": 16,
+                                    "end_lineno": 12,
+                                    "value": 352,
+                                    "lineno": 12,
+                                    "node_id": 59,
+                                    "end_col_offset": 19,
+                                    "src": "492:3:0",
+                                    "ast_type": "Int"
+                                },
+                                "lineno": 12,
+                                "node_id": 58,
+                                "end_col_offset": 19,
+                                "src": "492:3:0",
+                                "ast_type": "Index"
+                            },
+                            "lineno": 12,
+                            "node_id": 55,
+                            "end_col_offset": 20,
+                            "src": "486:10:0",
+                            "ast_type": "Subscript"
+                        },
+                        "col_offset": 4,
+                        "simple": 1,
+                        "end_lineno": 23,
+                        "value": {
+                            "col_offset": 23,
+                            "end_lineno": 23,
+                            "keyword": null,
+                            "args": [
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 12,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 12,
+                                            "id": "fromToken",
+                                            "lineno": 12,
+                                            "node_id": 67,
+                                            "end_col_offset": 47,
+                                            "src": "514:9:0",
+                                            "ast_type": "Name"
+                                        },
+                                        {
+                                            "col_offset": 49,
+                                            "end_lineno": 12,
+                                            "id": "bytes32",
+                                            "lineno": 12,
+                                            "node_id": 69,
+                                            "end_col_offset": 56,
+                                            "src": "525:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 12,
+                                        "id": "convert",
+                                        "lineno": 12,
+                                        "node_id": 65,
+                                        "end_col_offset": 37,
+                                        "src": "506:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 12,
+                                    "node_id": 64,
+                                    "end_col_offset": 57,
+                                    "src": "506:27:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 13,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 13,
+                                            "id": "toToken",
+                                            "lineno": 13,
+                                            "node_id": 74,
+                                            "end_col_offset": 45,
+                                            "src": "586:7:0",
+                                            "ast_type": "Name"
+                                        },
+                                        {
+                                            "col_offset": 47,
+                                            "end_lineno": 13,
+                                            "id": "bytes32",
+                                            "lineno": 13,
+                                            "node_id": 76,
+                                            "end_col_offset": 54,
+                                            "src": "595:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 13,
+                                        "id": "convert",
+                                        "lineno": 13,
+                                        "node_id": 72,
+                                        "end_col_offset": 37,
+                                        "src": "578:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 13,
+                                    "node_id": 71,
+                                    "end_col_offset": 55,
+                                    "src": "578:25:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 14,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 14,
+                                            "id": "amount",
+                                            "lineno": 14,
+                                            "node_id": 81,
+                                            "end_col_offset": 44,
+                                            "src": "658:6:0",
+                                            "ast_type": "Name"
+                                        },
+                                        {
+                                            "col_offset": 46,
+                                            "end_lineno": 14,
+                                            "id": "bytes32",
+                                            "lineno": 14,
+                                            "node_id": 83,
+                                            "end_col_offset": 53,
+                                            "src": "666:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 14,
+                                        "id": "convert",
+                                        "lineno": 14,
+                                        "node_id": 79,
+                                        "end_col_offset": 37,
+                                        "src": "650:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 14,
+                                    "node_id": 78,
+                                    "end_col_offset": 54,
+                                    "src": "650:24:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 15,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 15,
+                                            "id": "minReturn",
+                                            "lineno": 15,
+                                            "node_id": 88,
+                                            "end_col_offset": 47,
+                                            "src": "730:9:0",
+                                            "ast_type": "Name"
+                                        },
+                                        {
+                                            "col_offset": 49,
+                                            "end_lineno": 15,
+                                            "id": "bytes32",
+                                            "lineno": 15,
+                                            "node_id": 90,
+                                            "end_col_offset": 56,
+                                            "src": "741:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 15,
+                                        "id": "convert",
+                                        "lineno": 15,
+                                        "node_id": 86,
+                                        "end_col_offset": 37,
+                                        "src": "722:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 15,
+                                    "node_id": 85,
+                                    "end_col_offset": 57,
+                                    "src": "722:27:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 16,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 16,
+                                            "value": 160,
+                                            "lineno": 16,
+                                            "node_id": 95,
+                                            "end_col_offset": 41,
+                                            "src": "802:3:0",
+                                            "ast_type": "Int"
+                                        },
+                                        {
+                                            "col_offset": 43,
+                                            "end_lineno": 16,
+                                            "id": "bytes32",
+                                            "lineno": 16,
+                                            "node_id": 96,
+                                            "end_col_offset": 50,
+                                            "src": "807:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 16,
+                                        "id": "convert",
+                                        "lineno": 16,
+                                        "node_id": 93,
+                                        "end_col_offset": 37,
+                                        "src": "794:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 16,
+                                    "node_id": 92,
+                                    "end_col_offset": 51,
+                                    "src": "794:21:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 17,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 17,
+                                            "value": 4,
+                                            "lineno": 17,
+                                            "node_id": 101,
+                                            "end_col_offset": 39,
+                                            "src": "874:1:0",
+                                            "ast_type": "Int"
+                                        },
+                                        {
+                                            "col_offset": 41,
+                                            "end_lineno": 17,
+                                            "id": "bytes32",
+                                            "lineno": 17,
+                                            "node_id": 102,
+                                            "end_col_offset": 48,
+                                            "src": "877:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 17,
+                                        "id": "convert",
+                                        "lineno": 17,
+                                        "node_id": 99,
+                                        "end_col_offset": 37,
+                                        "src": "866:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 17,
+                                    "node_id": 98,
+                                    "end_col_offset": 49,
+                                    "src": "866:19:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 18,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 18,
+                                            "value": {
+                                                "col_offset": 38,
+                                                "end_lineno": 18,
+                                                "id": "trade_dist",
+                                                "lineno": 18,
+                                                "node_id": 108,
+                                                "end_col_offset": 48,
+                                                "src": "946:10:0",
+                                                "ast_type": "Name"
+                                            },
+                                            "slice": {
+                                                "col_offset": 49,
+                                                "end_lineno": 18,
+                                                "value": {
+                                                    "col_offset": 49,
+                                                    "end_lineno": 18,
+                                                    "value": 0,
+                                                    "lineno": 18,
+                                                    "node_id": 111,
+                                                    "end_col_offset": 50,
+                                                    "src": "957:1:0",
+                                                    "ast_type": "Int"
+                                                },
+                                                "lineno": 18,
+                                                "node_id": 110,
+                                                "end_col_offset": 50,
+                                                "src": "957:1:0",
+                                                "ast_type": "Index"
+                                            },
+                                            "lineno": 18,
+                                            "node_id": 107,
+                                            "end_col_offset": 51,
+                                            "src": "946:13:0",
+                                            "ast_type": "Subscript"
+                                        },
+                                        {
+                                            "col_offset": 53,
+                                            "end_lineno": 18,
+                                            "id": "bytes32",
+                                            "lineno": 18,
+                                            "node_id": 113,
+                                            "end_col_offset": 60,
+                                            "src": "961:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 18,
+                                        "id": "convert",
+                                        "lineno": 18,
+                                        "node_id": 105,
+                                        "end_col_offset": 37,
+                                        "src": "938:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 18,
+                                    "node_id": 104,
+                                    "end_col_offset": 61,
+                                    "src": "938:31:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 19,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 19,
+                                            "value": {
+                                                "col_offset": 38,
+                                                "end_lineno": 19,
+                                                "id": "trade_dist",
+                                                "lineno": 19,
+                                                "node_id": 119,
+                                                "end_col_offset": 48,
+                                                "src": "1018:10:0",
+                                                "ast_type": "Name"
+                                            },
+                                            "slice": {
+                                                "col_offset": 49,
+                                                "end_lineno": 19,
+                                                "value": {
+                                                    "col_offset": 49,
+                                                    "end_lineno": 19,
+                                                    "value": 1,
+                                                    "lineno": 19,
+                                                    "node_id": 122,
+                                                    "end_col_offset": 50,
+                                                    "src": "1029:1:0",
+                                                    "ast_type": "Int"
+                                                },
+                                                "lineno": 19,
+                                                "node_id": 121,
+                                                "end_col_offset": 50,
+                                                "src": "1029:1:0",
+                                                "ast_type": "Index"
+                                            },
+                                            "lineno": 19,
+                                            "node_id": 118,
+                                            "end_col_offset": 51,
+                                            "src": "1018:13:0",
+                                            "ast_type": "Subscript"
+                                        },
+                                        {
+                                            "col_offset": 53,
+                                            "end_lineno": 19,
+                                            "id": "bytes32",
+                                            "lineno": 19,
+                                            "node_id": 124,
+                                            "end_col_offset": 60,
+                                            "src": "1033:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 19,
+                                        "id": "convert",
+                                        "lineno": 19,
+                                        "node_id": 116,
+                                        "end_col_offset": 37,
+                                        "src": "1010:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 19,
+                                    "node_id": 115,
+                                    "end_col_offset": 61,
+                                    "src": "1010:31:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 20,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 20,
+                                            "value": {
+                                                "col_offset": 38,
+                                                "end_lineno": 20,
+                                                "id": "trade_dist",
+                                                "lineno": 20,
+                                                "node_id": 130,
+                                                "end_col_offset": 48,
+                                                "src": "1090:10:0",
+                                                "ast_type": "Name"
+                                            },
+                                            "slice": {
+                                                "col_offset": 49,
+                                                "end_lineno": 20,
+                                                "value": {
+                                                    "col_offset": 49,
+                                                    "end_lineno": 20,
+                                                    "value": 2,
+                                                    "lineno": 20,
+                                                    "node_id": 133,
+                                                    "end_col_offset": 50,
+                                                    "src": "1101:1:0",
+                                                    "ast_type": "Int"
+                                                },
+                                                "lineno": 20,
+                                                "node_id": 132,
+                                                "end_col_offset": 50,
+                                                "src": "1101:1:0",
+                                                "ast_type": "Index"
+                                            },
+                                            "lineno": 20,
+                                            "node_id": 129,
+                                            "end_col_offset": 51,
+                                            "src": "1090:13:0",
+                                            "ast_type": "Subscript"
+                                        },
+                                        {
+                                            "col_offset": 53,
+                                            "end_lineno": 20,
+                                            "id": "bytes32",
+                                            "lineno": 20,
+                                            "node_id": 135,
+                                            "end_col_offset": 60,
+                                            "src": "1105:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 20,
+                                        "id": "convert",
+                                        "lineno": 20,
+                                        "node_id": 127,
+                                        "end_col_offset": 37,
+                                        "src": "1082:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 20,
+                                    "node_id": 126,
+                                    "end_col_offset": 61,
+                                    "src": "1082:31:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 21,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 21,
+                                            "value": {
+                                                "col_offset": 38,
+                                                "end_lineno": 21,
+                                                "id": "trade_dist",
+                                                "lineno": 21,
+                                                "node_id": 141,
+                                                "end_col_offset": 48,
+                                                "src": "1162:10:0",
+                                                "ast_type": "Name"
+                                            },
+                                            "slice": {
+                                                "col_offset": 49,
+                                                "end_lineno": 21,
+                                                "value": {
+                                                    "col_offset": 49,
+                                                    "end_lineno": 21,
+                                                    "value": 3,
+                                                    "lineno": 21,
+                                                    "node_id": 144,
+                                                    "end_col_offset": 50,
+                                                    "src": "1173:1:0",
+                                                    "ast_type": "Int"
+                                                },
+                                                "lineno": 21,
+                                                "node_id": 143,
+                                                "end_col_offset": 50,
+                                                "src": "1173:1:0",
+                                                "ast_type": "Index"
+                                            },
+                                            "lineno": 21,
+                                            "node_id": 140,
+                                            "end_col_offset": 51,
+                                            "src": "1162:13:0",
+                                            "ast_type": "Subscript"
+                                        },
+                                        {
+                                            "col_offset": 53,
+                                            "end_lineno": 21,
+                                            "id": "bytes32",
+                                            "lineno": 21,
+                                            "node_id": 146,
+                                            "end_col_offset": 60,
+                                            "src": "1177:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 21,
+                                        "id": "convert",
+                                        "lineno": 21,
+                                        "node_id": 138,
+                                        "end_col_offset": 37,
+                                        "src": "1154:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 21,
+                                    "node_id": 137,
+                                    "end_col_offset": 61,
+                                    "src": "1154:31:0",
+                                    "ast_type": "Call"
+                                },
+                                {
+                                    "col_offset": 30,
+                                    "end_lineno": 22,
+                                    "keyword": null,
+                                    "args": [
+                                        {
+                                            "col_offset": 38,
+                                            "end_lineno": 22,
+                                            "id": "disableFlags",
+                                            "lineno": 22,
+                                            "node_id": 151,
+                                            "end_col_offset": 50,
+                                            "src": "1234:12:0",
+                                            "ast_type": "Name"
+                                        },
+                                        {
+                                            "col_offset": 52,
+                                            "end_lineno": 22,
+                                            "id": "bytes32",
+                                            "lineno": 22,
+                                            "node_id": 153,
+                                            "end_col_offset": 59,
+                                            "src": "1248:7:0",
+                                            "ast_type": "Name"
+                                        }
+                                    ],
+                                    "func": {
+                                        "col_offset": 30,
+                                        "end_lineno": 22,
+                                        "id": "convert",
+                                        "lineno": 22,
+                                        "node_id": 149,
+                                        "end_col_offset": 37,
+                                        "src": "1226:7:0",
+                                        "ast_type": "Name"
+                                    },
+                                    "keywords": [],
+                                    "lineno": 22,
+                                    "node_id": 148,
+                                    "end_col_offset": 60,
+                                    "src": "1226:30:0",
+                                    "ast_type": "Call"
+                                }
+                            ],
+                            "func": {
+                                "col_offset": 23,
+                                "end_lineno": 12,
+                                "id": "concat",
+                                "lineno": 12,
+                                "node_id": 62,
+                                "end_col_offset": 29,
+                                "src": "499:6:0",
+                                "ast_type": "Name"
+                            },
+                            "keywords": [],
+                            "lineno": 12,
+                            "node_id": 61,
+                            "end_col_offset": 29,
+                            "src": "499:798:0",
+                            "ast_type": "Call"
+                        },
+                        "target": {
+                            "col_offset": 4,
+                            "end_lineno": 12,
+                            "id": "data",
+                            "lineno": 12,
+                            "node_id": 53,
+                            "end_col_offset": 8,
+                            "src": "480:4:0",
+                            "ast_type": "Name"
+                        },
+                        "lineno": 12,
+                        "node_id": 52,
+                        "end_col_offset": 29,
+                        "src": "480:817:0",
+                        "ast_type": "AnnAssign"
+                    },
+                    {
+                        "annotation": {
+                            "col_offset": 15,
+                            "end_lineno": 24,
+                            "value": {
+                                "col_offset": 15,
+                                "end_lineno": 24,
+                                "id": "bytes",
+                                "lineno": 24,
+                                "node_id": 159,
+                                "end_col_offset": 20,
+                                "src": "1313:5:0",
+                                "ast_type": "Name"
+                            },
+                            "slice": {
+                                "col_offset": 21,
+                                "end_lineno": 24,
+                                "value": {
+                                    "col_offset": 21,
+                                    "end_lineno": 24,
+                                    "value": 356,
+                                    "lineno": 24,
+                                    "node_id": 162,
+                                    "end_col_offset": 24,
+                                    "src": "1319:3:0",
+                                    "ast_type": "Int"
+                                },
+                                "lineno": 24,
+                                "node_id": 161,
+                                "end_col_offset": 24,
+                                "src": "1319:3:0",
+                                "ast_type": "Index"
+                            },
+                            "lineno": 24,
+                            "node_id": 158,
+                            "end_col_offset": 25,
+                            "src": "1313:10:0",
+                            "ast_type": "Subscript"
+                        },
+                        "col_offset": 4,
+                        "simple": 1,
+                        "end_lineno": 24,
+                        "value": {
+                            "col_offset": 28,
+                            "end_lineno": 24,
+                            "keyword": null,
+                            "args": [
+                                {
+                                    "col_offset": 35,
+                                    "end_lineno": 24,
+                                    "id": "funcSig",
+                                    "lineno": 24,
+                                    "node_id": 167,
+                                    "end_col_offset": 42,
+                                    "src": "1333:7:0",
+                                    "ast_type": "Name"
+                                },
+                                {
+                                    "col_offset": 44,
+                                    "end_lineno": 24,
+                                    "id": "data",
+                                    "lineno": 24,
+                                    "node_id": 169,
+                                    "end_col_offset": 48,
+                                    "src": "1342:4:0",
+                                    "ast_type": "Name"
+                                }
+                            ],
+                            "func": {
+                                "col_offset": 28,
+                                "end_lineno": 24,
+                                "id": "concat",
+                                "lineno": 24,
+                                "node_id": 165,
+                                "end_col_offset": 34,
+                                "src": "1326:6:0",
+                                "ast_type": "Name"
+                            },
+                            "keywords": [],
+                            "lineno": 24,
+                            "node_id": 164,
+                            "end_col_offset": 49,
+                            "src": "1326:21:0",
+                            "ast_type": "Call"
+                        },
+                        "target": {
+                            "col_offset": 4,
+                            "end_lineno": 24,
+                            "id": "full_data",
+                            "lineno": 24,
+                            "node_id": 156,
+                            "end_col_offset": 13,
+                            "src": "1302:9:0",
+                            "ast_type": "Name"
+                        },
+                        "lineno": 24,
+                        "node_id": 155,
+                        "end_col_offset": 49,
+                        "src": "1302:45:0",
+                        "ast_type": "AnnAssign"
+                    },
+                    {
+                        "col_offset": 4,
+                        "end_lineno": 31,
+                        "value": {
+                            "col_offset": 4,
+                            "end_lineno": 31,
+                            "keyword": null,
+                            "args": [
+                                {
+                                    "col_offset": 8,
+                                    "end_lineno": 26,
+                                    "id": "testADDR",
+                                    "lineno": 26,
+                                    "node_id": 175,
+                                    "end_col_offset": 16,
+                                    "src": "1370:8:0",
+                                    "ast_type": "Name"
+                                },
+                                {
+                                    "col_offset": 8,
+                                    "end_lineno": 27,
+                                    "id": "full_data",
+                                    "lineno": 27,
+                                    "node_id": 177,
+                                    "end_col_offset": 17,
+                                    "src": "1388:9:0",
+                                    "ast_type": "Name"
+                                }
+                            ],
+                            "func": {
+                                "col_offset": 4,
+                                "end_lineno": 25,
+                                "id": "raw_call",
+                                "lineno": 25,
+                                "node_id": 173,
+                                "end_col_offset": 12,
+                                "src": "1352:8:0",
+                                "ast_type": "Name"
+                            },
+                            "keywords": [
+                                {
+                                    "arg": "outsize",
+                                    "col_offset": 8,
+                                    "end_lineno": 28,
+                                    "value": {
+                                        "col_offset": 16,
+                                        "end_lineno": 28,
+                                        "value": 0,
+                                        "lineno": 28,
+                                        "node_id": 180,
+                                        "end_col_offset": 17,
+                                        "src": "1415:1:0",
+                                        "ast_type": "Int"
+                                    },
+                                    "lineno": 28,
+                                    "node_id": 179,
+                                    "end_col_offset": 17,
+                                    "src": "1407:9:0",
+                                    "ast_type": "keyword"
+                                },
+                                {
+                                    "arg": "gas",
+                                    "col_offset": 8,
+                                    "end_lineno": 29,
+                                    "value": {
+                                        "attr": "gas",
+                                        "col_offset": 12,
+                                        "end_lineno": 29,
+                                        "value": {
+                                            "col_offset": 12,
+                                            "end_lineno": 29,
+                                            "id": "msg",
+                                            "lineno": 29,
+                                            "node_id": 183,
+                                            "end_col_offset": 15,
+                                            "src": "1430:3:0",
+                                            "ast_type": "Name"
+                                        },
+                                        "lineno": 29,
+                                        "node_id": 182,
+                                        "end_col_offset": 19,
+                                        "src": "1430:7:0",
+                                        "ast_type": "Attribute"
+                                    },
+                                    "lineno": 29,
+                                    "node_id": 181,
+                                    "end_col_offset": 19,
+                                    "src": "1426:11:0",
+                                    "ast_type": "keyword"
+                                },
+                                {
+                                    "arg": "delegate_call",
+                                    "col_offset": 8,
+                                    "end_lineno": 30,
+                                    "value": {
+                                        "col_offset": 22,
+                                        "end_lineno": 30,
+                                        "value": true,
+                                        "lineno": 30,
+                                        "node_id": 187,
+                                        "end_col_offset": 26,
+                                        "src": "1461:4:0",
+                                        "ast_type": "NameConstant"
+                                    },
+                                    "lineno": 30,
+                                    "node_id": 186,
+                                    "end_col_offset": 26,
+                                    "src": "1447:18:0",
+                                    "ast_type": "keyword"
+                                }
+                            ],
+                            "lineno": 25,
+                            "node_id": 172,
+                            "end_col_offset": 5,
+                            "src": "1352:119:0",
+                            "ast_type": "Call"
+                        },
+                        "lineno": 25,
+                        "node_id": 171,
+                        "end_col_offset": 5,
+                        "src": "1352:119:0",
+                        "ast_type": "Expr"
+                    },
+                    {
+                        "col_offset": 4,
+                        "end_lineno": 32,
+                        "value": {
+                            "col_offset": 17,
+                            "end_lineno": 32,
+                            "value": -2,
+                            "lineno": 32,
+                            "node_id": 195,
+                            "end_col_offset": 19,
+                            "src": "1490:1:0",
+                            "ast_type": "Int"
+                        },
+                        "target": {
+                            "attr": "_test",
+                            "col_offset": 4,
+                            "end_lineno": 32,
+                            "value": {
+                                "col_offset": 4,
+                                "end_lineno": 32,
+                                "id": "self",
+                                "lineno": 32,
+                                "node_id": 190,
+                                "end_col_offset": 8,
+                                "src": "1476:4:0",
+                                "ast_type": "Name"
+                            },
+                            "lineno": 32,
+                            "node_id": 189,
+                            "end_col_offset": 14,
+                            "src": "1476:10:0",
+                            "ast_type": "Attribute"
+                        },
+                        "lineno": 32,
+                        "node_id": 188,
+                        "end_col_offset": 19,
+                        "src": "1476:15:0",
+                        "ast_type": "Assign"
+                    }
+                ],
+                "col_offset": 0,
+                "end_lineno": 32,
+                "args": {
+                    "defaults": [],
+                    "col_offset": 18,
+                    "end_lineno": 10,
+                    "args": [
+                        {
+                            "arg": "testADDR",
+                            "annotation": {
+                                "col_offset": 28,
+                                "end_lineno": 4,
+                                "id": "address",
+                                "lineno": 4,
+                                "node_id": 9,
+                                "end_col_offset": 35,
+                                "src": "52:7:0",
+                                "ast_type": "Name"
+                            },
+                            "col_offset": 18,
+                            "end_lineno": 4,
+                            "lineno": 4,
+                            "node_id": 8,
+                            "end_col_offset": 35,
+                            "src": "42:17:0",
+                            "ast_type": "arg"
+                        },
+                        {
+                            "arg": "fromToken",
+                            "annotation": {
+                                "col_offset": 29,
+                                "end_lineno": 5,
+                                "id": "address",
+                                "lineno": 5,
+                                "node_id": 12,
+                                "end_col_offset": 36,
+                                "src": "90:7:0",
+                                "ast_type": "Name"
+                            },
+                            "col_offset": 18,
+                            "end_lineno": 5,
+                            "lineno": 5,
+                            "node_id": 11,
+                            "end_col_offset": 36,
+                            "src": "79:18:0",
+                            "ast_type": "arg"
+                        },
+                        {
+                            "arg": "toToken",
+                            "annotation": {
+                                "col_offset": 27,
+                                "end_lineno": 6,
+                                "id": "address",
+                                "lineno": 6,
+                                "node_id": 15,
+                                "end_col_offset": 34,
+                                "src": "142:7:0",
+                                "ast_type": "Name"
+                            },
+                            "col_offset": 18,
+                            "end_lineno": 6,
+                            "lineno": 6,
+                            "node_id": 14,
+                            "end_col_offset": 34,
+                            "src": "133:16:0",
+                            "ast_type": "arg"
+                        },
+                        {
+                            "arg": "amount",
+                            "annotation": {
+                                "col_offset": 26,
+                                "end_lineno": 7,
+                                "id": "uint256",
+                                "lineno": 7,
+                                "node_id": 18,
+                                "end_col_offset": 33,
+                                "src": "195:7:0",
+                                "ast_type": "Name"
+                            },
+                            "col_offset": 18,
+                            "end_lineno": 7,
+                            "lineno": 7,
+                            "node_id": 17,
+                            "end_col_offset": 33,
+                            "src": "187:15:0",
+                            "ast_type": "arg"
+                        },
+                        {
+                            "arg": "minReturn",
+                            "annotation": {
+                                "col_offset": 29,
+                                "end_lineno": 8,
+                                "id": "uint256",
+                                "lineno": 8,
+                                "node_id": 21,
+                                "end_col_offset": 36,
+                                "src": "252:7:0",
+                                "ast_type": "Name"
+                            },
+                            "col_offset": 18,
+                            "end_lineno": 8,
+                            "lineno": 8,
+                            "node_id": 20,
+                            "end_col_offset": 36,
+                            "src": "241:18:0",
+                            "ast_type": "arg"
+                        },
+                        {
+                            "arg": "trade_dist",
+                            "annotation": {
+                                "col_offset": 30,
+                                "end_lineno": 9,
+                                "value": {
+                                    "col_offset": 30,
+                                    "end_lineno": 9,
+                                    "id": "uint256",
+                                    "lineno": 9,
+                                    "node_id": 25,
+                                    "end_col_offset": 37,
+                                    "src": "307:7:0",
+                                    "ast_type": "Name"
+                                },
+                                "slice": {
+                                    "col_offset": 38,
+                                    "end_lineno": 9,
+                                    "value": {
+                                        "col_offset": 38,
+                                        "end_lineno": 9,
+                                        "value": 4,
+                                        "lineno": 9,
+                                        "node_id": 28,
+                                        "end_col_offset": 39,
+                                        "src": "315:1:0",
+                                        "ast_type": "Int"
+                                    },
+                                    "lineno": 9,
+                                    "node_id": 27,
+                                    "end_col_offset": 39,
+                                    "src": "315:1:0",
+                                    "ast_type": "Index"
+                                },
+                                "lineno": 9,
+                                "node_id": 24,
+                                "end_col_offset": 40,
+                                "src": "307:10:0",
+                                "ast_type": "Subscript"
+                            },
+                            "col_offset": 18,
+                            "end_lineno": 9,
+                            "lineno": 9,
+                            "node_id": 23,
+                            "end_col_offset": 40,
+                            "src": "295:22:0",
+                            "ast_type": "arg"
+                        },
+                        {
+                            "arg": "disableFlags",
+                            "annotation": {
+                                "col_offset": 32,
+                                "end_lineno": 10,
+                                "id": "uint256",
+                                "lineno": 10,
+                                "node_id": 31,
+                                "end_col_offset": 39,
+                                "src": "363:7:0",
+                                "ast_type": "Name"
+                            },
+                            "col_offset": 18,
+                            "end_lineno": 10,
+                            "lineno": 10,
+                            "node_id": 30,
+                            "end_col_offset": 39,
+                            "src": "349:21:0",
+                            "ast_type": "arg"
+                        }
+                    ],
+                    "default": null,
+                    "lineno": 4,
+                    "node_id": 7,
+                    "end_col_offset": 39,
+                    "src": "42:328:0",
+                    "ast_type": "arguments"
+                },
+                "decorator_list": [
+                    {
+                        "col_offset": 1,
+                        "end_lineno": 3,
+                        "id": "public",
+                        "lineno": 3,
+                        "node_id": 196,
+                        "end_col_offset": 7,
+                        "src": "17:6:0",
+                        "ast_type": "Name"
+                    }
+                ],
+                "name": "_swapOneSplit",
+                "pos": null,
+                "returns": null,
+                "lineno": 3,
+                "node_id": 6,
+                "doc_string": null,
+                "end_col_offset": 19,
+                "src": "16:1475:0",
+                "ast_type": "FunctionDef"
+            }
+        ],
+        "end_lineno": 32,
+        "lineno": 1,
+        "node_id": 0,
+        "doc_string": null,
+        "end_col_offset": 19,
+        "src": "0:1491:0",
+        "ast_type": "Module"
+    }
+}

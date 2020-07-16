@@ -11,6 +11,9 @@ class Node:
     def get_ast_type(self) -> str:
         return self._ast_type
 
+    def resolve_type(self):
+        print('Resolving Node')
+
 class ConstantNode:
     # TODO Support for multiple types
     def __init__(self, value: int):
@@ -24,6 +27,9 @@ class ConstantNode:
 
     def __repr__(self) -> str:
         return '<class \'ConstantNode\'; {}>'.format(self._value)
+
+    def resolve_type(self):
+        print('Resolving ConstantNode')
 
 class BinaryOperatorNode:
     def __init__(self, ast_type: str, op: str, left, right):
@@ -47,6 +53,11 @@ class BinaryOperatorNode:
     def __repr__(self) -> str:
         return '<class \'BinaryOpNode\'({}); {} {} {}>'.format(self._ast_type, self._left, self._op, self._right)
 
+    def resolve_type(self):
+        print('Resolving BinaryOperatorNode')
+        self._left.resolve_type()
+        self._right.resolve_type()
+
 class AssignmentNode:
     #TODO: Add var_type?
     def __init__(self, ast_type: str, left, right):
@@ -69,6 +80,11 @@ class AssignmentNode:
     def __repr__(self) -> str:
         return '<class \'AssignmentNode\'; {} {} {}>'.format(self._ast_type, self._left, self._right)
 
+    def resolve_type(self):
+        print('Resolving AssignmentNode')
+        self._left.resolve_type()
+        self._right.resolve_type()
+
 class AnnAssignmentNode:
     def __init__(self, ast_type: str, var_type, left, right):
         self._ast_type = ast_type
@@ -82,6 +98,11 @@ class AnnAssignmentNode:
     def __repr__(self) -> str:
         return '<class \'AnnAssignmentNode\'(); {} {} {}>'.format(self._ast_type, self._left, self._right)
 
+    def resolve_type(self):
+        print('Resolving AnnAssignmentNode')
+        self._left.resolve_type()
+        self._right.resolve_type()
+
 class UnaryOperatorNode:
     def __init__(self, ast_type:str, var_list: list):
         self._ast_type = ast_type
@@ -92,6 +113,9 @@ class UnaryOperatorNode:
         
     def get_ast_type(self):
         return self._ast_type
+
+    def resolve_type(self):
+        print('Resolving UnaryOperatorNode')
 
 class CallNode:
     def __init__(self, call: str, args_list: list):
@@ -110,6 +134,9 @@ class CallNode:
     def __str__(self):
         return '<class \'CallNode\'; {}({})>'.format(self._call, self._args_list)
 
+    def resolve_type(self):
+        print('Resolving CallNode')
+        
 class AssertNode:
     ##TODO: Use Binary node?
     def __init__(self, left, right, comparitor: str):
@@ -131,6 +158,11 @@ class AssertNode:
 
     def __repr__(self):
         return '<class \'Assert Node\'; {} ({} {})>'.format(self._comparitor, self._left, self._right)
+
+    def resolve_type(self):
+        print('Resolving AssertNode')
+        self._left.resolve_type()
+        self._right.resolve_type()
 
 class VariableNode:
     def __init__(self, identifier: str, var_type: str, var_dict: dict):
@@ -154,6 +186,9 @@ class VariableNode:
     def __repr__(self):
         return '<class \'VariableNode\'; {}:{}>'.format(self._identifier, self._var_type)
 
+    def resolve_type(self):
+        print('Resolving VariableNode')
+
 class SubscriptNode:
     def __init__(self, left: VariableNode, var_type: str, var_dict: dict, subscript):
         """ Used for storing individual variables in a statement """
@@ -176,6 +211,9 @@ class SubscriptNode:
 
     def __repr__(self):
         return '<class \'SubscriptNode\'; {}({})[{}]>'.format(self._left, self._var_type, self._subscript)
+
+    def resolve_type(self):
+        print('Resolving SubscriptNode')
         
 class StatementNode:
     def __init__(self, ast_type, identifier, value):
@@ -200,6 +238,9 @@ class StatementNode:
     def get_line_string(self) -> str:
         return ''
 
+    def resolve_type(self):
+        print('Resolving StatementNode')
+
 class ContractNode:
     def __init__(self, name: str, body: list):
         self._name = name
@@ -220,6 +261,11 @@ class ContractNode:
 
     def __repr__(self):
         return '<class \'ContractNode\'; {}\n\t{}>'.format(self._name, self._body)
+
+    def resolve_type(self):
+        print('Resolving ContractNode')
+        for statement in self._body:
+            statement.resolve_type()
 
 class FunctionNode:
     def __init__(self, name: str, body: list, is_public: bool, decorators: list, args: list, returns: str):
@@ -273,7 +319,13 @@ class FunctionNode:
             ret += str(statement) + '\n'
         return '\n\t<class \'FunctionNode\'; {}\n\t\t{}>'.format(self._name, ret)
 
+    def resolve_type(self):
+        print('Resolving FunctionNode')
+        # TODO: Check the function return and arg types 
+        for statement in self._body:
+            statement.resolve_type()
 
 class ArrayType:
-    def __init__(self, index: int):
+    def __init__(self, ast_type: str, index: int):
+        self._type = ast_type
         self._index = index

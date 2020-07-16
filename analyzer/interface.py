@@ -2,6 +2,7 @@ import argparse
 import os
 from ast import AstWalker 
 from visualizer import Visualizer
+from detector import Detector
 
 class Interface:
     def __init__(self):
@@ -47,8 +48,10 @@ class Interface:
             filename = self.get_filename(file)
             #parsed_ast = visualizer.parse_ast(ast._ast)
             #visualizer.visualize_cfg(parsed_ast)
-            parsed_ast = ast.parse_ast_alt(ast._ast)
+            parsed_ast = ast.parse_ast(ast._ast)
             print(parsed_ast)
+            detector = Detector(parsed_ast)
+            detector.type_check()
             #visualizer = Visualizer(ast.get_contract_name())
             #print(filename)
             #visualizer.visualize_ast(parsed_ast, filename)
