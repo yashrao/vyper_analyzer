@@ -58,7 +58,7 @@ class AstWalker:
         cmd = 'vyper -f ast {}'.format(filename)
         try:
             FNULL = open(os.devnull, 'w')
-            vyper_c = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=FNULL)
+            vyper_c = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             ast = json.loads(vyper_c.communicate()[0].decode('utf-8', 'strict'))
             self._contract_name = ast['contract_name']
             return ast['ast']
@@ -92,10 +92,10 @@ class AstWalker:
             decorator_list_res = []
             for decorator in decorator_list:
                 if decorator['ast_type'] == 'Name':
-                    if decorator['id'] == 'public':
-                        is_public = True
-                    elif decorator['id'] == 'private':
-                        is_public = False
+                    if decorator['id'] == 'external':
+                        is_external = True
+                    elif decorator['id'] == 'internal':
+                        is_external = False
                     decorator_list_res.append(decorator['id'])
                 elif decorator['ast_type'] == 'Call':
                     # TODO: make sure this can get all the args for the non-rentrant decorator
@@ -109,16 +109,19 @@ class AstWalker:
             else:
                 returns = statement['returns']['id']
             name = statement['name']
-            return FunctionNode(name, body, is_public, decorator_list_res, args, returns)
+            return FunctionNode(name, body, is_external, decorator_list_res, args, returns)
         elif ast_type == 'AnnAssign':
             var_type = statement['annotation'] # TODO: turn into a node
             return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['annotation']))
         
         
-    def get_call_args(self, args: list) -> list:
+    def get_call_args(self, args: list, keywords=None) -> list:
         ret = []
         for arg in args:
             ret.append(self.get_right(arg))
+        if keywords is not None:
+            for keyword in keywords:
+                ret.append(self.get_keyword(keyword))
         return ret
 
     def get_annotation(self, annotation: dict):
@@ -138,22 +141,25 @@ class AstWalker:
                     node = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']))
                     statement_objs.append(node)
                 elif ast_type == 'AnnAssign':
-                    if annotation['ast_type'] != 'Slice':
+                    if statement['annotation']['ast_type'] != 'Subscript':
                         var_type = statement['annotation']['id']  #TODO: change to a node
                     else:
                         var_type = ArrayType(self.get_left(statement['value']),                        \
-                                            statement['slice']['value'])
-                                        )
+                                            statement['annotation']['slice']['value'])
                     node = AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']))
                     statement_objs.append(StatementNode(ast_type, var_type, node))
                 elif ast_type == 'Expr':
-                    node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']))
+                    if 'keywords' in list(statement['value'].keys()):
+                        node = CallNode(statement['value']['func']['id'],                               \
+                            self.get_call_args(statement['value']['args'], statement['value']['keywords']))
+                    else:
+                        node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']))
                     statement_objs.append(StatementNode(ast_type, 'Call', 
                             node))
                 elif ast_type == 'Assert':
                     if statement['test']['ast_type'] == 'Compare':
                         node = AssertNode(self.get_left(statement['test']['left']), 
-                            self.get_right(statement['test']['right']),                                   \
+                            self.get_right(statement['test']['right']),                                \
                             COMPARITORS[statement['test']['op']['ast_type']])
                         statement_objs.append(node)
                     elif statement['test']['ast_type'] == 'UnaryOp':
@@ -166,9 +172,9 @@ class AstWalker:
                     # TODO: Generalize for all constants not just Int
                     #TODO: change to nodes
                     if statement['value']['ast_type'] == "Int":
-                        statement_objs.append(StatementNode(ast_type, 'return', None, statement['value']['value']))
+                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['value']))
                     else:
-                        statement_objs.append(StatementNode(ast_type, 'return', None, statement['value']['attr']))
+                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['attr']))
             except KeyError as e:
                 pprint(statement)
                 raise e
@@ -270,6 +276,9 @@ class AstWalker:
             left_var = self.get_left(right['value'])
             subscript = self.get_right(right['slice']['value'])
             return SubscriptNode(left_var, ast_type, right, subscript)
+        
+    def get_keyword(self, keyword: dict):
+        return KeywordNode(keyword['arg'], keyword['value']['ast_type'], self.get_right(keyword['value']))
 
     def get_variable(self, line: dict, body: list):
         pass

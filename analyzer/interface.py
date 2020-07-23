@@ -52,6 +52,7 @@ class Interface:
             print(parsed_ast)
             detector = Detector(parsed_ast)
             detector.type_check()
+            detector.delegate_call_check()
             #visualizer = Visualizer(ast.get_contract_name())
             #print(filename)
             #visualizer.visualize_ast(parsed_ast, filename)

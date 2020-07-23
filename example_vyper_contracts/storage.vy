@@ -1,18 +1,18 @@
 number_var: int128
 
-@public 
+@external
 def store(num: int128):
     self.number_var = num
     
-@public
+@external
 def retrieve() -> int128:
     return self.number_var
 
-@public
+@external
 def add_num():
     self.number_var += 10
     
-@public
+@external
 def subtract_num():
     self.number_var -= 10
     

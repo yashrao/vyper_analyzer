@@ -1,6 +1,6 @@
 _test: uint256
 
-@public
+@external
 def _swapOneSplit(testADDR: address,
                   fromToken: address,               \
                   toToken: address,                 \

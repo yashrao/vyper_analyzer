@@ -1,27 +1,26 @@
-# @version 0.1.0b13
 # Open Auction
 
 # Auction params
 # Beneficiary receives money from the highest bidder
-beneficiary: address
-auctionStart: timestamp
-auctionEnd: timestamp
+beneficiary: public(address)
+auctionStart: public(uint256)
+auctionEnd: public(uint256)
 
 # Current state of auction
-highestBidder: address
-highestBid: wei_value
+highestBidder: public(address)
+highestBid: public(uint256)
 
 # Set to true at the end, disallows any change
-ended: bool
+ended: public(bool)
 
 # Keep track of refunded bids so we can follow the withdraw pattern
-pendingReturns: map(address, wei_value)
+pendingReturns: public(HashMap[address, uint256])
 
 # Create a simple auction with `_bidding_time`
 # seconds bidding time on behalf of the
 # beneficiary address `_beneficiary`.
-@public
-def __init__(_beneficiary: address, _bidding_time: timedelta):
+@external
+def __init__(_beneficiary: address, _bidding_time: uint256):
     self.beneficiary = _beneficiary
     self.auctionStart = block.timestamp
     self.auctionEnd = self.auctionStart + _bidding_time
@@ -30,7 +29,7 @@ def __init__(_beneficiary: address, _bidding_time: timedelta):
 # together with this transaction.
 # The value will only be refunded if the
 # auction is not won.
-@public
+@external
 @payable
 def bid():
     # Check if bidding period is over.
@@ -47,15 +46,15 @@ def bid():
 # used here to avoid a security issue. If refunds were directly
 # sent as part of bid(), a malicious bidding contract could block
 # those refunds and thus block new higher bids from coming in.
-@public
+@external
 def withdraw():
-    pending_amount: wei_value = self.pendingReturns[msg.sender]
+    pending_amount: uint256 = self.pendingReturns[msg.sender]
     self.pendingReturns[msg.sender] = 0
     send(msg.sender, pending_amount)
 
 # End the auction and send the highest bid
 # to the beneficiary.
-@public
+@external
 def endAuction():
     # It is a good guideline to structure functions that interact
     # with other contracts (i.e. they call functions or send Ether)
