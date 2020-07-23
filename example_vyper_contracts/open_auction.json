@@ -1,0 +1,1599 @@
+{
+    "contract_name": "example_vyper_contracts/open_auction.vy",
+    "ast": {
+        "end_col_offset": 43,
+        "lineno": 1,
+        "end_lineno": 82,
+        "name": null,
+        "doc_string": null,
+        "src": "0:2773:0",
+        "body": [
+            {
+                "end_col_offset": 28,
+                "target": {
+                    "end_col_offset": 11,
+                    "lineno": 5,
+                    "end_lineno": 5,
+                    "id": "beneficiary",
+                    "src": "86:11:0",
+                    "col_offset": 0,
+                    "ast_type": "Name",
+                    "node_id": 2
+                },
+                "simple": 1,
+                "lineno": 5,
+                "node_id": 1,
+                "end_lineno": 5,
+                "annotation": {
+                    "func": {
+                        "end_col_offset": 19,
+                        "lineno": 5,
+                        "end_lineno": 5,
+                        "id": "public",
+                        "src": "99:6:0",
+                        "col_offset": 13,
+                        "ast_type": "Name",
+                        "node_id": 5
+                    },
+                    "end_col_offset": 28,
+                    "lineno": 5,
+                    "args": [
+                        {
+                            "end_col_offset": 27,
+                            "lineno": 5,
+                            "end_lineno": 5,
+                            "id": "address",
+                            "src": "106:7:0",
+                            "col_offset": 20,
+                            "ast_type": "Name",
+                            "node_id": 7
+                        }
+                    ],
+                    "keywords": [],
+                    "end_lineno": 5,
+                    "src": "99:15:0",
+                    "keyword": null,
+                    "col_offset": 13,
+                    "ast_type": "Call",
+                    "node_id": 4
+                },
+                "src": "86:28:0",
+                "col_offset": 0,
+                "ast_type": "AnnAssign",
+                "value": null
+            },
+            {
+                "end_col_offset": 29,
+                "target": {
+                    "end_col_offset": 12,
+                    "lineno": 6,
+                    "end_lineno": 6,
+                    "id": "auctionStart",
+                    "src": "115:12:0",
+                    "col_offset": 0,
+                    "ast_type": "Name",
+                    "node_id": 10
+                },
+                "simple": 1,
+                "lineno": 6,
+                "node_id": 9,
+                "end_lineno": 6,
+                "annotation": {
+                    "func": {
+                        "end_col_offset": 20,
+                        "lineno": 6,
+                        "end_lineno": 6,
+                        "id": "public",
+                        "src": "129:6:0",
+                        "col_offset": 14,
+                        "ast_type": "Name",
+                        "node_id": 13
+                    },
+                    "end_col_offset": 29,
+                    "lineno": 6,
+                    "args": [
+                        {
+                            "end_col_offset": 28,
+                            "lineno": 6,
+                            "end_lineno": 6,
+                            "id": "uint256",
+                            "src": "136:7:0",
+                            "col_offset": 21,
+                            "ast_type": "Name",
+                            "node_id": 15
+                        }
+                    ],
+                    "keywords": [],
+                    "end_lineno": 6,
+                    "src": "129:15:0",
+                    "keyword": null,
+                    "col_offset": 14,
+                    "ast_type": "Call",
+                    "node_id": 12
+                },
+                "src": "115:29:0",
+                "col_offset": 0,
+                "ast_type": "AnnAssign",
+                "value": null
+            },
+            {
+                "end_col_offset": 27,
+                "target": {
+                    "end_col_offset": 10,
+                    "lineno": 7,
+                    "end_lineno": 7,
+                    "id": "auctionEnd",
+                    "src": "145:10:0",
+                    "col_offset": 0,
+                    "ast_type": "Name",
+                    "node_id": 18
+                },
+                "simple": 1,
+                "lineno": 7,
+                "node_id": 17,
+                "end_lineno": 7,
+                "annotation": {
+                    "func": {
+                        "end_col_offset": 18,
+                        "lineno": 7,
+                        "end_lineno": 7,
+                        "id": "public",
+                        "src": "157:6:0",
+                        "col_offset": 12,
+                        "ast_type": "Name",
+                        "node_id": 21
+                    },
+                    "end_col_offset": 27,
+                    "lineno": 7,
+                    "args": [
+                        {
+                            "end_col_offset": 26,
+                            "lineno": 7,
+                            "end_lineno": 7,
+                            "id": "uint256",
+                            "src": "164:7:0",
+                            "col_offset": 19,
+                            "ast_type": "Name",
+                            "node_id": 23
+                        }
+                    ],
+                    "keywords": [],
+                    "end_lineno": 7,
+                    "src": "157:15:0",
+                    "keyword": null,
+                    "col_offset": 12,
+                    "ast_type": "Call",
+                    "node_id": 20
+                },
+                "src": "145:27:0",
+                "col_offset": 0,
+                "ast_type": "AnnAssign",
+                "value": null
+            },
+            {
+                "end_col_offset": 30,
+                "target": {
+                    "end_col_offset": 13,
+                    "lineno": 10,
+                    "end_lineno": 10,
+                    "id": "highestBidder",
+                    "src": "201:13:0",
+                    "col_offset": 0,
+                    "ast_type": "Name",
+                    "node_id": 26
+                },
+                "simple": 1,
+                "lineno": 10,
+                "node_id": 25,
+                "end_lineno": 10,
+                "annotation": {
+                    "func": {
+                        "end_col_offset": 21,
+                        "lineno": 10,
+                        "end_lineno": 10,
+                        "id": "public",
+                        "src": "216:6:0",
+                        "col_offset": 15,
+                        "ast_type": "Name",
+                        "node_id": 29
+                    },
+                    "end_col_offset": 30,
+                    "lineno": 10,
+                    "args": [
+                        {
+                            "end_col_offset": 29,
+                            "lineno": 10,
+                            "end_lineno": 10,
+                            "id": "address",
+                            "src": "223:7:0",
+                            "col_offset": 22,
+                            "ast_type": "Name",
+                            "node_id": 31
+                        }
+                    ],
+                    "keywords": [],
+                    "end_lineno": 10,
+                    "src": "216:15:0",
+                    "keyword": null,
+                    "col_offset": 15,
+                    "ast_type": "Call",
+                    "node_id": 28
+                },
+                "src": "201:30:0",
+                "col_offset": 0,
+                "ast_type": "AnnAssign",
+                "value": null
+            },
+            {
+                "end_col_offset": 27,
+                "target": {
+                    "end_col_offset": 10,
+                    "lineno": 11,
+                    "end_lineno": 11,
+                    "id": "highestBid",
+                    "src": "232:10:0",
+                    "col_offset": 0,
+                    "ast_type": "Name",
+                    "node_id": 34
+                },
+                "simple": 1,
+                "lineno": 11,
+                "node_id": 33,
+                "end_lineno": 11,
+                "annotation": {
+                    "func": {
+                        "end_col_offset": 18,
+                        "lineno": 11,
+                        "end_lineno": 11,
+                        "id": "public",
+                        "src": "244:6:0",
+                        "col_offset": 12,
+                        "ast_type": "Name",
+                        "node_id": 37
+                    },
+                    "end_col_offset": 27,
+                    "lineno": 11,
+                    "args": [
+                        {
+                            "end_col_offset": 26,
+                            "lineno": 11,
+                            "end_lineno": 11,
+                            "id": "uint256",
+                            "src": "251:7:0",
+                            "col_offset": 19,
+                            "ast_type": "Name",
+                            "node_id": 39
+                        }
+                    ],
+                    "keywords": [],
+                    "end_lineno": 11,
+                    "src": "244:15:0",
+                    "keyword": null,
+                    "col_offset": 12,
+                    "ast_type": "Call",
+                    "node_id": 36
+                },
+                "src": "232:27:0",
+                "col_offset": 0,
+                "ast_type": "AnnAssign",
+                "value": null
+            },
+            {
+                "end_col_offset": 19,
+                "target": {
+                    "end_col_offset": 5,
+                    "lineno": 14,
+                    "end_lineno": 14,
+                    "id": "ended",
+                    "src": "308:5:0",
+                    "col_offset": 0,
+                    "ast_type": "Name",
+                    "node_id": 42
+                },
+                "simple": 1,
+                "lineno": 14,
+                "node_id": 41,
+                "end_lineno": 14,
+                "annotation": {
+                    "func": {
+                        "end_col_offset": 13,
+                        "lineno": 14,
+                        "end_lineno": 14,
+                        "id": "public",
+                        "src": "315:6:0",
+                        "col_offset": 7,
+                        "ast_type": "Name",
+                        "node_id": 45
+                    },
+                    "end_col_offset": 19,
+                    "lineno": 14,
+                    "args": [
+                        {
+                            "end_col_offset": 18,
+                            "lineno": 14,
+                            "end_lineno": 14,
+                            "id": "bool",
+                            "src": "322:4:0",
+                            "col_offset": 14,
+                            "ast_type": "Name",
+                            "node_id": 47
+                        }
+                    ],
+                    "keywords": [],
+                    "end_lineno": 14,
+                    "src": "315:12:0",
+                    "keyword": null,
+                    "col_offset": 7,
+                    "ast_type": "Call",
+                    "node_id": 44
+                },
+                "src": "308:19:0",
+                "col_offset": 0,
+                "ast_type": "AnnAssign",
+                "value": null
+            },
+            {
+                "end_col_offset": 49,
+                "target": {
+                    "end_col_offset": 14,
+                    "lineno": 17,
+                    "end_lineno": 17,
+                    "id": "pendingReturns",
+                    "src": "397:14:0",
+                    "col_offset": 0,
+                    "ast_type": "Name",
+                    "node_id": 50
+                },
+                "simple": 1,
+                "lineno": 17,
+                "node_id": 49,
+                "end_lineno": 17,
+                "annotation": {
+                    "func": {
+                        "end_col_offset": 22,
+                        "lineno": 17,
+                        "end_lineno": 17,
+                        "id": "public",
+                        "src": "413:6:0",
+                        "col_offset": 16,
+                        "ast_type": "Name",
+                        "node_id": 53
+                    },
+                    "end_col_offset": 49,
+                    "lineno": 17,
+                    "args": [
+                        {
+                            "value": {
+                                "end_col_offset": 30,
+                                "lineno": 17,
+                                "end_lineno": 17,
+                                "id": "HashMap",
+                                "src": "420:7:0",
+                                "col_offset": 23,
+                                "ast_type": "Name",
+                                "node_id": 56
+                            },
+                            "slice": {
+                                "value": {
+                                    "end_col_offset": 47,
+                                    "lineno": 17,
+                                    "end_lineno": 17,
+                                    "src": "428:16:0",
+                                    "elements": [
+                                        {
+                                            "end_col_offset": 38,
+                                            "lineno": 17,
+                                            "end_lineno": 17,
+                                            "id": "address",
+                                            "src": "428:7:0",
+                                            "col_offset": 31,
+                                            "ast_type": "Name",
+                                            "node_id": 60
+                                        },
+                                        {
+                                            "end_col_offset": 47,
+                                            "lineno": 17,
+                                            "end_lineno": 17,
+                                            "id": "uint256",
+                                            "src": "437:7:0",
+                                            "col_offset": 40,
+                                            "ast_type": "Name",
+                                            "node_id": 62
+                                        }
+                                    ],
+                                    "col_offset": 31,
+                                    "ast_type": "Tuple",
+                                    "node_id": 59
+                                },
+                                "end_col_offset": 47,
+                                "lineno": 17,
+                                "end_lineno": 17,
+                                "src": "428:16:0",
+                                "col_offset": 31,
+                                "ast_type": "Index",
+                                "node_id": 58
+                            },
+                            "end_col_offset": 48,
+                            "lineno": 17,
+                            "end_lineno": 17,
+                            "src": "420:25:0",
+                            "col_offset": 23,
+                            "ast_type": "Subscript",
+                            "node_id": 55
+                        }
+                    ],
+                    "keywords": [],
+                    "end_lineno": 17,
+                    "src": "413:33:0",
+                    "keyword": null,
+                    "col_offset": 16,
+                    "ast_type": "Call",
+                    "node_id": 52
+                },
+                "src": "397:49:0",
+                "col_offset": 0,
+                "ast_type": "AnnAssign",
+                "value": null
+            },
+            {
+                "end_col_offset": 55,
+                "lineno": 22,
+                "args": {
+                    "default": null,
+                    "end_col_offset": 58,
+                    "lineno": 23,
+                    "args": [
+                        {
+                            "end_col_offset": 34,
+                            "lineno": 23,
+                            "arg": "_beneficiary",
+                            "end_lineno": 23,
+                            "annotation": {
+                                "end_col_offset": 34,
+                                "lineno": 23,
+                                "end_lineno": 23,
+                                "id": "address",
+                                "src": "610:7:0",
+                                "col_offset": 27,
+                                "ast_type": "Name",
+                                "node_id": 69
+                            },
+                            "src": "596:21:0",
+                            "col_offset": 13,
+                            "ast_type": "arg",
+                            "node_id": 68
+                        },
+                        {
+                            "end_col_offset": 58,
+                            "lineno": 23,
+                            "arg": "_bidding_time",
+                            "end_lineno": 23,
+                            "annotation": {
+                                "end_col_offset": 58,
+                                "lineno": 23,
+                                "end_lineno": 23,
+                                "id": "uint256",
+                                "src": "634:7:0",
+                                "col_offset": 51,
+                                "ast_type": "Name",
+                                "node_id": 72
+                            },
+                            "src": "619:22:0",
+                            "col_offset": 36,
+                            "ast_type": "arg",
+                            "node_id": 71
+                        }
+                    ],
+                    "end_lineno": 23,
+                    "defaults": [],
+                    "src": "596:45:0",
+                    "col_offset": 13,
+                    "ast_type": "arguments",
+                    "node_id": 67
+                },
+                "decorator_list": [
+                    {
+                        "end_col_offset": 9,
+                        "lineno": 22,
+                        "end_lineno": 22,
+                        "id": "external",
+                        "src": "574:8:0",
+                        "col_offset": 1,
+                        "ast_type": "Name",
+                        "node_id": 103
+                    }
+                ],
+                "node_id": 66,
+                "returns": null,
+                "end_lineno": 26,
+                "name": "__init__",
+                "doc_string": null,
+                "src": "573:202:0",
+                "body": [
+                    {
+                        "value": {
+                            "end_col_offset": 35,
+                            "lineno": 24,
+                            "end_lineno": 24,
+                            "id": "_beneficiary",
+                            "src": "667:12:0",
+                            "col_offset": 23,
+                            "ast_type": "Name",
+                            "node_id": 79
+                        },
+                        "end_col_offset": 35,
+                        "target": {
+                            "end_col_offset": 20,
+                            "lineno": 24,
+                            "node_id": 75,
+                            "end_lineno": 24,
+                            "src": "648:16:0",
+                            "attr": "beneficiary",
+                            "col_offset": 4,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 8,
+                                "lineno": 24,
+                                "end_lineno": 24,
+                                "id": "self",
+                                "src": "648:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 76
+                            }
+                        },
+                        "lineno": 24,
+                        "end_lineno": 24,
+                        "src": "648:31:0",
+                        "col_offset": 4,
+                        "ast_type": "Assign",
+                        "node_id": 74
+                    },
+                    {
+                        "value": {
+                            "end_col_offset": 39,
+                            "lineno": 25,
+                            "node_id": 86,
+                            "end_lineno": 25,
+                            "src": "704:15:0",
+                            "attr": "timestamp",
+                            "col_offset": 24,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 29,
+                                "lineno": 25,
+                                "end_lineno": 25,
+                                "id": "block",
+                                "src": "704:5:0",
+                                "col_offset": 24,
+                                "ast_type": "Name",
+                                "node_id": 87
+                            }
+                        },
+                        "end_col_offset": 39,
+                        "target": {
+                            "end_col_offset": 21,
+                            "lineno": 25,
+                            "node_id": 82,
+                            "end_lineno": 25,
+                            "src": "684:17:0",
+                            "attr": "auctionStart",
+                            "col_offset": 4,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 8,
+                                "lineno": 25,
+                                "end_lineno": 25,
+                                "id": "self",
+                                "src": "684:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 83
+                            }
+                        },
+                        "lineno": 25,
+                        "end_lineno": 25,
+                        "src": "684:35:0",
+                        "col_offset": 4,
+                        "ast_type": "Assign",
+                        "node_id": 81
+                    },
+                    {
+                        "value": {
+                            "end_col_offset": 55,
+                            "lineno": 26,
+                            "end_lineno": 26,
+                            "left": {
+                                "end_col_offset": 39,
+                                "lineno": 26,
+                                "node_id": 96,
+                                "end_lineno": 26,
+                                "src": "742:17:0",
+                                "attr": "auctionStart",
+                                "col_offset": 22,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 26,
+                                    "lineno": 26,
+                                    "end_lineno": 26,
+                                    "id": "self",
+                                    "src": "742:4:0",
+                                    "col_offset": 22,
+                                    "ast_type": "Name",
+                                    "node_id": 97
+                                }
+                            },
+                            "src": "742:33:0",
+                            "col_offset": 22,
+                            "right": {
+                                "end_col_offset": 55,
+                                "lineno": 26,
+                                "end_lineno": 26,
+                                "id": "_bidding_time",
+                                "src": "762:13:0",
+                                "col_offset": 42,
+                                "ast_type": "Name",
+                                "node_id": 101
+                            },
+                            "op": {
+                                "end_col_offset": 55,
+                                "lineno": 26,
+                                "end_lineno": 26,
+                                "src": "742:33:0",
+                                "col_offset": 22,
+                                "ast_type": "Add",
+                                "node_id": 141
+                            },
+                            "ast_type": "BinOp",
+                            "node_id": 95
+                        },
+                        "end_col_offset": 55,
+                        "target": {
+                            "end_col_offset": 19,
+                            "lineno": 26,
+                            "node_id": 91,
+                            "end_lineno": 26,
+                            "src": "724:15:0",
+                            "attr": "auctionEnd",
+                            "col_offset": 4,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 8,
+                                "lineno": 26,
+                                "end_lineno": 26,
+                                "id": "self",
+                                "src": "724:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 92
+                            }
+                        },
+                        "lineno": 26,
+                        "end_lineno": 26,
+                        "src": "724:51:0",
+                        "col_offset": 4,
+                        "ast_type": "Assign",
+                        "node_id": 90
+                    }
+                ],
+                "col_offset": 0,
+                "pos": null,
+                "ast_type": "FunctionDef"
+            },
+            {
+                "end_col_offset": 31,
+                "lineno": 32,
+                "args": {
+                    "default": null,
+                    "end_col_offset": 3,
+                    "lineno": 34,
+                    "args": [],
+                    "end_lineno": 34,
+                    "defaults": [],
+                    "src": "934:3:0",
+                    "col_offset": 0,
+                    "ast_type": "arguments",
+                    "node_id": 106
+                },
+                "decorator_list": [
+                    {
+                        "end_col_offset": 9,
+                        "lineno": 32,
+                        "end_lineno": 32,
+                        "id": "external",
+                        "src": "916:8:0",
+                        "col_offset": 1,
+                        "ast_type": "Name",
+                        "node_id": 164
+                    },
+                    {
+                        "end_col_offset": 8,
+                        "lineno": 33,
+                        "end_lineno": 33,
+                        "id": "payable",
+                        "src": "926:7:0",
+                        "col_offset": 1,
+                        "ast_type": "Name",
+                        "node_id": 166
+                    }
+                ],
+                "node_id": 105,
+                "returns": null,
+                "end_lineno": 43,
+                "name": "bid",
+                "doc_string": null,
+                "src": "915:394:0",
+                "body": [
+                    {
+                        "end_col_offset": 44,
+                        "lineno": 36,
+                        "test": {
+                            "end_col_offset": 44,
+                            "lineno": 36,
+                            "end_lineno": 36,
+                            "left": {
+                                "end_col_offset": 26,
+                                "lineno": 36,
+                                "node_id": 109,
+                                "end_lineno": 36,
+                                "src": "995:15:0",
+                                "attr": "timestamp",
+                                "col_offset": 11,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 16,
+                                    "lineno": 36,
+                                    "end_lineno": 36,
+                                    "id": "block",
+                                    "src": "995:5:0",
+                                    "col_offset": 11,
+                                    "ast_type": "Name",
+                                    "node_id": 110
+                                }
+                            },
+                            "src": "995:33:0",
+                            "col_offset": 11,
+                            "right": {
+                                "end_col_offset": 44,
+                                "lineno": 36,
+                                "node_id": 114,
+                                "end_lineno": 36,
+                                "src": "1013:15:0",
+                                "attr": "auctionEnd",
+                                "col_offset": 29,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 33,
+                                    "lineno": 36,
+                                    "end_lineno": 36,
+                                    "id": "self",
+                                    "src": "1013:4:0",
+                                    "col_offset": 29,
+                                    "ast_type": "Name",
+                                    "node_id": 115
+                                }
+                            },
+                            "op": {
+                                "end_col_offset": 44,
+                                "lineno": 36,
+                                "end_lineno": 36,
+                                "src": "995:33:0",
+                                "col_offset": 11,
+                                "ast_type": "Lt",
+                                "node_id": 113
+                            },
+                            "ast_type": "Compare",
+                            "node_id": 108
+                        },
+                        "end_lineno": 36,
+                        "msg": null,
+                        "src": "988:40:0",
+                        "col_offset": 4,
+                        "ast_type": "Assert",
+                        "node_id": 107
+                    },
+                    {
+                        "end_col_offset": 38,
+                        "lineno": 38,
+                        "test": {
+                            "end_col_offset": 38,
+                            "lineno": 38,
+                            "end_lineno": 38,
+                            "left": {
+                                "end_col_offset": 20,
+                                "lineno": 38,
+                                "node_id": 120,
+                                "end_lineno": 38,
+                                "src": "1074:9:0",
+                                "attr": "value",
+                                "col_offset": 11,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 14,
+                                    "lineno": 38,
+                                    "end_lineno": 38,
+                                    "id": "msg",
+                                    "src": "1074:3:0",
+                                    "col_offset": 11,
+                                    "ast_type": "Name",
+                                    "node_id": 121
+                                }
+                            },
+                            "src": "1074:27:0",
+                            "col_offset": 11,
+                            "right": {
+                                "end_col_offset": 38,
+                                "lineno": 38,
+                                "node_id": 125,
+                                "end_lineno": 38,
+                                "src": "1086:15:0",
+                                "attr": "highestBid",
+                                "col_offset": 23,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 27,
+                                    "lineno": 38,
+                                    "end_lineno": 38,
+                                    "id": "self",
+                                    "src": "1086:4:0",
+                                    "col_offset": 23,
+                                    "ast_type": "Name",
+                                    "node_id": 126
+                                }
+                            },
+                            "op": {
+                                "end_col_offset": 38,
+                                "lineno": 38,
+                                "end_lineno": 38,
+                                "src": "1074:27:0",
+                                "col_offset": 11,
+                                "ast_type": "Gt",
+                                "node_id": 124
+                            },
+                            "ast_type": "Compare",
+                            "node_id": 119
+                        },
+                        "end_lineno": 38,
+                        "msg": null,
+                        "src": "1067:34:0",
+                        "col_offset": 4,
+                        "ast_type": "Assert",
+                        "node_id": 118
+                    },
+                    {
+                        "value": {
+                            "end_col_offset": 62,
+                            "lineno": 40,
+                            "node_id": 142,
+                            "end_lineno": 40,
+                            "src": "1201:15:0",
+                            "attr": "highestBid",
+                            "col_offset": 47,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 51,
+                                "lineno": 40,
+                                "end_lineno": 40,
+                                "id": "self",
+                                "src": "1201:4:0",
+                                "col_offset": 47,
+                                "ast_type": "Name",
+                                "node_id": 143
+                            }
+                        },
+                        "end_col_offset": 62,
+                        "target": {
+                            "value": {
+                                "end_col_offset": 23,
+                                "lineno": 40,
+                                "node_id": 131,
+                                "end_lineno": 40,
+                                "src": "1158:19:0",
+                                "attr": "pendingReturns",
+                                "col_offset": 4,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 8,
+                                    "lineno": 40,
+                                    "end_lineno": 40,
+                                    "id": "self",
+                                    "src": "1158:4:0",
+                                    "col_offset": 4,
+                                    "ast_type": "Name",
+                                    "node_id": 132
+                                }
+                            },
+                            "slice": {
+                                "value": {
+                                    "end_col_offset": 42,
+                                    "lineno": 40,
+                                    "node_id": 136,
+                                    "end_lineno": 40,
+                                    "src": "1178:18:0",
+                                    "attr": "highestBidder",
+                                    "col_offset": 24,
+                                    "ast_type": "Attribute",
+                                    "value": {
+                                        "end_col_offset": 28,
+                                        "lineno": 40,
+                                        "end_lineno": 40,
+                                        "id": "self",
+                                        "src": "1178:4:0",
+                                        "col_offset": 24,
+                                        "ast_type": "Name",
+                                        "node_id": 137
+                                    }
+                                },
+                                "end_col_offset": 42,
+                                "lineno": 40,
+                                "end_lineno": 40,
+                                "src": "1178:18:0",
+                                "col_offset": 24,
+                                "ast_type": "Index",
+                                "node_id": 135
+                            },
+                            "end_col_offset": 43,
+                            "lineno": 40,
+                            "end_lineno": 40,
+                            "src": "1158:39:0",
+                            "col_offset": 4,
+                            "ast_type": "Subscript",
+                            "node_id": 130
+                        },
+                        "lineno": 40,
+                        "end_lineno": 40,
+                        "src": "1158:58:0",
+                        "col_offset": 4,
+                        "op": {
+                            "end_col_offset": 62,
+                            "lineno": 40,
+                            "end_lineno": 40,
+                            "src": "1158:58:0",
+                            "col_offset": 4,
+                            "ast_type": "Add",
+                            "node_id": 141
+                        },
+                        "ast_type": "AugAssign",
+                        "node_id": 129
+                    },
+                    {
+                        "value": {
+                            "end_col_offset": 35,
+                            "lineno": 42,
+                            "node_id": 151,
+                            "end_lineno": 42,
+                            "src": "1267:10:0",
+                            "attr": "sender",
+                            "col_offset": 25,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 28,
+                                "lineno": 42,
+                                "end_lineno": 42,
+                                "id": "msg",
+                                "src": "1267:3:0",
+                                "col_offset": 25,
+                                "ast_type": "Name",
+                                "node_id": 152
+                            }
+                        },
+                        "end_col_offset": 35,
+                        "target": {
+                            "end_col_offset": 22,
+                            "lineno": 42,
+                            "node_id": 147,
+                            "end_lineno": 42,
+                            "src": "1246:18:0",
+                            "attr": "highestBidder",
+                            "col_offset": 4,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 8,
+                                "lineno": 42,
+                                "end_lineno": 42,
+                                "id": "self",
+                                "src": "1246:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 148
+                            }
+                        },
+                        "lineno": 42,
+                        "end_lineno": 42,
+                        "src": "1246:31:0",
+                        "col_offset": 4,
+                        "ast_type": "Assign",
+                        "node_id": 146
+                    },
+                    {
+                        "value": {
+                            "end_col_offset": 31,
+                            "lineno": 43,
+                            "node_id": 160,
+                            "end_lineno": 43,
+                            "src": "1300:9:0",
+                            "attr": "value",
+                            "col_offset": 22,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 25,
+                                "lineno": 43,
+                                "end_lineno": 43,
+                                "id": "msg",
+                                "src": "1300:3:0",
+                                "col_offset": 22,
+                                "ast_type": "Name",
+                                "node_id": 161
+                            }
+                        },
+                        "end_col_offset": 31,
+                        "target": {
+                            "end_col_offset": 19,
+                            "lineno": 43,
+                            "node_id": 156,
+                            "end_lineno": 43,
+                            "src": "1282:15:0",
+                            "attr": "highestBid",
+                            "col_offset": 4,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 8,
+                                "lineno": 43,
+                                "end_lineno": 43,
+                                "id": "self",
+                                "src": "1282:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 157
+                            }
+                        },
+                        "lineno": 43,
+                        "end_lineno": 43,
+                        "src": "1282:27:0",
+                        "col_offset": 4,
+                        "ast_type": "Assign",
+                        "node_id": 155
+                    }
+                ],
+                "col_offset": 0,
+                "pos": null,
+                "ast_type": "FunctionDef"
+            },
+            {
+                "end_col_offset": 36,
+                "lineno": 49,
+                "args": {
+                    "default": null,
+                    "end_col_offset": 3,
+                    "lineno": 50,
+                    "args": [],
+                    "end_lineno": 50,
+                    "defaults": [],
+                    "src": "1576:3:0",
+                    "col_offset": 0,
+                    "ast_type": "arguments",
+                    "node_id": 169
+                },
+                "decorator_list": [
+                    {
+                        "end_col_offset": 9,
+                        "lineno": 49,
+                        "end_lineno": 49,
+                        "id": "external",
+                        "src": "1567:8:0",
+                        "col_offset": 1,
+                        "ast_type": "Name",
+                        "node_id": 209
+                    }
+                ],
+                "node_id": 168,
+                "returns": null,
+                "end_lineno": 53,
+                "name": "withdraw",
+                "doc_string": null,
+                "src": "1566:164:0",
+                "body": [
+                    {
+                        "end_col_offset": 61,
+                        "target": {
+                            "end_col_offset": 18,
+                            "lineno": 51,
+                            "end_lineno": 51,
+                            "id": "pending_amount",
+                            "src": "1596:14:0",
+                            "col_offset": 4,
+                            "ast_type": "Name",
+                            "node_id": 171
+                        },
+                        "simple": 1,
+                        "lineno": 51,
+                        "node_id": 170,
+                        "end_lineno": 51,
+                        "annotation": {
+                            "end_col_offset": 27,
+                            "lineno": 51,
+                            "end_lineno": 51,
+                            "id": "uint256",
+                            "src": "1612:7:0",
+                            "col_offset": 20,
+                            "ast_type": "Name",
+                            "node_id": 173
+                        },
+                        "src": "1596:57:0",
+                        "col_offset": 4,
+                        "ast_type": "AnnAssign",
+                        "value": {
+                            "value": {
+                                "end_col_offset": 49,
+                                "lineno": 51,
+                                "node_id": 176,
+                                "end_lineno": 51,
+                                "src": "1622:19:0",
+                                "attr": "pendingReturns",
+                                "col_offset": 30,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 34,
+                                    "lineno": 51,
+                                    "end_lineno": 51,
+                                    "id": "self",
+                                    "src": "1622:4:0",
+                                    "col_offset": 30,
+                                    "ast_type": "Name",
+                                    "node_id": 177
+                                }
+                            },
+                            "slice": {
+                                "value": {
+                                    "end_col_offset": 60,
+                                    "lineno": 51,
+                                    "node_id": 181,
+                                    "end_lineno": 51,
+                                    "src": "1642:10:0",
+                                    "attr": "sender",
+                                    "col_offset": 50,
+                                    "ast_type": "Attribute",
+                                    "value": {
+                                        "end_col_offset": 53,
+                                        "lineno": 51,
+                                        "end_lineno": 51,
+                                        "id": "msg",
+                                        "src": "1642:3:0",
+                                        "col_offset": 50,
+                                        "ast_type": "Name",
+                                        "node_id": 182
+                                    }
+                                },
+                                "end_col_offset": 60,
+                                "lineno": 51,
+                                "end_lineno": 51,
+                                "src": "1642:10:0",
+                                "col_offset": 50,
+                                "ast_type": "Index",
+                                "node_id": 180
+                            },
+                            "end_col_offset": 61,
+                            "lineno": 51,
+                            "end_lineno": 51,
+                            "src": "1622:31:0",
+                            "col_offset": 30,
+                            "ast_type": "Subscript",
+                            "node_id": 175
+                        }
+                    },
+                    {
+                        "value": {
+                            "value": 0,
+                            "end_col_offset": 39,
+                            "lineno": 52,
+                            "end_lineno": 52,
+                            "src": "1692:1:0",
+                            "col_offset": 38,
+                            "ast_type": "Int",
+                            "node_id": 198
+                        },
+                        "end_col_offset": 39,
+                        "target": {
+                            "value": {
+                                "end_col_offset": 23,
+                                "lineno": 52,
+                                "node_id": 188,
+                                "end_lineno": 52,
+                                "src": "1658:19:0",
+                                "attr": "pendingReturns",
+                                "col_offset": 4,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 8,
+                                    "lineno": 52,
+                                    "end_lineno": 52,
+                                    "id": "self",
+                                    "src": "1658:4:0",
+                                    "col_offset": 4,
+                                    "ast_type": "Name",
+                                    "node_id": 189
+                                }
+                            },
+                            "slice": {
+                                "value": {
+                                    "end_col_offset": 34,
+                                    "lineno": 52,
+                                    "node_id": 193,
+                                    "end_lineno": 52,
+                                    "src": "1678:10:0",
+                                    "attr": "sender",
+                                    "col_offset": 24,
+                                    "ast_type": "Attribute",
+                                    "value": {
+                                        "end_col_offset": 27,
+                                        "lineno": 52,
+                                        "end_lineno": 52,
+                                        "id": "msg",
+                                        "src": "1678:3:0",
+                                        "col_offset": 24,
+                                        "ast_type": "Name",
+                                        "node_id": 194
+                                    }
+                                },
+                                "end_col_offset": 34,
+                                "lineno": 52,
+                                "end_lineno": 52,
+                                "src": "1678:10:0",
+                                "col_offset": 24,
+                                "ast_type": "Index",
+                                "node_id": 192
+                            },
+                            "end_col_offset": 35,
+                            "lineno": 52,
+                            "end_lineno": 52,
+                            "src": "1658:31:0",
+                            "col_offset": 4,
+                            "ast_type": "Subscript",
+                            "node_id": 187
+                        },
+                        "lineno": 52,
+                        "end_lineno": 52,
+                        "src": "1658:35:0",
+                        "col_offset": 4,
+                        "ast_type": "Assign",
+                        "node_id": 186
+                    },
+                    {
+                        "value": {
+                            "func": {
+                                "end_col_offset": 8,
+                                "lineno": 53,
+                                "end_lineno": 53,
+                                "id": "send",
+                                "src": "1698:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 201
+                            },
+                            "end_col_offset": 36,
+                            "lineno": 53,
+                            "args": [
+                                {
+                                    "end_col_offset": 19,
+                                    "lineno": 53,
+                                    "node_id": 203,
+                                    "end_lineno": 53,
+                                    "src": "1703:10:0",
+                                    "attr": "sender",
+                                    "col_offset": 9,
+                                    "ast_type": "Attribute",
+                                    "value": {
+                                        "end_col_offset": 12,
+                                        "lineno": 53,
+                                        "end_lineno": 53,
+                                        "id": "msg",
+                                        "src": "1703:3:0",
+                                        "col_offset": 9,
+                                        "ast_type": "Name",
+                                        "node_id": 204
+                                    }
+                                },
+                                {
+                                    "end_col_offset": 35,
+                                    "lineno": 53,
+                                    "end_lineno": 53,
+                                    "id": "pending_amount",
+                                    "src": "1715:14:0",
+                                    "col_offset": 21,
+                                    "ast_type": "Name",
+                                    "node_id": 207
+                                }
+                            ],
+                            "keywords": [],
+                            "end_lineno": 53,
+                            "src": "1698:32:0",
+                            "keyword": null,
+                            "col_offset": 4,
+                            "ast_type": "Call",
+                            "node_id": 200
+                        },
+                        "end_col_offset": 36,
+                        "lineno": 53,
+                        "end_lineno": 53,
+                        "src": "1698:32:0",
+                        "col_offset": 4,
+                        "ast_type": "Expr",
+                        "node_id": 199
+                    }
+                ],
+                "col_offset": 0,
+                "pos": null,
+                "ast_type": "FunctionDef"
+            },
+            {
+                "end_col_offset": 43,
+                "lineno": 57,
+                "args": {
+                    "default": null,
+                    "end_col_offset": 3,
+                    "lineno": 58,
+                    "args": [],
+                    "end_lineno": 58,
+                    "defaults": [],
+                    "src": "1807:3:0",
+                    "col_offset": 0,
+                    "ast_type": "arguments",
+                    "node_id": 212
+                },
+                "decorator_list": [
+                    {
+                        "end_col_offset": 9,
+                        "lineno": 57,
+                        "end_lineno": 57,
+                        "id": "external",
+                        "src": "1798:8:0",
+                        "col_offset": 1,
+                        "ast_type": "Name",
+                        "node_id": 249
+                    }
+                ],
+                "node_id": 211,
+                "returns": null,
+                "end_lineno": 82,
+                "name": "endAuction",
+                "doc_string": null,
+                "src": "1797:976:0",
+                "body": [
+                    {
+                        "end_col_offset": 45,
+                        "lineno": 74,
+                        "test": {
+                            "end_col_offset": 45,
+                            "lineno": 74,
+                            "end_lineno": 74,
+                            "left": {
+                                "end_col_offset": 26,
+                                "lineno": 74,
+                                "node_id": 215,
+                                "end_lineno": 74,
+                                "src": "2554:15:0",
+                                "attr": "timestamp",
+                                "col_offset": 11,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 16,
+                                    "lineno": 74,
+                                    "end_lineno": 74,
+                                    "id": "block",
+                                    "src": "2554:5:0",
+                                    "col_offset": 11,
+                                    "ast_type": "Name",
+                                    "node_id": 216
+                                }
+                            },
+                            "src": "2554:34:0",
+                            "col_offset": 11,
+                            "right": {
+                                "end_col_offset": 45,
+                                "lineno": 74,
+                                "node_id": 220,
+                                "end_lineno": 74,
+                                "src": "2573:15:0",
+                                "attr": "auctionEnd",
+                                "col_offset": 30,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 34,
+                                    "lineno": 74,
+                                    "end_lineno": 74,
+                                    "id": "self",
+                                    "src": "2573:4:0",
+                                    "col_offset": 30,
+                                    "ast_type": "Name",
+                                    "node_id": 221
+                                }
+                            },
+                            "op": {
+                                "end_col_offset": 45,
+                                "lineno": 74,
+                                "end_lineno": 74,
+                                "src": "2554:34:0",
+                                "col_offset": 11,
+                                "ast_type": "GtE",
+                                "node_id": 219
+                            },
+                            "ast_type": "Compare",
+                            "node_id": 214
+                        },
+                        "end_lineno": 74,
+                        "msg": null,
+                        "src": "2547:41:0",
+                        "col_offset": 4,
+                        "ast_type": "Assert",
+                        "node_id": 213
+                    },
+                    {
+                        "end_col_offset": 25,
+                        "lineno": 76,
+                        "test": {
+                            "end_col_offset": 25,
+                            "lineno": 76,
+                            "operand": {
+                                "end_col_offset": 25,
+                                "lineno": 76,
+                                "node_id": 227,
+                                "end_lineno": 76,
+                                "src": "2657:10:0",
+                                "attr": "ended",
+                                "col_offset": 15,
+                                "ast_type": "Attribute",
+                                "value": {
+                                    "end_col_offset": 19,
+                                    "lineno": 76,
+                                    "end_lineno": 76,
+                                    "id": "self",
+                                    "src": "2657:4:0",
+                                    "col_offset": 15,
+                                    "ast_type": "Name",
+                                    "node_id": 228
+                                }
+                            },
+                            "end_lineno": 76,
+                            "src": "2653:14:0",
+                            "col_offset": 11,
+                            "op": {
+                                "end_col_offset": 25,
+                                "lineno": 76,
+                                "end_lineno": 76,
+                                "src": "2653:14:0",
+                                "col_offset": 11,
+                                "ast_type": "Not",
+                                "node_id": 226
+                            },
+                            "ast_type": "UnaryOp",
+                            "node_id": 225
+                        },
+                        "end_lineno": 76,
+                        "msg": null,
+                        "src": "2646:21:0",
+                        "col_offset": 4,
+                        "ast_type": "Assert",
+                        "node_id": 224
+                    },
+                    {
+                        "value": {
+                            "value": true,
+                            "end_col_offset": 21,
+                            "lineno": 79,
+                            "end_lineno": 79,
+                            "src": "2703:4:0",
+                            "col_offset": 17,
+                            "ast_type": "NameConstant",
+                            "node_id": 236
+                        },
+                        "end_col_offset": 21,
+                        "target": {
+                            "end_col_offset": 14,
+                            "lineno": 79,
+                            "node_id": 232,
+                            "end_lineno": 79,
+                            "src": "2690:10:0",
+                            "attr": "ended",
+                            "col_offset": 4,
+                            "ast_type": "Attribute",
+                            "value": {
+                                "end_col_offset": 8,
+                                "lineno": 79,
+                                "end_lineno": 79,
+                                "id": "self",
+                                "src": "2690:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 233
+                            }
+                        },
+                        "lineno": 79,
+                        "end_lineno": 79,
+                        "src": "2690:17:0",
+                        "col_offset": 4,
+                        "ast_type": "Assign",
+                        "node_id": 231
+                    },
+                    {
+                        "value": {
+                            "func": {
+                                "end_col_offset": 8,
+                                "lineno": 82,
+                                "end_lineno": 82,
+                                "id": "send",
+                                "src": "2734:4:0",
+                                "col_offset": 4,
+                                "ast_type": "Name",
+                                "node_id": 239
+                            },
+                            "end_col_offset": 43,
+                            "lineno": 82,
+                            "args": [
+                                {
+                                    "end_col_offset": 25,
+                                    "lineno": 82,
+                                    "node_id": 241,
+                                    "end_lineno": 82,
+                                    "src": "2739:16:0",
+                                    "attr": "beneficiary",
+                                    "col_offset": 9,
+                                    "ast_type": "Attribute",
+                                    "value": {
+                                        "end_col_offset": 13,
+                                        "lineno": 82,
+                                        "end_lineno": 82,
+                                        "id": "self",
+                                        "src": "2739:4:0",
+                                        "col_offset": 9,
+                                        "ast_type": "Name",
+                                        "node_id": 242
+                                    }
+                                },
+                                {
+                                    "end_col_offset": 42,
+                                    "lineno": 82,
+                                    "node_id": 245,
+                                    "end_lineno": 82,
+                                    "src": "2757:15:0",
+                                    "attr": "highestBid",
+                                    "col_offset": 27,
+                                    "ast_type": "Attribute",
+                                    "value": {
+                                        "end_col_offset": 31,
+                                        "lineno": 82,
+                                        "end_lineno": 82,
+                                        "id": "self",
+                                        "src": "2757:4:0",
+                                        "col_offset": 27,
+                                        "ast_type": "Name",
+                                        "node_id": 246
+                                    }
+                                }
+                            ],
+                            "keywords": [],
+                            "end_lineno": 82,
+                            "src": "2734:39:0",
+                            "keyword": null,
+                            "col_offset": 4,
+                            "ast_type": "Call",
+                            "node_id": 238
+                        },
+                        "end_col_offset": 43,
+                        "lineno": 82,
+                        "end_lineno": 82,
+                        "src": "2734:39:0",
+                        "col_offset": 4,
+                        "ast_type": "Expr",
+                        "node_id": 237
+                    }
+                ],
+                "col_offset": 0,
+                "pos": null,
+                "ast_type": "FunctionDef"
+            }
+        ],
+        "col_offset": 0,
+        "ast_type": "Module",
+        "node_id": 0
+    }
+}

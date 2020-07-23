@@ -98,6 +98,9 @@ class Visualizer:
                     count += 1
                 
         self._graph.render(output_folder + '/' + filename)
+
+    def visualize_cfg_new(self, parsed_ast: ContractNode):
+        pass
         
     def create_output_folder_ast(self) -> str:
         OUTPUT_DIR = 'output'

@@ -33,13 +33,23 @@ class Interface:
     def cli(self):
         parser = argparse.ArgumentParser(description='Vyper Static Analysis Tool')
         parser.add_argument('--format', type=str, nargs='?',
-                           help='format options: visualize-cfg, visualize-ast')
+                           help='format options: cfg, ast')
         parser.add_argument('filename', metavar='file-name', type=str, nargs='+',
                            help='Name of the .vy file')
 
         args = vars(parser.parse_args())
         print(args)
         files = args['filename']
+        visualize = args['format']
+        if 'cfg' == visualize:
+            ## Visualize CFG
+            print('Visualize CFG Option enabled')
+        elif 'ast' == visualize :
+            print('Visualize AST Option enabled')
+        else: 
+            print('ERROR: Invalid option for format')
+            parser.print_help()
+            exit(1)
 
         for file in files:
             ast = AstWalker(file)

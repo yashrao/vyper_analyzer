@@ -111,7 +111,8 @@ class AstWalker:
             name = statement['name']
             return FunctionNode(name, body, is_external, decorator_list_res, args, returns)
         elif ast_type == 'AnnAssign':
-            var_type = statement['annotation'] # TODO: turn into a node
+            #var_type = statement['annotation'] # TODO: turn into a node
+            var_type = self.get_right(statement['annnotation'])
             return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['annotation']))
         
         
@@ -276,6 +277,8 @@ class AstWalker:
             left_var = self.get_left(right['value'])
             subscript = self.get_right(right['slice']['value'])
             return SubscriptNode(left_var, ast_type, right, subscript)
+        elif ast_type == 'Call':
+            print('fuck')
         
     def get_keyword(self, keyword: dict):
         return KeywordNode(keyword['arg'], keyword['value']['ast_type'], self.get_right(keyword['value']))

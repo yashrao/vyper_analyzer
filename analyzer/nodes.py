@@ -91,7 +91,7 @@ class AssignmentNode:
         print('Done AssignmentNode')
 
 class AnnAssignmentNode:
-    def __init__(self, ast_type: str, var_type, left, right):
+    def __init__(self, ast_type, var_type, left, right):
         self._ast_type = ast_type
         self._var_type = var_type
         self._left = left
