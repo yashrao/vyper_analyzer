@@ -58,8 +58,13 @@ class BinaryOperatorNode:
 
     def resolve_type(self):
         print('Resolving BinaryOperatorNode')
-        self._left.resolve_type()
-        self._right.resolve_type()
+        left = self._left.resolve_type()
+        right = self._right.resolve_type()
+        print(self._left)
+        print(self._right)
+        if left != right:
+            print('Error: TypeError')
+            exit(1)
         print('Done BinaryOperatorNode')
 
 class AssignmentNode:
@@ -98,6 +103,9 @@ class AnnAssignmentNode:
         self._right = right
         self._problem = None
 
+    def get_ast_type(self):
+        return self._var_type
+
     def __str__(self) -> str:
         return '<class \'AnnAssignmentNode\'(); {} {} {}>'.format(self._ast_type, self._left, self._right)
         
@@ -107,7 +115,8 @@ class AnnAssignmentNode:
     def resolve_type(self):
         print('Resolving AnnAssignmentNode')
         self._left.resolve_type()
-        self._right.resolve_type()
+        if self._right != None:
+            self._right.resolve_type()
         print('Done AnnAssignmentNode')
 
 class UnaryOperatorNode:
@@ -171,7 +180,13 @@ class AssertNode:
     def resolve_type(self):
         print('Resolving AssertNode')
         self._left.resolve_type()
-        self._right.resolve_type()
+        if self._right != None:
+            ## Two things to compare 
+            self._right.resolve_type()
+        else:
+            ## One thing to compare
+            ## TODO: check if it's boolean
+            pass
         print('Done AssertNode')
 
 class VariableNode:
@@ -198,7 +213,7 @@ class VariableNode:
         return '<class \'VariableNode\'; {}:{}>'.format(self._identifier, self._var_type)
 
     def resolve_type(self):
-        pass
+        return self._var_type
 
 class KeywordNode:
     def __init__(self, identifier: str, var_type: str, value):
@@ -377,3 +392,13 @@ class ArrayType:
         self._type = ast_type
         self._index = index
         self._problem = None
+
+class PublicType:
+    def __init__(self, ast_type: str):
+        self._ast_type = ast_type
+
+    def __str__(self) -> str:
+        return '<Type \'Public\'; {}>'.format(self._ast_type)
+
+    def __repr__(self) -> str:
+        return '<Type \'Public\'; {}>'.format(self._ast_type)

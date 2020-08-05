@@ -11,8 +11,15 @@ class Detector:
 
     def reentrancy(self):
         ## TODO: check that the @nonreentrant is used
-        ## TODO: (NOT AST LEVEL) make sure implemented in IR
+        ## TODO: (NOT AST LEVEL) 
         pass
+
+    def public_var_warning(self):
+        ## TODO: warn the user about public types
+        for node in self._parsed_ast.get_body():
+            if type(node) is AnnAssignmentNode:
+                if type(node.get_ast_type()) is PublicType:
+                    print('WARNING: public variable {}'.format(node.get_ast_type()))
 
     # Check for delegate_call vulnerability
     def delegate_call_check(self):

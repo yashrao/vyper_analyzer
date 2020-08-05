@@ -1,4 +1,4 @@
-number_var: int128
+number_var: uint256
 
 @external
 def store(num: int128):

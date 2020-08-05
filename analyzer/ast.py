@@ -112,8 +112,8 @@ class AstWalker:
             return FunctionNode(name, body, is_external, decorator_list_res, args, returns)
         elif ast_type == 'AnnAssign':
             #var_type = statement['annotation'] # TODO: turn into a node
-            var_type = self.get_right(statement['annnotation'])
-            return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['annotation']))
+            var_type = self.get_right(statement['annotation'])
+            return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']))
         
         
     def get_call_args(self, args: list, keywords=None) -> list:
@@ -259,6 +259,9 @@ class AstWalker:
     ## TODO: Get rid of ast_type if statements
     def get_right(self, right: dict):
         #TODO: Unary operator needs to be done
+        if right == None:
+            return None
+
         ast_type = right['ast_type']
         if ast_type == 'Name':
             return VariableNode(right['id'], ast_type, right)
@@ -278,7 +281,7 @@ class AstWalker:
             subscript = self.get_right(right['slice']['value'])
             return SubscriptNode(left_var, ast_type, right, subscript)
         elif ast_type == 'Call':
-            print('fuck')
+            return PublicType(self.get_right(right['args'][0]))
         
     def get_keyword(self, keyword: dict):
         return KeywordNode(keyword['arg'], keyword['value']['ast_type'], self.get_right(keyword['value']))
