@@ -50,6 +50,9 @@ class BinaryOperatorNode:
     def get_ast_type(self):
         return self._ast_type
 
+    def get_op(self):
+        return self._op
+
     def __str__(self) -> str:
         return '<class \'BinaryOpNode\'({}); {} {} {}>'.format(self._ast_type, self._left, self._op, self._right)
 
@@ -260,6 +263,9 @@ class SubscriptNode:
 
     def get_var_dict(self) -> dict:
         return self._var_dict
+    
+    def get_subscript(self):
+        return self._subscript
         
     def __str__(self):
         return '<class \'SubscriptNode\'; {}({})[{}]>'.format(self._left, self._var_type, self._subscript)

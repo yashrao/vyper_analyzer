@@ -139,7 +139,9 @@ class AstWalker:
                     statement_objs.append(node)
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
-                    node = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']))
+                    left = self.get_left(statement['target'])
+                    right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value'])) 
+                    node = AssignmentNode(ast_type, left, right)
                     statement_objs.append(node)
                 elif ast_type == 'AnnAssign':
                     if statement['annotation']['ast_type'] != 'Subscript':
@@ -148,15 +150,14 @@ class AstWalker:
                         var_type = ArrayType(self.get_left(statement['value']),                        \
                                             statement['annotation']['slice']['value'])
                     node = AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']))
-                    statement_objs.append(StatementNode(ast_type, var_type, node))
+                    statement_objs.append(node)
                 elif ast_type == 'Expr':
                     if 'keywords' in list(statement['value'].keys()):
                         node = CallNode(statement['value']['func']['id'],                               \
                             self.get_call_args(statement['value']['args'], statement['value']['keywords']))
                     else:
                         node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']))
-                    statement_objs.append(StatementNode(ast_type, 'Call', 
-                            node))
+                    statement_objs.append(node)
                 elif ast_type == 'Assert':
                     if statement['test']['ast_type'] == 'Compare':
                         node = AssertNode(self.get_left(statement['test']['left']), 

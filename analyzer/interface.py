@@ -41,15 +41,16 @@ class Interface:
         print(args)
         files = args['filename']
         visualize = args['format']
-        if 'cfg' == visualize:
-            ## Visualize CFG
-            print('Visualize CFG Option enabled')
-        elif 'ast' == visualize :
-            print('Visualize AST Option enabled')
-        else: 
-            print('ERROR: Invalid option for format')
-            parser.print_help()
-            exit(1)
+        if visualize is not None:
+            if 'cfg' == visualize:
+                ## Visualize CFG
+                print('Visualize CFG Option enabled')
+            elif 'ast' == visualize :
+                print('Visualize AST Option enabled')
+            else: 
+                print('ERROR: Invalid option for format')
+                parser.print_help()
+                exit(1)
 
         for file in files:
             ast = AstWalker(file)
@@ -57,14 +58,14 @@ class Interface:
             ast.walk(ast._ast, nodes)
             filename = self.get_filename(file)
             #parsed_ast = visualizer.parse_ast(ast._ast)
-            #visualizer.visualize_cfg(parsed_ast)
             parsed_ast = ast.parse_ast(ast._ast)
+            visualizer = Visualizer(parsed_ast, ast.get_contract_name())
+            visualizer.visualize_ast()
             #print(parsed_ast)
             detector = Detector(parsed_ast)
-            detector.public_var_warning()
+            #detector.public_var_warning()
             #detector.type_check()
             #detector.delegate_call_check()
-            #visualizer = Visualizer(ast.get_contract_name())
             #print(filename)
             #visualizer.visualize_ast(parsed_ast, filename)
 
