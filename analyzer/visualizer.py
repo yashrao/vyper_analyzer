@@ -85,6 +85,23 @@ class Visualizer:
             sg.edge(prev, node_label_statement)
             count += 1
         
+    def build_subscript_str(self, node) -> str:
+        # Possible Nodes: Variable, Constant, Subscript, BinOp
+        subscript_str = '['
+        node_type = type(node)
+        if node_type is VariableNode:
+            subscript_str += node.get_identifier()
+        #TODO: the below needs to be tested
+        elif node_type is ConstantNode:
+            subscript_str += str(node.get_value())
+        elif node_type is SubscriptNode:
+            subscript_str += node.get_left() + self.build_subscript_str(node.get_subscript())
+        elif node_type is BinaryOperatorNode:
+            subscript_str += self.build_subscript_str(node.get_left()) +   \
+                OPERATORS[node.get_op()] +                  \
+                self.build_subscript_str(node.get_right())
+        
+        return subscript_str + ']'
 
     def visualize_ast(self):
         """ Used to visualize the AST into graphviz format
@@ -116,18 +133,34 @@ class Visualizer:
                     if type(statement) is AssignmentNode:
                         left = statement.get_left()
                         if type(left) is SubscriptNode:
-                            print('lol' + str(left.get_subscript()))
+                            sg.node(node_label +'=' + '_' + str(count), label='=')
+                            tmp = node_label + '=' + '_' + str(count)
+                            count += 1
+                            identifier = left.get_left().get_identifier() +                \
+                                self.build_subscript_str(left.get_subscript()) 
+                            node_label_statement = node_label + '_' + identifier + str(count) # lvalue
+                            sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
+                            count += 1
+                            sg.edge(tmp, node_label_statement)
+                            self.build_right(node_label, sg, statement.get_right(), tmp, count)
                         elif type(left) is VariableNode:
                             sg.node(node_label +'=' + '_' + str(count), label='=')
                             tmp = node_label + '=' + '_' + str(count)
                             count += 1
                             identifier = left.get_identifier()
                             node_label_statement = node_label + '_' + identifier + str(count) # lvalue
-                            print('lol' + node_label_statement)
                             sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
                             count += 1
                             sg.edge(tmp, node_label_statement)
                             self.build_right(node_label, sg, statement.get_right(), tmp, count)
+                    elif type(statement) is CallNode:
+                        identifier = statement.get_call()
+                        call_node_label = node_label + '_' + identifier + str(count) # lvalue
+                        sg.node(call_node_label, label='FunctionCall(' + identifier + ')')
+                        count += 1
+                        param_list = statement.get_param_list()
+                        for param in param_list:
+                            self.build_right(node_label, sg, param, call_node_label, count)
                     #node_label_statement = node_label + '_' + str(count)
                     #value = str(statement.get_value())
                     #target = str(statement.get_target())
