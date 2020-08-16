@@ -128,6 +128,15 @@ class AstWalker:
     def get_annotation(self, annotation: dict):
        return '' 
 
+    def set_state_variable(self, ast_node: dict, node):
+        ## node is either SuscriptNode or VariableNode
+        ## ast_node is node from vyper ast dict 
+        if 'value' in list(ast_node.keys()):
+            if 'id' in list(ast_node['value'].keys()):
+                if ast_node['value']['id'] == 'self':
+                    # Set as state variable
+                    node.set_state_variable(True)
+
     def parse_body(self, body: list) -> list:
         # TODO: make it prettier (fix the slashes on the end to be on the same column)
         statement_objs = []
@@ -135,11 +144,14 @@ class AstWalker:
             ast_type = self.get_ast_type(statement)
             try:
                 if ast_type == 'Assign':
-                    node = AssignmentNode(ast_type, self.get_left(statement['target']), self.get_right(statement['value']))
+                    left = self.get_left(statement['target'])
+                    self.set_state_variable(statement['target'], left)
+                    node = AssignmentNode(ast_type, left, self.get_right(statement['value']))
                     statement_objs.append(node)
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
                     left = self.get_left(statement['target'])
+                    self.set_state_variable(statement['target'], left)
                     right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value'])) 
                     node = AssignmentNode(ast_type, left, right)
                     statement_objs.append(node)
@@ -149,7 +161,9 @@ class AstWalker:
                     else:
                         var_type = ArrayType(self.get_left(statement['value']),                        \
                                             statement['annotation']['slice']['value'])
-                    node = AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']))
+                    left = self.get_left(statement['target'])
+                    self.set_state_variable(statement['target'], left)
+                    node = AnnAssignmentNode(ast_type, var_type, left, self.get_right(statement['value']))
                     statement_objs.append(node)
                 elif ast_type == 'Expr':
                     if 'keywords' in list(statement['value'].keys()):
