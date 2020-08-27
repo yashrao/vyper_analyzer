@@ -79,13 +79,15 @@ class AstWalker:
         statements = [] # Empty list of Strings
         for statement in body:
             statements.append(self.parse_statements(statement))
-        main = ContractNode(self._contract_name, statements)
+        #TODO: change 'TODO' string to the actual source code
+        main = ContractNode(self._contract_name, statements, 'TODO')
         return main
 
     def parse_statements(self, statement: dict):
         # TODO: handle AnnAssign nodes here
         # TODO: MAKE THIS THE BETTER PARSE_STATMEENTS FUNCTION
         ast_type = self.get_ast_type(statement)
+        loc = (statement['col_offset'], statement['end_col_offset'], statement['lineno'])
         if ast_type == 'FunctionDef':
             body = self.parse_body(statement['body']) # Returns a list of statements 
             decorator_list = statement['decorator_list']
@@ -109,11 +111,11 @@ class AstWalker:
             else:
                 returns = statement['returns']['id']
             name = statement['name']
-            return FunctionNode(name, body, is_external, decorator_list_res, args, returns)
+            return FunctionNode(name, body, is_external, decorator_list_res, args, returns, loc)
         elif ast_type == 'AnnAssign':
             #var_type = statement['annotation'] # TODO: turn into a node
             var_type = self.get_right(statement['annotation'])
-            return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']))
+            return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']), loc)
         
         
     def get_call_args(self, args: list, keywords=None) -> list:
@@ -133,15 +135,16 @@ class AstWalker:
         statement_objs = []
         for statement in body:
             ast_type = self.get_ast_type(statement)
+            loc = (statement['col_offset'], statement['end_col_offset'], statement['lineno'])
             try:
                 if ast_type == 'Assign':
-                    node = AssignmentNode(ast_type, self.get_left(statement['target']), self.get_right(statement['value']))
+                    node = AssignmentNode(ast_type, self.get_left(statement['target']), self.get_right(statement['value']), loc)
                     statement_objs.append(node)
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
                     left = self.get_left(statement['target'])
-                    right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value'])) 
-                    node = AssignmentNode(ast_type, left, right)
+                    right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']), loc) 
+                    node = AssignmentNode(ast_type, left, right, loc)
                     statement_objs.append(node)
                 elif ast_type == 'AnnAssign':
                     if statement['annotation']['ast_type'] != 'Subscript':
@@ -149,20 +152,21 @@ class AstWalker:
                     else:
                         var_type = ArrayType(self.get_left(statement['value']),                        \
                                             statement['annotation']['slice']['value'])
-                    node = AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']))
+                    node = AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']), loc)
                     statement_objs.append(node)
                 elif ast_type == 'Expr':
                     if 'keywords' in list(statement['value'].keys()):
                         node = CallNode(statement['value']['func']['id'],                               \
-                            self.get_call_args(statement['value']['args'], statement['value']['keywords']))
+                            self.get_call_args(statement['value']['args'], statement['value']['keywords']), loc)
                     else:
-                        node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']))
+                        node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']), loc)
                     statement_objs.append(node)
                 elif ast_type == 'Assert':
                     if statement['test']['ast_type'] == 'Compare':
                         node = AssertNode(self.get_left(statement['test']['left']), 
-                            self.get_right(statement['test']['right']),                                \
-                            COMPARITORS[statement['test']['op']['ast_type']])
+                            self.get_right(statement['test']['right']),                    \
+                            COMPARITORS[statement['test']['op']['ast_type']],              \
+                            loc)
                         statement_objs.append(node)
                     elif statement['test']['ast_type'] == 'UnaryOp':
                         #TODO: add the COMPARITOR thing to the assert
@@ -245,16 +249,17 @@ class AstWalker:
         ## TODO: make get_left take statement['target]
         ## TODO: Add BinOp
         ast_type = left['ast_type']
+        loc = (left['col_offset'], left['end_col_offset'], left['lineno'])
         if ast_type == 'Subscript':
             #return self.get_left(left['value']) +  \
             #    '[' + self.get_right(left['slice']['value']) + ']
             left_var = self.get_left(left['value'])
             subscript = self.get_right(left['slice']['value'])
-            return SubscriptNode(left_var, ast_type, left, subscript)
+            return SubscriptNode(left_var, ast_type, left, subscript, loc)
         elif ast_type == 'Attribute':
-            return VariableNode(left['value']['id'] + '.' + left['attr'], ast_type, left)
+            return VariableNode(left['value']['id'] + '.' + left['attr'], ast_type, left, loc)
         elif ast_type == 'Name':
-            return VariableNode(left['id'], ast_type, left)
+            return VariableNode(left['id'], ast_type, left, loc)
         #return left['attr']
 
     ## TODO: Get rid of ast_type if statements
@@ -264,28 +269,32 @@ class AstWalker:
             return None
 
         ast_type = right['ast_type']
+        print(right)
+        loc = (right['col_offset'], right['end_col_offset'], right['lineno'])
         if ast_type == 'Name':
-            return VariableNode(right['id'], ast_type, right)
-        elif ast_type == 'Attribute':
-            return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right)
-        elif ast_type == 'Int':
+            #(col_offset, end_col_offset, line_no)
+            return VariableNode(right['id'], ast_type, right, loc)
+        if ast_type == 'Attribute':
+            return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right, loc)
+        if ast_type == 'Int':
             #return VariableNode(right['value'], ast_type, right)
-            return ConstantNode(right['value'])
-        elif ast_type == 'NameConstant':
+            return ConstantNode(right['value'], loc)
+        if ast_type == 'NameConstant':
             #return right['value']
-            return ConstantNode(int(right['value']))
-        elif ast_type == 'BinOp':
+            return ConstantNode(int(right['value']), loc)
+        if ast_type == 'BinOp':
             op = self.get_op(right) 
-            return BinaryOperatorNode(ast_type, op, self.get_right(right['left']), self.get_right(right['right']))
-        elif ast_type == 'Subscript':
+            return BinaryOperatorNode(ast_type, op, self.get_right(right['left']), self.get_right(right['right']), loc)
+        if ast_type == 'Subscript':
             left_var = self.get_left(right['value'])
             subscript = self.get_right(right['slice']['value'])
-            return SubscriptNode(left_var, ast_type, right, subscript)
-        elif ast_type == 'Call':
+            return SubscriptNode(left_var, ast_type, right, subscript, loc)
+        if ast_type == 'Call':
             return PublicType(self.get_right(right['args'][0]))
         
     def get_keyword(self, keyword: dict):
-        return KeywordNode(keyword['arg'], keyword['value']['ast_type'], self.get_right(keyword['value']))
+        loc = (keyword['col_offset'], keyword['end_col_offset'], keyword['lineno'])
+        return KeywordNode(keyword['arg'], keyword['value']['ast_type'], self.get_right(keyword['value']), loc)
 
     def get_variable(self, line: dict, body: list):
         pass

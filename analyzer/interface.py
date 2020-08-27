@@ -53,20 +53,26 @@ class Interface:
                 exit(1)
 
         for file in files:
+            # Setup
             ast = AstWalker(file)
             nodes = []
             ast.walk(ast._ast, nodes)
             filename = self.get_filename(file)
-            #parsed_ast = visualizer.parse_ast(ast._ast)
-            parsed_ast = ast.parse_ast(ast._ast)
-            visualizer = Visualizer(parsed_ast, ast.get_contract_name())
-            visualizer.visualize_ast()
-            #print(parsed_ast)
-            detector = Detector(parsed_ast)
-            #detector.public_var_warning()
-            #detector.type_check()
-            #detector.delegate_call_check()
-            #print(filename)
-            #visualizer.visualize_ast(parsed_ast, filename)
+            parsed_ast = ast.parse_ast(ast._ast) # process AST
+            
+            if visualize:
+                visualizer = Visualizer(parsed_ast, ast.get_contract_name())
+                if visualize == 'cfg':
+                    visualizer.visualize_cfg_new()
+                elif visualize == 'ast':
+                    visualizer.visualize_ast()
+            else:
+                #print(parsed_ast)
+                detector = Detector(parsed_ast)
+                #detector.public_var_warning()
+                #detector.type_check()
+                #detector.delegate_call_check()
+                #print(filename)
+                #visualizer.visualize_ast(parsed_ast, filename)
 
 

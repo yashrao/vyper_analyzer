@@ -1,7 +1,11 @@
+"""
+loc: location of the node in the source code (col_offset, end_col_offset, line_no)
+"""
 class Node:
-    def __init__(self, ast_type: str):
+    def __init__(self, ast_type: str, loc: tuple):
         self._ast_type = ast_type
         self._problem = None
+        self._loc = loc
 
     def __str__(self):
         return '<class \'Node\';>'
@@ -18,8 +22,9 @@ class Node:
 
 class ConstantNode:
     # TODO Support for multiple types
-    def __init__(self, value: int):
+    def __init__(self, value: int, loc: tuple):
         self._value = value
+        self._loc = loc
 
     def get_value(self) -> int:
         return self._value
@@ -34,12 +39,13 @@ class ConstantNode:
         pass
 
 class BinaryOperatorNode:
-    def __init__(self, ast_type: str, op: str, left, right):
+    def __init__(self, ast_type: str, op: str, left, right, loc: tuple):
         self._ast_type = ast_type
         self._op = op
         self._left = left
         self._right = right
         self._problem = None
+        self._loc = loc
 
     def get_left(self):
         return self._left
@@ -71,11 +77,12 @@ class BinaryOperatorNode:
         print('Done BinaryOperatorNode')
 
 class AssignmentNode:
-    def __init__(self, ast_type: str, left, right):
+    def __init__(self, ast_type: str, left, right, loc: tuple):
         self._ast_type = ast_type
         self._left = left
         self._right = right
         self._problem = None
+        self._loc = loc
 
     def get_left(self):
         return self._left
@@ -99,12 +106,13 @@ class AssignmentNode:
         print('Done AssignmentNode')
 
 class AnnAssignmentNode:
-    def __init__(self, ast_type, var_type, left, right):
+    def __init__(self, ast_type, var_type, left, right, loc: tuple):
         self._ast_type = ast_type
         self._var_type = var_type
         self._left = left
         self._right = right
         self._problem = None
+        self._loc = loc
 
     def get_ast_type(self):
         return self._var_type
@@ -123,10 +131,11 @@ class AnnAssignmentNode:
         print('Done AnnAssignmentNode')
 
 class UnaryOperatorNode:
-    def __init__(self, ast_type:str, var_list: list):
+    def __init__(self, ast_type:str, var_list: list, loc: tuple):
         self._ast_type = ast_type
         self._var_list = var_list
         self._problem = None
+        self._loc = loc
 
     def get_var_list(self):
         return self._var_list
@@ -139,10 +148,11 @@ class UnaryOperatorNode:
         print('Done UnaryOperatorNode')
 
 class CallNode:
-    def __init__(self, call: str, param_list: list):
+    def __init__(self, call: str, param_list: list, loc: tuple):
         self._call = call
         self._param_list = param_list
         self._problem = None
+        self._loc = loc
 
     def get_call(self): 
         return self._call
@@ -159,11 +169,12 @@ class CallNode:
         
 class AssertNode:
     ##TODO: Use Binary node?
-    def __init__(self, left, right, comparitor: str):
+    def __init__(self, left, right, comparitor: str, loc):
         self._left = left
         self._right = right
         self._comparitor = comparitor
         self._problem = None
+        self._loc = loc
         
     def get_left(self):
         return self._left
@@ -193,12 +204,13 @@ class AssertNode:
         print('Done AssertNode')
 
 class VariableNode:
-    def __init__(self, identifier: str, var_type: str, var_dict: dict):
+    def __init__(self, identifier: str, var_type: str, var_dict: dict, loc):
         """ Used for storing individual variables in a statement """
         self._identifier = identifier
         self._var_type = var_type
         self._var_dict = var_dict
         self._problem = None
+        self._loc = loc
 
     def get_identifier(self):
         return self._identifier
@@ -219,12 +231,13 @@ class VariableNode:
         return self._var_type
 
 class KeywordNode:
-    def __init__(self, identifier: str, var_type: str, value):
+    def __init__(self, identifier: str, var_type: str, value, loc):
         """ Used for storing keyword args used in method calls """
         self._identifier = identifier
         self._var_type = var_type
         self._value = value
         self._problem = None
+        self._loc = loc
 
     def get_identifier(self):
         return self._identifier
@@ -247,13 +260,14 @@ class KeywordNode:
 
 
 class SubscriptNode:
-    def __init__(self, left: VariableNode, var_type: str, var_dict: dict, subscript):
+    def __init__(self, left: VariableNode, var_type: str, var_dict: dict, subscript, loc):
         """ Used for storing individual variables in a statement """
         self._left = left
         self._var_type = var_type
         self._var_dict = var_dict
         self._subscript = subscript
         self._problem = None
+        self._loc = loc
 
     def get_left(self):
         return self._left
@@ -278,11 +292,12 @@ class SubscriptNode:
         print('Done Subscript Node')
         
 class StatementNode:
-    def __init__(self, ast_type, identifier, value):
+    def __init__(self, ast_type, identifier, value, loc):
         self._ast_type = ast_type
         self._identifier = identifier
         self._value = value # Node containing everything 
         self._problem = None
+        self._loc = loc
     
     def get_value(self):
         return self._value
@@ -306,11 +321,12 @@ class StatementNode:
         print('Done StatementNode')
 
 class ContractNode:
-    def __init__(self, name: str, body: list):
+    def __init__(self, name: str, body: list, src_str: str):
         self._name = name
         self._body = body
         self._symbol_table = {}
         self._problem = None
+        self._src_str = src_str
 
     def get_contract_name(self) -> str:
         return self._name
@@ -334,7 +350,7 @@ class ContractNode:
         print('Done ContractNode')
 
 class FunctionNode:
-    def __init__(self, name: str, body: list, is_external: bool, decorators: list, args: list, returns: str):
+    def __init__(self, name: str, body: list, is_external: bool, decorators: list, args: list, returns: str, loc):
         self._name = name
         self._body = body
         self._is_external = is_external
@@ -343,6 +359,7 @@ class FunctionNode:
         self._returns = returns
         self._symbol_table = {} # an empty dictionary for a symbol table
         self._problem = None
+        self._loc = loc
 
     def set_name(self, name: str):
         self._name = name

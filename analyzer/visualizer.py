@@ -1,8 +1,12 @@
+"""
+Used for accessing files
+"""
+import os
+
 from graphviz import Digraph
-from pprint import pprint
+#from pprint import pprint
 
 from nodes import *
-import os
 
 AST_TYPES = {
     'AnnAssign': ':',
@@ -39,17 +43,20 @@ COMPARITORS = {
     'Not': 'not',
 }
 
+"""
+TODO:
+"""
 class Visualizer:
     def __init__(self, parsed_ast: ContractNode, filename):
         self._graph = Digraph('G', filename='filename.txt') # TODO: change the filename
-        self._graph.attr(overlap='false', 
-                name='cfg', 
-                label= filename, 
-                color='black', 
+        self._graph.attr(overlap='false',
+                name='cfg',
+                label= filename,
+                color='black',
                 labelloc='t')
         self._filename = filename
         self._parsed_ast = parsed_ast
-                
+              
     def get_func_label(self, node_name: str, 
             decorator_list: list, 
             args: list) -> str:
@@ -57,10 +64,16 @@ class Visualizer:
             ret = '@{}\n'.format(decorator)
         ret += node_name + ' ('
         for arg in args:
-            if len(args) > 1:
-                ret += '{} {}\n'.format(arg['annotation']['id'], arg['arg'])
+            # checking if unit is array type or not
+            if 'slice' in arg['annotation'].keys():
+                slice_val = arg['annotation']['slice']['value']['value'] #TODO: generalize into a function
+                arg_id = '{}[{}] {}'.format(arg['annotation']['value']['id'], slice_val, arg['arg'])
             else:
-                ret += '{} {}'.format(arg['annotation']['id'], arg['arg'])
+                arg_id = '{} {}'.format(arg['annotation']['id'], arg['arg'])
+            if len(args) > 1:
+                ret += '{}\n'.format(arg_id)
+            else:
+                ret += '{}'.format(arg_id)
         ret += ')'
         return ret
 
@@ -116,16 +129,11 @@ class Visualizer:
                 node_label = self.get_func_label(node.get_name(), 
                     node.get_decorator_list(), 
                     node.get_arg_list())
-                #node_label = ''.join(''.join(self.get_func_label(node.get_name(), 
-                #    node.get_decorator_list(), 
-                #    node.get_arg_list()).split(' ')).split('\n'))
                 sg.attr(label=node_label)
                 sg.attr(style='filled', color ='lightgrey')
-                #sg.node(node_label, 'Function: ' + node_label, shape='Mdiamond', fillcolor='white')
 
                 body = node.get_body()
                 count = 0
-                #sg.node(node_label + '_start', label='START')
                 for statement in body:
                     #this part needs to call some kind of recursive function 
                     print(statement)
@@ -161,23 +169,101 @@ class Visualizer:
                         param_list = statement.get_param_list()
                         for param in param_list:
                             self.build_right(node_label, sg, param, call_node_label, count)
-                    #node_label_statement = node_label + '_' + str(count)
-                    #value = str(statement.get_value())
-                    #target = str(statement.get_target())
-                    #identifier = str(statement.get_identifier())
-                    #sg.node(node_label_statement + '_identifier', label=identifier)
-                    #sg.node(node_label_statement + '_target', label=target)
-                    #sg.node(node_label_statement + '_value', label=value)
-                    #sg.edge(node_label + '_identifier', node_label_statement + '_target')
-                    #sg.edge(node_label + '_identifier', node_label_statement + '_value')
-                    #if count == 0:
-                    #    sg.edge(node_label + '_start', node_label_statement)
-                    #count += 1
                 
         self._graph.render(output_folder + '/' + self._filename)
 
-    def visualize_cfg_new(self, parsed_ast: ContractNode):
-        pass
+    def build_right_statement_cfg(self, right) -> str:
+        if type(right) is BinaryOperatorNode:
+            print(right)
+            op = OPERATORS[right.get_op()]
+            lval = right.get_left()
+            if type(lval) is VariableNode:
+                return lval.get_identifier() + op + self.build_right_statement_cfg(right.get_right())
+            elif type(lval) is SubscriptNode:
+                return lval.get_left().get_identifier() +                \
+                    self.build_subscript_str(lval.get_subscript()) 
+        #TODO: if right is a subscript 
+        if type(right) is ConstantNode:
+            return str(right.get_value())
+        return right.get_identifier()
+
+    
+    def visualize_cfg_new(self):
+        output_folder = self.create_output_folder_cfg()
+        nodes = self._parsed_ast.get_body()
+        for node in nodes:
+            if node is None or type(node) is not FunctionNode:
+                continue
+            with self._graph.subgraph(name='cluster_' + node.get_name()) as sg:
+                node_label = self.get_func_label(node.get_name(), 
+                    node.get_decorator_list(), 
+                    node.get_arg_list()) 
+                sg.attr(label=node_label)
+                sg.node(node_label, 'ENTRY', shape='Mdiamond', fillcolor='white')
+                body = node.get_body()
+
+                node_struct_str = '{'
+                
+                for i in range(len(body)):
+                    statement = body[i]
+                    node_struct_str += '{'
+                    if type(statement) is AssignmentNode:
+                        left = statement.get_left()
+                        if type(left) is SubscriptNode:
+                            identifier = left.get_left().get_identifier() +                \
+                                self.build_subscript_str(left.get_subscript()) 
+                            right = self.build_right_statement_cfg(statement.get_right())
+                            node_struct_str += identifier + ' = ' + right
+                        elif type(left) is VariableNode:
+                            right = self.build_right_statement_cfg(statement.get_right())
+                            node_struct_str += left.get_identifier() + ' = ' + right
+                    elif type(statement) is CallNode:
+                        identifier = statement.get_call()
+                        print(identifier)
+                        param_list = statement.get_param_list()
+                        param_list_str = '('
+                        for i in range(len(param_list)):
+                            param = param_list[i]
+                            if len(param_list) == 1:
+                                param_list_str += self.build_right_statement_cfg
+                            else:
+                                if i == len(param_list) - 1:
+                                    param_list_str += self.build_right_statement_cfg(param)
+                                else:
+                                    param_list_str += self.build_right_statement_cfg(param) + ', '
+                        param_list_str += ')'
+                        node_struct_str += identifier + param_list_str
+                    elif type(statement) is AssertNode:
+                        print('lkek')
+                        if statement.get_right() is not None:
+                            node_struct_str += 'assert ' + self.build_right_statement_cfg(statement.get_left()) \
+                                    + ' ' + statement.get_comparitor() + ' '                                    \
+                                    + self.build_right_statement_cfg(statement.get_right())
+                        else:
+                            node_struct_str += 'assert '                                                        \
+                                    + ' ' + statement.get_comparitor() + ' '                                    \
+                                    + self.build_right_statement_cfg(statement.get_left())
+                        
+                    #node_struct_str += body[i]
+                    if i != len(body) - 1:
+                        node_struct_str += '}|'
+                    else:
+                        node_struct_str += '}'
+                sg.edge(node_label, 'struct_' + node.get_name())
+
+                node_struct_str += '}'
+
+                sg.node_attr = {
+                    'shape': 'record', 
+                    'style':'filled',
+                    'fillcolor':'lightgrey'
+                }
+                sg.node('struct_' + node.get_name(), 
+                  r'{}'.format(node_struct_str)) 
+
+                print(node_struct_str)
+                
+        self._graph.render(output_folder + '/' + self._filename)
         
     def create_output_folder_ast(self) -> str:
         OUTPUT_DIR = 'output'
@@ -187,6 +273,15 @@ class Visualizer:
         if not os.path.isdir(OUTPUT_DIR + '/' + AST_DIR):
             os.makedirs(OUTPUT_DIR + '/' + AST_DIR)
         return OUTPUT_DIR + '/' + AST_DIR
+        
+    def create_output_folder_cfg(self) -> str:
+        OUTPUT_DIR = 'output'
+        CFG_DIR = 'cfg'
+        if not os.path.isdir(OUTPUT_DIR):
+            os.makedirs(OUTPUT_DIR)
+        if not os.path.isdir(OUTPUT_DIR + '/' + CFG_DIR):
+            os.makedirs(OUTPUT_DIR + '/' + CFG_DIR)
+        return OUTPUT_DIR + '/' + CFG_DIR
 
     # List of statement nodes and function nodes
     def visualize_cfg(self, nodes: list):
