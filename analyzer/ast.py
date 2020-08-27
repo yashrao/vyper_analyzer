@@ -130,6 +130,15 @@ class AstWalker:
     def get_annotation(self, annotation: dict):
        return '' 
 
+    def set_state_variable(self, ast_node: dict, node):
+        ## node is either SuscriptNode or VariableNode
+        ## ast_node is node from vyper ast dict 
+        if 'value' in list(ast_node.keys()):
+            if 'id' in list(ast_node['value'].keys()):
+                if ast_node['value']['id'] == 'self':
+                    # Set as state variable
+                    node.set_state_variable(True)
+
     def parse_body(self, body: list) -> list:
         # TODO: make it prettier (fix the slashes on the end to be on the same column)
         statement_objs = []
@@ -138,13 +147,16 @@ class AstWalker:
             loc = (statement['col_offset'], statement['end_col_offset'], statement['lineno'])
             try:
                 if ast_type == 'Assign':
-                    node = AssignmentNode(ast_type, self.get_left(statement['target']), self.get_right(statement['value']), loc)
+                    left = self.get_left(statement['target'])
+                    node = AssignmentNode(ast_type, left, self.get_right(statement['value']), loc)
+                    self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement) 
                     left = self.get_left(statement['target'])
                     right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']), loc) 
                     node = AssignmentNode(ast_type, left, right, loc)
+                    self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
                 elif ast_type == 'AnnAssign':
                     if statement['annotation']['ast_type'] != 'Subscript':
@@ -152,7 +164,9 @@ class AstWalker:
                     else:
                         var_type = ArrayType(self.get_left(statement['value']),                        \
                                             statement['annotation']['slice']['value'])
-                    node = AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']), loc)
+                    left = self.get_left(statement['target'])
+                    node = AnnAssignmentNode(ast_type, var_type, left, self.get_right(statement['value']), loc)
+                    self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
                 elif ast_type == 'Expr':
                     if 'keywords' in list(statement['value'].keys()):
@@ -172,7 +186,8 @@ class AstWalker:
                         #TODO: add the COMPARITOR thing to the assert
                         node = AssertNode(self.get_left(statement['test']['operand']), 
                             None,
-                            COMPARITORS[statement['test']['op']['ast_type']])
+                            COMPARITORS[statement['test']['op']['ast_type']],
+                            loc)
                         statement_objs.append(node)
                 elif ast_type == 'Return':
                     # TODO: Generalize for all constants not just Int

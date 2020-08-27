@@ -211,7 +211,14 @@ class VariableNode:
         self._var_dict = var_dict
         self._problem = None
         self._loc = loc
+        self._is_state_variable = False
 
+    def set_state_variable(self, state: bool):
+        self._is_state_variable = state
+    
+    def is_state_variable(self) -> bool:
+        return self._is_state_variable
+        
     def get_identifier(self):
         return self._identifier
         
@@ -268,6 +275,13 @@ class SubscriptNode:
         self._subscript = subscript
         self._problem = None
         self._loc = loc
+        self._is_state_variable = False # True if it's a state variable
+
+    def set_state_variable(self, state: bool):
+        self._is_state_variable = state
+    
+    def is_state_variable(self) -> bool:
+        return self._is_state_variable
 
     def get_left(self):
         return self._left
@@ -324,7 +338,7 @@ class ContractNode:
     def __init__(self, name: str, body: list, src_str: str):
         self._name = name
         self._body = body
-        self._symbol_table = {}
+        self._symbol_table = {} # an empty dictionary for a symbol table
         self._problem = None
         self._src_str = src_str
 

@@ -94,6 +94,7 @@ class Visualizer:
             count += 1
         elif type(right) is VariableNode:
             node_label_statement = node_label + '_' + right.get_identifier() + str(count) 
+            self.add_var_type(right, right.get_identifier())
             sg.node(node_label_statement, label=right.get_identifier())
             sg.edge(prev, node_label_statement)
             count += 1
@@ -114,7 +115,14 @@ class Visualizer:
                 OPERATORS[node.get_op()] +                  \
                 self.build_subscript_str(node.get_right())
         
-        return subscript_str + ']'
+        return self.add_var_type(node, subscript_str) + ']'
+
+    def add_var_type(self, node, identifier) -> str:
+        ret = identifier
+        if type(node) is VariableNode or type(node) is SubscriptNode:
+            if node.is_state_variable():
+                ret = 'StateVar<' + ret[5:] + '>'
+        return ret
 
     def visualize_ast(self):
         """ Used to visualize the AST into graphviz format
@@ -140,6 +148,7 @@ class Visualizer:
                     print(node_label)
                     if type(statement) is AssignmentNode:
                         left = statement.get_left()
+                        # TODO: have to add in state var decorator
                         if type(left) is SubscriptNode:
                             sg.node(node_label +'=' + '_' + str(count), label='=')
                             tmp = node_label + '=' + '_' + str(count)
@@ -147,6 +156,7 @@ class Visualizer:
                             identifier = left.get_left().get_identifier() +                \
                                 self.build_subscript_str(left.get_subscript()) 
                             node_label_statement = node_label + '_' + identifier + str(count) # lvalue
+                            identifier = self.add_var_type(left.get_left(), identifier)
                             sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
                             count += 1
                             sg.edge(tmp, node_label_statement)
@@ -156,6 +166,7 @@ class Visualizer:
                             tmp = node_label + '=' + '_' + str(count)
                             count += 1
                             identifier = left.get_identifier()
+                            identifier = self.add_var_type(left, identifier)
                             node_label_statement = node_label + '_' + identifier + str(count) # lvalue
                             sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
                             count += 1
@@ -164,7 +175,7 @@ class Visualizer:
                     elif type(statement) is CallNode:
                         identifier = statement.get_call()
                         call_node_label = node_label + '_' + identifier + str(count) # lvalue
-                        sg.node(call_node_label, label='FunctionCall(' + identifier + ')')
+                        sg.node(call_node_label, label='FunctionCall<' + identifier + '>')
                         count += 1
                         param_list = statement.get_param_list()
                         for param in param_list:
