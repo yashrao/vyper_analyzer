@@ -43,9 +43,10 @@ COMPARITORS = {
 
 
 class AstWalker:
-    def __init__(self, source: str):
+    def __init__(self, filename: str):
         self._contract_name = '' 
-        self._ast = self.get_ast(source)
+        self._ast = self.get_ast(filename)
+        self._filename = filename
 
     def walk(self, node, nodes):
         if 'FunctionDef' in node['ast_type']:
@@ -56,6 +57,7 @@ class AstWalker:
 
     def get_ast(self, filename: str) -> dict:
         cmd = 'vyper -f ast {}'.format(filename)
+        print()
         try:
             FNULL = open(os.devnull, 'w')
             vyper_c = subprocess.Popen(cmd.split(' '), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -70,8 +72,12 @@ class AstWalker:
                 vyper_c.communicate()[0].decode('utf-8', 'strict')
             exit(1)
 
-    def get_contract_name(self):
+    def get_contract_name(self) -> str:
         return self._contract_name
+
+    def get_vyper_src(self, filename: str) -> str:
+        with open(filename, 'r') as f:
+            return f.read()
 
     def parse_ast(self, ast:dict) -> list:
         #TODO: Change this to just parse_ast
@@ -80,7 +86,8 @@ class AstWalker:
         for statement in body:
             statements.append(self.parse_statements(statement))
         #TODO: change 'TODO' string to the actual source code
-        main = ContractNode(self._contract_name, statements, 'TODO')
+        vyper_source = self.get_vyper_src(self._filename)
+        main = ContractNode(self._contract_name, statements, vyper_source)
         return main
 
     def parse_statements(self, statement: dict):
@@ -193,9 +200,9 @@ class AstWalker:
                     # TODO: Generalize for all constants not just Int
                     #TODO: change to nodes
                     if statement['value']['ast_type'] == "Int":
-                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['value']))
+                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['value'], loc))
                     else:
-                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['attr']))
+                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['attr'], loc))
             except KeyError as e:
                 pprint(statement)
                 raise e

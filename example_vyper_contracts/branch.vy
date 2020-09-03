@@ -1,6 +1,6 @@
 _test: uint256
 
-@private
+@internal
 def branch():
     if self._test == 1:
         self._test += 1

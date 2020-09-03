@@ -27,9 +27,12 @@ class Detector:
         #  is used if there is a raw_call(..., delegate_call=True)
         raw_call = False
         vulnerable = False
+        func = None # the "problem node" 
+        raw_call_node = None # the node with the raw_call
         print('Starting DelegateCall Check')
         for node in self._parsed_ast.get_body():
             if type(node) is FunctionNode:
+                func = node
                 for statement in node.get_body():
                     if type(statement) is StatementNode:
                         val = statement.get_value()
@@ -44,15 +47,18 @@ class Detector:
                                                     ## Raw call is True
                                                     ## Check if an @constant is being used
                                                     raw_call = True
+                                                    raw_call_node = val
                 if raw_call:
-                    ## Checking if @constant is being used
-                    if 'constant' not in node.get_decorator_list():
+                    ## Checking if @view is being used
+                    if 'view' not in node.get_decorator_list():
                         vulnerable = True
+                        func.set_problem()
+                        raw_call_node.set_problem()
                 else:
                     vulnerable = False
 
         if vulnerable:
-            print('DELEGATE CALL VULNERABILITY DETECTED')
+            print('DELEGATE CALL VULNERABILITY DETECTED AT {}'.format(func.get_loc()))
         else:
             print('NO DELEGATE CALL VULNERABILITY DETECTED')
         print('DelegateCall Check Finished')

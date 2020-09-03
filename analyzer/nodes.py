@@ -154,6 +154,15 @@ class CallNode:
         self._problem = None
         self._loc = loc
 
+    def set_problem(self):
+        self._problem = True
+
+    def is_problem(self) -> bool:
+        return self._problem
+
+    def get_loc(self) -> tuple:
+        return self._loc
+
     def get_call(self): 
         return self._call
 
@@ -304,7 +313,30 @@ class SubscriptNode:
     def resolve_type(self):
         print('Resolving SubscriptNode')
         print('Done Subscript Node')
-        
+ 
+class ReturnNode:
+    def __init__(self, ast_type, identifier, value, loc):
+        self._ast_type = ast_type
+        self._identifier = identifier 
+        self._value = value
+        self._loc = loc 
+
+    def get_value(self):
+        return self._value
+
+    def get_identifier(self) -> str:
+        return self._identifier
+
+    def __str__(self):
+        return '<class \'ReturnNode\'; {}({}), Node:{}>'.format(self._ast_type, self._identifier, self._value)
+
+    def __repr__(self):
+        return '<class \'ReturnNode\'; {}({}), Node:{}>'.format(self._ast_type, self._identifier, self._value)
+
+    def resolve_type(self):
+        print('Resolving ReturnNode')
+        print('Done ReturnNode')
+
 class StatementNode:
     def __init__(self, ast_type, identifier, value, loc):
         self._ast_type = ast_type
@@ -374,6 +406,15 @@ class FunctionNode:
         self._symbol_table = {} # an empty dictionary for a symbol table
         self._problem = None
         self._loc = loc
+
+    def set_problem(self):
+        self._problem = True
+
+    def get_loc(self) -> tuple:
+        return self._loc
+
+    def is_problem(self) -> bool:
+        return self._problem
 
     def set_name(self, name: str):
         self._name = name

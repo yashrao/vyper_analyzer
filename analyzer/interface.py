@@ -3,6 +3,8 @@ import os
 from ast import AstWalker 
 from visualizer import Visualizer
 from detector import Detector
+from gui import AnalyzerGui
+from glob import glob
 
 class Interface:
     def __init__(self):
@@ -18,40 +20,63 @@ class Interface:
             ret = ret.split('.')[0]
         return ret
 
-    def get_files(self, files: list) -> str:
+    def get_files(self, path) -> list:
+        if os.path.isdir(path):
+            files = os.listdir(path)
+            ret = []
+            for file_ in files:
+                ret.append(path + '/' + file_)
+            return ret 
+        return [path]
+
+    def get_files_recursive(self, path) -> list:
         #TODO: this doesn't work at the moment, but make it recursive so it gets all the folders
-        ret = []
-        for file in files:
-            if os.path.isdir(file):
-                #get list of files in the folder
-                tmp += os.listdir(file)
-            else:
-                ret.append(file)
-        return ret 
+        if os.path.isdir(path):
+            files = os.listdir(path)
+            ret = []
+            for file in files:
+                if os.path.isdir(path):
+                    #get list of files in the folder
+                    tmp += os.listdir(path)
+                else:
+                    ret.append(path)
+            return ret 
+        return path
 
 
     def cli(self):
         parser = argparse.ArgumentParser(description='Vyper Static Analysis Tool')
         parser.add_argument('--format', type=str, nargs='?',
                            help='format options: cfg, ast')
-        parser.add_argument('filename', metavar='file-name', type=str, nargs='+',
+        parser.add_argument('filename', metavar='file-name', type=str, nargs='?',
                            help='Name of the .vy file')
 
         args = vars(parser.parse_args())
         print(args)
         files = args['filename']
         visualize = args['format']
+        analyzer_gui = None
+        if files is None and visualize is None:
+            analyzer_gui = AnalyzerGui()
+            analyzer_gui.run()
+            user_info = analyzer_gui.get_user_info()
+            files = user_info['filename']
+            if user_info['filename'] is None:
+                print('Error: Must specify a filename')
+                exit(1)
+
         if visualize is not None:
             if 'cfg' == visualize:
                 ## Visualize CFG
                 print('Visualize CFG Option enabled')
-            elif 'ast' == visualize :
+            if 'ast' == visualize :
                 print('Visualize AST Option enabled')
-            else: 
-                print('ERROR: Invalid option for format')
+            if visualize != 'cfg' and visualize != 'ast':
+                print('Error: Invalid option for format')
                 parser.print_help()
                 exit(1)
 
+        files = self.get_files(files)
         for file in files:
             # Setup
             ast = AstWalker(file)
@@ -69,10 +94,9 @@ class Interface:
             else:
                 #print(parsed_ast)
                 detector = Detector(parsed_ast)
-                #detector.public_var_warning()
+                detector.public_var_warning()
                 #detector.type_check()
-                #detector.delegate_call_check()
+                detector.delegate_call_check()
                 #print(filename)
-                #visualizer.visualize_ast(parsed_ast, filename)
 
 

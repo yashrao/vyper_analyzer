@@ -8,7 +8,7 @@ def _swapOneSplit(testADDR: address,
                   minReturn: uint256,               \
                   trade_dist: uint256[4],           \
                   disableFlags: uint256):
-    funcSig: bytes[4] = method_id("swap(address,address,uint256,uint256,uint256[],uint256)", bytes[4])
+    funcSig: bytes[4] = method_id("swap(address,address,uint256,uint256,uint256[],uint256)", output_type=Bytes[4])
     data: bytes[352] = concat(convert(fromToken, bytes32),            \
                               convert(toToken, bytes32),              \
                               convert(amount, bytes32),               \
@@ -27,6 +27,6 @@ def _swapOneSplit(testADDR: address,
         full_data,
         outsize=0,
         gas=msg.gas,
-        delegate_call=True
+        delegate_call=True,
     )
     self._test = -2
