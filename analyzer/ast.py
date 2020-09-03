@@ -2,9 +2,25 @@ import os
 import subprocess
 import json
 from visualizer import Visualizer
-from nodes import *
 
-from pprint import pprint #DEBUG
+from nodes import ContractNode
+from nodes import AssignmentNode
+from nodes import AssertNode
+from nodes import BinaryOperatorNode
+from nodes import FunctionNode
+from nodes import AnnAssignmentNode
+from nodes import CallNode
+from nodes import StatementNode  # Get rid of
+from nodes import VariableNode
+from nodes import SubscriptNode
+from nodes import ConstantNode
+from nodes import KeywordNode
+from nodes import IfStatementNode
+
+from nodes import ArrayType
+from nodes import PublicType
+
+from pprint import pprint  # DEBUG
 
 AST_TYPES = {
     'AnnAssign': ':',
@@ -44,7 +60,7 @@ COMPARITORS = {
 
 class AstWalker:
     def __init__(self, filename: str):
-        self._contract_name = '' 
+        self._contract_name = ''
         self._ast = self.get_ast(filename)
         self._filename = filename
 
@@ -123,8 +139,7 @@ class AstWalker:
             #var_type = statement['annotation'] # TODO: turn into a node
             var_type = self.get_right(statement['annotation'])
             return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']), loc)
-        
-        
+
     def get_call_args(self, args: list, keywords=None) -> list:
         ret = []
         for arg in args:
@@ -135,11 +150,11 @@ class AstWalker:
         return ret
 
     def get_annotation(self, annotation: dict):
-       return '' 
+        return ''
 
     def set_state_variable(self, ast_node: dict, node):
-        ## node is either SuscriptNode or VariableNode
-        ## ast_node is node from vyper ast dict 
+        # node is either SuscriptNode or VariableNode
+        # ast_node is node from vyper ast dict 
         if 'value' in list(ast_node.keys()):
             if 'id' in list(ast_node['value'].keys()):
                 if ast_node['value']['id'] == 'self':
@@ -196,9 +211,18 @@ class AstWalker:
                             COMPARITORS[statement['test']['op']['ast_type']],
                             loc)
                         statement_objs.append(node)
+                elif ast_type == 'If':
+                    print('this should be an if statement')
+                    test = statement['test']
+                    if test['op']['ast_type'] == 'Eq':
+                        right = self.get_right(test['right'])
+                        left = self.get_right(test['left'])
+                        body = self.parse_body(statement['body'])
+                        node = IfStatementNode(left, right, test, body, loc)
+                        statement_objs.append(node)
                 elif ast_type == 'Return':
                     # TODO: Generalize for all constants not just Int
-                    #TODO: change to nodes
+                    # TODO: change to nodes
                     if statement['value']['ast_type'] == "Int":
                         statement_objs.append(StatementNode(ast_type, 'return', statement['value']['value'], loc))
                     else:
@@ -329,15 +353,15 @@ class AstWalker:
     
     
 
-#TODO: remove
+# TODO: remove
 if __name__ == '__main__':
-    #ast = AstWalker('example_vyper_contracts/open_auction.vy')
+    # ast = AstWalker('example_vyper_contracts/open_auction.vy')
     ast = AstWalker('example_vyper_contracts/vulnerable.vy')
-    #ast = AstWalker('example_vyper_contracts/storage.vy')
+    # ast = AstWalker('example_vyper_contracts/storage.vy')
     nodes = []
     ast.walk(ast._ast, nodes)
-    #parsed_ast = visualizer.parse_ast(ast._ast)
-    #visualizer.visualize_cfg(parsed_ast)
+    # parsed_ast = visualizer.parse_ast(ast._ast)
+    # visualizer.visualize_cfg(parsed_ast)
     parsed_ast = ast.parse_ast(ast._ast)
     visualizer = Visualizer(ast.get_contract_name())
     visualizer.visualize_ast(parsed_ast)

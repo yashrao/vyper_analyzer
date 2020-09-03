@@ -50,6 +50,8 @@ class Interface:
                            help='format options: cfg, ast')
         parser.add_argument('filename', metavar='file-name', type=str, nargs='?',
                            help='Name of the .vy file')
+        parser.add_argument('--options', type=str, nargs='+',
+                           help='format options: cfg, ast')
 
         args = vars(parser.parse_args())
         print(args)
@@ -97,6 +99,3 @@ class Interface:
                 detector.public_var_warning()
                 #detector.type_check()
                 detector.delegate_call_check()
-                #print(filename)
-
-

@@ -6,7 +6,19 @@ import os
 from graphviz import Digraph
 #from pprint import pprint
 
-from nodes import *
+from nodes import ContractNode
+from nodes import AssignmentNode
+from nodes import AssertNode
+from nodes import BinaryOperatorNode
+from nodes import FunctionNode
+from nodes import AnnAssignmentNode
+from nodes import CallNode
+from nodes import StatementNode  # Get rid of
+from nodes import VariableNode
+from nodes import SubscriptNode
+from nodes import ConstantNode
+from nodes import KeywordNode
+from nodes import IfStatementNode
 
 AST_TYPES = {
     'AnnAssign': ':',
@@ -36,6 +48,7 @@ OPERATORS = {
 }
 
 COMPARITORS = {
+    'Eq': '==',
     'Lt': '\<',
     'LtE': '\<=',
     'Gt': '\>',
@@ -77,6 +90,7 @@ class Visualizer:
         ret += ')'
         return ret
 
+    # For AST
     def build_right(self, node_label, sg, right, prev, count):
         # If prev = None then it is the start of the tree
         if type(right) is BinaryOperatorNode:
@@ -94,7 +108,7 @@ class Visualizer:
             count += 1
         elif type(right) is VariableNode:
             node_label_statement = node_label + '_' + right.get_identifier() + str(count) 
-            self.add_var_type(right, right.get_identifier())
+            #self.add_var_type(right, right.get_identifier())
             sg.node(node_label_statement, label=right.get_identifier())
             sg.edge(prev, node_label_statement)
             count += 1
@@ -115,14 +129,86 @@ class Visualizer:
                 OPERATORS[node.get_op()] +                  \
                 self.build_subscript_str(node.get_right())
         
-        return self.add_var_type(node, subscript_str) + ']'
+        return subscript_str + ']'
 
     def add_var_type(self, node, identifier) -> str:
+        # TODO: REMOVE
         ret = identifier
-        if type(node) is VariableNode or type(node) is SubscriptNode:
-            if node.is_state_variable():
-                ret = 'StateVar<' + ret[5:] + '>'
         return ret
+
+    def visualize_ast_body(self, body, sg, node_label, count, prev=False):
+        first = True
+        root = None
+        for statement in body:
+            #this part needs to call some kind of recursive function 
+            print(statement)
+            print(node_label)
+            if type(statement) is AssignmentNode:
+                left = statement.get_left()
+                # TODO: have to add in state var decorator
+                if type(left) is SubscriptNode:
+                    sg.node(node_label + '=' + '_' + str(count), label='=')
+                    if first:
+                        root = node_label + '=' + '_' + str(count)
+                        first = False
+                    tmp = node_label + '=' + '_' + str(count)
+                    count += 1
+                    identifier = left.get_left().get_identifier() +                \
+                        self.build_subscript_str(left.get_subscript()) 
+                    node_label_statement = node_label + '_' + identifier + str(count) # lvalue
+                    identifier = self.add_var_type(left.get_left(), identifier)
+                    sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
+                    count += 1
+                    sg.edge(tmp, node_label_statement)
+                    self.build_right(node_label, sg, statement.get_right(), tmp, count)
+                elif type(left) is VariableNode:
+                    sg.node(node_label +'=' + '_' + str(count), label='=')
+                    if first:
+                        root = node_label + '=' + '_' + str(count)
+                        first = False
+                    tmp = node_label + '=' + '_' + str(count)
+                    count += 1
+                    identifier = left.get_identifier()
+                    identifier = self.add_var_type(left, identifier)
+                    node_label_statement = node_label + '_' + identifier + str(count) # lvalue
+                    sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
+                    count += 1
+                    sg.edge(tmp, node_label_statement)
+                    self.build_right(node_label, sg, statement.get_right(), tmp, count)
+            elif type(statement) is CallNode:
+                identifier = statement.get_call()
+                call_node_label = node_label + '_' + identifier + str(count) # lvalue
+                if first:
+                    root = call_node_label
+                    first = False
+                node_label_statement = call_node_label
+                sg.node(call_node_label, label='FunctionCall<' + identifier + '>')
+                count += 1
+                param_list = statement.get_param_list()
+                for param in param_list:
+                    self.build_right(node_label, sg, param, call_node_label, count)
+            elif type(statement) is IfStatementNode:
+                identifier = 'If'
+                if_node_label = node_label + '_' + identifier + str(count) # lvalue
+                if first:
+                    root = if_node_label
+                    first = False
+                node_label_statement = if_node_label 
+                sg.node(if_node_label, label='If')
+                count += 1
+                if_test_node_label = node_label + '_' + identifier + str(count) + '_test' # lvalue
+                sg.node(if_test_node_label, COMPARITORS[statement.get_test()['op']['ast_type']])
+                count += 1
+                sg.edge(if_node_label, if_test_node_label, label='Test')
+                self.build_right(if_test_node_label, sg, statement.get_left(), if_test_node_label, count)
+                self.build_right(if_test_node_label, sg, statement.get_right(), if_test_node_label, count)
+                join = self.visualize_ast_body(statement.get_body(), sg, node_label, count, True)
+                sg.edge(if_node_label, join, label='Then')
+                #def visualize_ast_body(self, body, sg, node_label, count):
+                #def build_right(self, node_label, sg, right, prev, count):
+
+        if prev:
+            return root
 
     def visualize_ast(self):
         """ Used to visualize the AST into graphviz format
@@ -142,45 +228,7 @@ class Visualizer:
 
                 body = node.get_body()
                 count = 0
-                for statement in body:
-                    #this part needs to call some kind of recursive function 
-                    print(statement)
-                    print(node_label)
-                    if type(statement) is AssignmentNode:
-                        left = statement.get_left()
-                        # TODO: have to add in state var decorator
-                        if type(left) is SubscriptNode:
-                            sg.node(node_label +'=' + '_' + str(count), label='=')
-                            tmp = node_label + '=' + '_' + str(count)
-                            count += 1
-                            identifier = left.get_left().get_identifier() +                \
-                                self.build_subscript_str(left.get_subscript()) 
-                            node_label_statement = node_label + '_' + identifier + str(count) # lvalue
-                            identifier = self.add_var_type(left.get_left(), identifier)
-                            sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
-                            count += 1
-                            sg.edge(tmp, node_label_statement)
-                            self.build_right(node_label, sg, statement.get_right(), tmp, count)
-                        elif type(left) is VariableNode:
-                            sg.node(node_label +'=' + '_' + str(count), label='=')
-                            tmp = node_label + '=' + '_' + str(count)
-                            count += 1
-                            identifier = left.get_identifier()
-                            identifier = self.add_var_type(left, identifier)
-                            node_label_statement = node_label + '_' + identifier + str(count) # lvalue
-                            sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
-                            count += 1
-                            sg.edge(tmp, node_label_statement)
-                            self.build_right(node_label, sg, statement.get_right(), tmp, count)
-                    elif type(statement) is CallNode:
-                        identifier = statement.get_call()
-                        call_node_label = node_label + '_' + identifier + str(count) # lvalue
-                        sg.node(call_node_label, label='FunctionCall<' + identifier + '>')
-                        count += 1
-                        param_list = statement.get_param_list()
-                        for param in param_list:
-                            self.build_right(node_label, sg, param, call_node_label, count)
-                
+                self.visualize_ast_body(body, sg, node_label, count)
         self._graph.render(output_folder + '/' + self._filename)
 
     def build_right_statement_cfg(self, right) -> str:
