@@ -1,194 +1,351 @@
 {
     "contract_name": "example_vyper_contracts/branch.vy",
     "ast": {
-        "doc_string": null,
+        "ast_type": "Module",
         "body": [
             {
-                "value": null,
-                "ast_type": "AnnAssign",
-                "col_offset": 0,
-                "src": "0:14:0",
                 "node_id": 1,
-                "lineno": 1,
-                "end_col_offset": 14,
-                "end_lineno": 1,
-                "annotation": {
-                    "ast_type": "Name",
-                    "col_offset": 7,
-                    "src": "7:7:0",
-                    "node_id": 4,
-                    "lineno": 1,
-                    "end_col_offset": 14,
-                    "end_lineno": 1,
-                    "id": "uint256"
-                },
-                "target": {
-                    "ast_type": "Name",
-                    "col_offset": 0,
-                    "src": "0:5:0",
-                    "node_id": 2,
-                    "lineno": 1,
-                    "end_col_offset": 5,
-                    "end_lineno": 1,
-                    "id": "_test"
-                },
-                "simple": 1
-            },
-            {
-                "doc_string": null,
+                "ast_type": "FunctionDef",
+                "returns": null,
                 "body": [
                     {
+                        "simple": 1,
+                        "value": {
+                            "value": 0,
+                            "ast_type": "Int",
+                            "end_col_offset": 21,
+                            "src": "44:1:0",
+                            "col_offset": 20,
+                            "lineno": 3,
+                            "end_lineno": 3,
+                            "node_id": 8
+                        },
+                        "ast_type": "AnnAssign",
+                        "end_col_offset": 21,
+                        "annotation": {
+                            "ast_type": "Name",
+                            "id": "uint256",
+                            "end_col_offset": 17,
+                            "src": "34:7:0",
+                            "col_offset": 10,
+                            "lineno": 3,
+                            "end_lineno": 3,
+                            "node_id": 6
+                        },
+                        "src": "28:17:0",
+                        "target": {
+                            "ast_type": "Name",
+                            "id": "test",
+                            "end_col_offset": 8,
+                            "src": "28:4:0",
+                            "col_offset": 4,
+                            "lineno": 3,
+                            "end_lineno": 3,
+                            "node_id": 4
+                        },
+                        "col_offset": 4,
+                        "lineno": 3,
+                        "end_lineno": 3,
+                        "node_id": 3
+                    },
+                    {
+                        "simple": 1,
+                        "value": {
+                            "value": 1,
+                            "ast_type": "Int",
+                            "end_col_offset": 23,
+                            "src": "68:1:0",
+                            "col_offset": 22,
+                            "lineno": 4,
+                            "end_lineno": 4,
+                            "node_id": 14
+                        },
+                        "ast_type": "AnnAssign",
+                        "end_col_offset": 23,
+                        "annotation": {
+                            "ast_type": "Name",
+                            "id": "uint256",
+                            "end_col_offset": 19,
+                            "src": "58:7:0",
+                            "col_offset": 12,
+                            "lineno": 4,
+                            "end_lineno": 4,
+                            "node_id": 12
+                        },
+                        "src": "50:19:0",
+                        "target": {
+                            "ast_type": "Name",
+                            "id": "test_2",
+                            "end_col_offset": 10,
+                            "src": "50:6:0",
+                            "col_offset": 4,
+                            "lineno": 4,
+                            "end_lineno": 4,
+                            "node_id": 10
+                        },
+                        "col_offset": 4,
+                        "lineno": 4,
+                        "end_lineno": 4,
+                        "node_id": 9
+                    },
+                    {
+                        "ast_type": "If",
+                        "test": {
+                            "right": {
+                                "value": 1,
+                                "ast_type": "Int",
+                                "end_col_offset": 16,
+                                "src": "85:1:0",
+                                "col_offset": 15,
+                                "lineno": 5,
+                                "end_lineno": 5,
+                                "node_id": 20
+                            },
+                            "ast_type": "Compare",
+                            "op": {
+                                "ast_type": "Eq",
+                                "end_col_offset": 16,
+                                "src": "77:9:0",
+                                "col_offset": 7,
+                                "lineno": 5,
+                                "end_lineno": 5,
+                                "node_id": 30
+                            },
+                            "left": {
+                                "ast_type": "Name",
+                                "id": "test",
+                                "end_col_offset": 11,
+                                "src": "77:4:0",
+                                "col_offset": 7,
+                                "lineno": 5,
+                                "end_lineno": 5,
+                                "node_id": 17
+                            },
+                            "end_col_offset": 16,
+                            "src": "77:9:0",
+                            "col_offset": 7,
+                            "lineno": 5,
+                            "end_lineno": 5,
+                            "node_id": 16
+                        },
                         "body": [
                             {
                                 "value": {
                                     "value": 1,
                                     "ast_type": "Int",
-                                    "col_offset": 22,
-                                    "node_id": 22,
+                                    "end_col_offset": 17,
+                                    "src": "104:1:0",
+                                    "col_offset": 16,
                                     "lineno": 6,
-                                    "end_col_offset": 23,
                                     "end_lineno": 6,
-                                    "src": "84:1:0"
+                                    "node_id": 25
                                 },
                                 "ast_type": "AugAssign",
-                                "col_offset": 8,
                                 "op": {
                                     "ast_type": "Add",
+                                    "end_col_offset": 17,
+                                    "src": "96:9:0",
                                     "col_offset": 8,
-                                    "node_id": 21,
                                     "lineno": 6,
-                                    "end_col_offset": 23,
                                     "end_lineno": 6,
-                                    "src": "70:15:0"
+                                    "node_id": 40
                                 },
-                                "node_id": 16,
-                                "lineno": 6,
-                                "end_col_offset": 23,
-                                "end_lineno": 6,
-                                "src": "70:15:0",
+                                "end_col_offset": 17,
+                                "src": "96:9:0",
                                 "target": {
-                                    "value": {
-                                        "ast_type": "Name",
-                                        "col_offset": 8,
-                                        "src": "70:4:0",
-                                        "node_id": 18,
-                                        "lineno": 6,
-                                        "end_col_offset": 12,
-                                        "end_lineno": 6,
-                                        "id": "self"
-                                    },
-                                    "ast_type": "Attribute",
+                                    "ast_type": "Name",
+                                    "id": "test",
+                                    "end_col_offset": 12,
+                                    "src": "96:4:0",
                                     "col_offset": 8,
-                                    "node_id": 17,
                                     "lineno": 6,
-                                    "end_col_offset": 18,
                                     "end_lineno": 6,
-                                    "src": "70:10:0",
-                                    "attr": "_test"
-                                }
+                                    "node_id": 22
+                                },
+                                "col_offset": 8,
+                                "lineno": 6,
+                                "end_lineno": 6,
+                                "node_id": 21
                             }
                         ],
-                        "ast_type": "If",
+                        "end_col_offset": 19,
+                        "src": "74:102:0",
                         "col_offset": 4,
-                        "test": {
-                            "ast_type": "Compare",
-                            "col_offset": 7,
-                            "op": {
-                                "ast_type": "Eq",
-                                "col_offset": 7,
-                                "node_id": 14,
-                                "lineno": 5,
-                                "end_col_offset": 22,
-                                "end_lineno": 5,
-                                "src": "45:15:0"
-                            },
-                            "node_id": 9,
-                            "lineno": 5,
-                            "right": {
-                                "value": 1,
-                                "ast_type": "Int",
-                                "col_offset": 21,
-                                "node_id": 15,
-                                "lineno": 5,
-                                "end_col_offset": 22,
-                                "end_lineno": 5,
-                                "src": "59:1:0"
-                            },
-                            "end_col_offset": 22,
-                            "end_lineno": 5,
-                            "src": "45:15:0",
-                            "left": {
-                                "value": {
-                                    "ast_type": "Name",
-                                    "col_offset": 7,
-                                    "src": "45:4:0",
-                                    "node_id": 11,
-                                    "lineno": 5,
-                                    "end_col_offset": 11,
-                                    "end_lineno": 5,
-                                    "id": "self"
-                                },
-                                "ast_type": "Attribute",
-                                "col_offset": 7,
-                                "node_id": 10,
-                                "lineno": 5,
-                                "end_col_offset": 17,
-                                "end_lineno": 5,
-                                "src": "45:10:0",
-                                "attr": "_test"
-                            }
-                        },
-                        "node_id": 8,
-                        "orelse": [],
                         "lineno": 5,
-                        "end_col_offset": 23,
-                        "end_lineno": 6,
-                        "src": "42:43:0"
+                        "orelse": [
+                            {
+                                "ast_type": "If",
+                                "test": {
+                                    "right": {
+                                        "value": 2,
+                                        "ast_type": "Int",
+                                        "end_col_offset": 18,
+                                        "src": "123:1:0",
+                                        "col_offset": 17,
+                                        "lineno": 7,
+                                        "end_lineno": 7,
+                                        "node_id": 31
+                                    },
+                                    "ast_type": "Compare",
+                                    "op": {
+                                        "ast_type": "Eq",
+                                        "end_col_offset": 18,
+                                        "src": "115:9:0",
+                                        "col_offset": 9,
+                                        "lineno": 7,
+                                        "end_lineno": 7,
+                                        "node_id": 30
+                                    },
+                                    "left": {
+                                        "ast_type": "Name",
+                                        "id": "test",
+                                        "end_col_offset": 13,
+                                        "src": "115:4:0",
+                                        "col_offset": 9,
+                                        "lineno": 7,
+                                        "end_lineno": 7,
+                                        "node_id": 28
+                                    },
+                                    "end_col_offset": 18,
+                                    "src": "115:9:0",
+                                    "col_offset": 9,
+                                    "lineno": 7,
+                                    "end_lineno": 7,
+                                    "node_id": 27
+                                },
+                                "body": [
+                                    {
+                                        "value": {
+                                            "value": 1000,
+                                            "ast_type": "Int",
+                                            "end_col_offset": 20,
+                                            "src": "142:4:0",
+                                            "col_offset": 16,
+                                            "lineno": 8,
+                                            "end_lineno": 8,
+                                            "node_id": 36
+                                        },
+                                        "ast_type": "AugAssign",
+                                        "op": {
+                                            "ast_type": "Add",
+                                            "end_col_offset": 20,
+                                            "src": "134:12:0",
+                                            "col_offset": 8,
+                                            "lineno": 8,
+                                            "end_lineno": 8,
+                                            "node_id": 40
+                                        },
+                                        "end_col_offset": 20,
+                                        "src": "134:12:0",
+                                        "target": {
+                                            "ast_type": "Name",
+                                            "id": "test",
+                                            "end_col_offset": 12,
+                                            "src": "134:4:0",
+                                            "col_offset": 8,
+                                            "lineno": 8,
+                                            "end_lineno": 8,
+                                            "node_id": 33
+                                        },
+                                        "col_offset": 8,
+                                        "lineno": 8,
+                                        "end_lineno": 8,
+                                        "node_id": 32
+                                    }
+                                ],
+                                "end_col_offset": 19,
+                                "src": "110:66:0",
+                                "col_offset": 4,
+                                "lineno": 7,
+                                "orelse": [
+                                    {
+                                        "value": {
+                                            "value": 1,
+                                            "ast_type": "Int",
+                                            "end_col_offset": 19,
+                                            "src": "175:1:0",
+                                            "col_offset": 18,
+                                            "lineno": 10,
+                                            "end_lineno": 10,
+                                            "node_id": 41
+                                        },
+                                        "ast_type": "AugAssign",
+                                        "op": {
+                                            "ast_type": "Add",
+                                            "end_col_offset": 19,
+                                            "src": "165:11:0",
+                                            "col_offset": 8,
+                                            "lineno": 10,
+                                            "end_lineno": 10,
+                                            "node_id": 40
+                                        },
+                                        "end_col_offset": 19,
+                                        "src": "165:11:0",
+                                        "target": {
+                                            "ast_type": "Name",
+                                            "id": "test_2",
+                                            "end_col_offset": 14,
+                                            "src": "165:6:0",
+                                            "col_offset": 8,
+                                            "lineno": 10,
+                                            "end_lineno": 10,
+                                            "node_id": 38
+                                        },
+                                        "col_offset": 8,
+                                        "lineno": 10,
+                                        "end_lineno": 10,
+                                        "node_id": 37
+                                    }
+                                ],
+                                "end_lineno": 10,
+                                "node_id": 26
+                            }
+                        ],
+                        "end_lineno": 10,
+                        "node_id": 15
                     }
                 ],
-                "ast_type": "FunctionDef",
-                "col_offset": 0,
                 "name": "branch",
-                "node_id": 6,
-                "lineno": 3,
-                "pos": null,
-                "args": {
-                    "ast_type": "arguments",
-                    "col_offset": 0,
-                    "default": null,
-                    "node_id": 7,
-                    "lineno": 4,
-                    "args": [],
-                    "end_col_offset": 3,
-                    "end_lineno": 4,
-                    "src": "24:3:0",
-                    "defaults": []
-                },
-                "end_col_offset": 23,
-                "end_lineno": 6,
-                "src": "16:69:0",
-                "returns": null,
+                "doc_string": null,
+                "end_col_offset": 19,
+                "src": "10:166:0",
+                "col_offset": 0,
+                "lineno": 2,
                 "decorator_list": [
                     {
                         "ast_type": "Name",
+                        "id": "internal",
+                        "end_col_offset": 9,
+                        "src": "1:8:0",
                         "col_offset": 1,
-                        "src": "17:6:0",
-                        "node_id": 23,
-                        "lineno": 3,
-                        "end_col_offset": 7,
-                        "end_lineno": 3,
-                        "id": "public"
+                        "lineno": 1,
+                        "end_lineno": 1,
+                        "node_id": 42
                     }
-                ]
+                ],
+                "pos": null,
+                "end_lineno": 10,
+                "args": {
+                    "node_id": 2,
+                    "ast_type": "arguments",
+                    "defaults": [],
+                    "args": [],
+                    "end_col_offset": 1,
+                    "src": "0:1:0",
+                    "col_offset": 0,
+                    "lineno": 1,
+                    "end_lineno": 1,
+                    "default": null
+                }
             }
         ],
-        "ast_type": "Module",
+        "name": "example_vyper_contracts/branch.vy",
+        "doc_string": null,
+        "end_col_offset": 19,
+        "src": "0:176:0",
         "col_offset": 0,
-        "name": null,
-        "node_id": 0,
         "lineno": 1,
-        "end_col_offset": 23,
-        "end_lineno": 6,
-        "src": "0:85:0"
+        "end_lineno": 10,
+        "node_id": 0
     }
 }

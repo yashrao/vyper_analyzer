@@ -1,9 +1,13 @@
-_test: uint256
-
 @internal
 def branch():
-    if self._test == 1:
-        self._test += 1
+    test: uint256 = 0
+    test_2: uint256 = 1
+    if test == 1:
+        test += 1
+    elif test == 2:
+        test += 1000
+    else:
+        test_2 += 1
 
-    for i in range(10):
-        self._test += i
+#for i in range(10):
+#       test += i

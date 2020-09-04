@@ -351,11 +351,12 @@ class ReturnNode:
 
 
 class IfStatementNode:
-    def __init__(self, left, right, test, body, loc):
+    def __init__(self, left, right, test, body, orelse, loc):
         self._left = left
         self._right = right
         self._test = test
         self._body = body
+        self._orelse = orelse
         self._loc = loc
 
     def get_body(self):
@@ -370,11 +371,14 @@ class IfStatementNode:
     def get_test(self):
         return self._test
 
+    def get_orelse(self):
+        return self._orelse
+
     def __str__(self):
-        return '<class \'IfStatementNode\'; if({}op{}): {}>'.format(self._left, self._right, self._body)
+        return '<class \'IfStatementNode\'; if({}op{}): {} else:{}>'.format(self._left, self._right, self._body, self._orelse)
 
     def __repr__(self):
-        return '<class \'IfStatementNode\'; if({}op{})> {}'.format(self._left, self._right, self._body)
+        return '<class \'IfStatementNode\'; if({}op{})> {} else:{}>'.format(self._left, self._right, self._body, self._orelse)
 
 
 class StatementNode:

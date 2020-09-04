@@ -162,7 +162,7 @@ class Visualizer:
                     sg.edge(tmp, node_label_statement)
                     self.build_right(node_label, sg, statement.get_right(), tmp, count)
                 elif type(left) is VariableNode:
-                    sg.node(node_label +'=' + '_' + str(count), label='=')
+                    sg.node(node_label + '=' + '_' + str(count), label='=')
                     if first:
                         root = node_label + '=' + '_' + str(count)
                         first = False
@@ -189,21 +189,24 @@ class Visualizer:
                     self.build_right(node_label, sg, param, call_node_label, count)
             elif type(statement) is IfStatementNode:
                 identifier = 'If'
-                if_node_label = node_label + '_' + identifier + str(count) # lvalue
+                if_node_label = node_label + '_' + identifier + str(count)  # lvalue
                 if first:
                     root = if_node_label
                     first = False
-                node_label_statement = if_node_label 
+                node_label_statement = if_node_label
                 sg.node(if_node_label, label='If')
                 count += 1
                 if_test_node_label = node_label + '_' + identifier + str(count) + '_test' # lvalue
-                sg.node(if_test_node_label, COMPARITORS[statement.get_test()['op']['ast_type']])
+                sg.node(if_test_node_label, label=COMPARITORS[statement.get_test()['op']['ast_type']])
                 count += 1
                 sg.edge(if_node_label, if_test_node_label, label='Test')
                 self.build_right(if_test_node_label, sg, statement.get_left(), if_test_node_label, count)
                 self.build_right(if_test_node_label, sg, statement.get_right(), if_test_node_label, count)
-                join = self.visualize_ast_body(statement.get_body(), sg, node_label, count, True)
-                sg.edge(if_node_label, join, label='Then')
+                then = self.visualize_ast_body(statement.get_body(), sg, node_label, count, True)
+                sg.edge(if_node_label, then, label='Then')
+                #if_else_node_label = node_label + '_' + identifier + str(count) + '_else' # lvalue
+                orelse = self.visualize_ast_body(statement.get_orelse(), sg, node_label, count, True)
+                sg.edge(if_node_label, orelse, label='Else')
                 #def visualize_ast_body(self, body, sg, node_label, count):
                 #def build_right(self, node_label, sg, right, prev, count):
 

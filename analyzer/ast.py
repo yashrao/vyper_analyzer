@@ -218,7 +218,10 @@ class AstWalker:
                         right = self.get_right(test['right'])
                         left = self.get_right(test['left'])
                         body = self.parse_body(statement['body'])
-                        node = IfStatementNode(left, right, test, body, loc)
+                        orelse = self.parse_body(statement['orelse'])
+                        print('kqpweiqpwiepqwieqiwe')
+                        print(orelse)
+                        node = IfStatementNode(left, right, test, body, orelse, loc)
                         statement_objs.append(node)
                 elif ast_type == 'Return':
                     # TODO: Generalize for all constants not just Int
