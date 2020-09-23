@@ -380,6 +380,27 @@ class IfStatementNode:
     def __repr__(self):
         return '<class \'IfStatementNode\'; if({}op{})> {} else:{}>'.format(self._left, self._right, self._body, self._orelse)
 
+class ForNode:
+    def __init__(self, left, iterable, body, loc):
+        self._left = left
+        self._iter = iterable
+        self._body = body
+        self._loc = loc
+
+    def get_body(self):
+        return self._body
+
+    def get_left(self):
+        return self._left
+
+    def get_iter(self):
+        return self._iter
+
+    def __str__(self):
+        return '<class \'ForNode\'; for {} in {}: {}>'.format(self._left, self._iter, self._body)
+
+    def __repr__(self):
+        return '<class \'ForNode\'; for {} in {}: {}>'.format(self._left, self._iter, self._body)
 
 class StatementNode:
     def __init__(self, ast_type, identifier, value, loc):
@@ -388,7 +409,7 @@ class StatementNode:
         self._value = value # Node containing everything 
         self._problem = None
         self._loc = loc
-    
+
     def get_value(self):
         return self._value
 

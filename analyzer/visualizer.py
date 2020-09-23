@@ -19,6 +19,7 @@ from nodes import SubscriptNode
 from nodes import ConstantNode
 from nodes import KeywordNode
 from nodes import IfStatementNode
+from nodes import ForNode
 
 AST_TYPES = {
     'AnnAssign': ':',
@@ -94,7 +95,7 @@ class Visualizer:
     def build_right(self, node_label, sg, right, prev, count):
         # If prev = None then it is the start of the tree
         if type(right) is BinaryOperatorNode:
-            node_label_statement = node_label + '_' + OPERATORS[right.get_op()] + str(count) 
+            node_label_statement = node_label + '_' + OPERATORS[right.get_op()] + str(count)
             sg.node(node_label_statement, label=OPERATORS[right.get_op()])
             count += 1
             sg.edge(prev, node_label_statement)
@@ -102,17 +103,17 @@ class Visualizer:
             self.build_right(node_label, sg, right.get_right(), node_label_statement, count)
         elif type(right) is ConstantNode:
             ## just return the string
-            node_label_statement = node_label + '_' + str(right.get_value()) + str(count) 
+            node_label_statement = node_label + '_' + str(right.get_value()) + str(count)
             sg.node(node_label_statement, label=str(right.get_value()))
             sg.edge(prev, node_label_statement)
             count += 1
         elif type(right) is VariableNode:
-            node_label_statement = node_label + '_' + right.get_identifier() + str(count) 
+            node_label_statement = node_label + '_' + right.get_identifier() + str(count)
             #self.add_var_type(right, right.get_identifier())
             sg.node(node_label_statement, label=right.get_identifier())
             sg.edge(prev, node_label_statement)
             count += 1
-        
+
     def build_subscript_str(self, node) -> str:
         # Possible Nodes: Variable, Constant, Subscript, BinOp
         subscript_str = '['
@@ -128,7 +129,6 @@ class Visualizer:
             subscript_str += self.build_subscript_str(node.get_left()) +   \
                 OPERATORS[node.get_op()] +                  \
                 self.build_subscript_str(node.get_right())
-        
         return subscript_str + ']'
 
     def add_var_type(self, node, identifier) -> str:
@@ -188,6 +188,7 @@ class Visualizer:
                 for param in param_list:
                     self.build_right(node_label, sg, param, call_node_label, count)
             elif type(statement) is IfStatementNode:
+                # TODO: reverse the order
                 identifier = 'If'
                 if_node_label = node_label + '_' + identifier + str(count)  # lvalue
                 if first:
@@ -205,11 +206,26 @@ class Visualizer:
                 then = self.visualize_ast_body(statement.get_body(), sg, node_label, count, True)
                 sg.edge(if_node_label, then, label='Then')
                 #if_else_node_label = node_label + '_' + identifier + str(count) + '_else' # lvalue
-                orelse = self.visualize_ast_body(statement.get_orelse(), sg, node_label, count, True)
-                sg.edge(if_node_label, orelse, label='Else')
+                # TODO: add a check for multiple if statements
+                #orelse = self.visualize_ast_body(statement.get_orelse(), sg, node_label, count, True)
+                #sg.edge(if_node_label, orelse, label='Else')
                 #def visualize_ast_body(self, body, sg, node_label, count):
                 #def build_right(self, node_label, sg, right, prev, count):
-
+            elif type(statement) is ForNode:
+                identifier = 'for'
+                for_node_label = node_label + '_' + identifier + str(count)  # lvalue
+                node_label_statement = for_node_label # is this being used? TODO:
+                sg.node(for_node_label, label='for')
+                count += 1
+                #iterable = self.visualize_ast_body(statement.get_iter(), sg, node_label, count, True)
+                # variable
+                self.build_right(for_node_label, sg, statement.get_left(), for_node_label, count)
+                # iterable part
+                iterable = self.visualize_ast_body([statement.get_iter()], sg, node_label, count, True)
+                sg.edge(for_node_label, iterable, label='Iterable')
+                # Body
+                body = self.visualize_ast_body(statement.get_body(), sg, node_label, count, True)
+                sg.edge(for_node_label, body, label='Body')
         if prev:
             return root
 

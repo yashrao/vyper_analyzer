@@ -16,6 +16,7 @@ from nodes import SubscriptNode
 from nodes import ConstantNode
 from nodes import KeywordNode
 from nodes import IfStatementNode
+from nodes import ForNode
 
 from nodes import ArrayType
 from nodes import PublicType
@@ -174,9 +175,9 @@ class AstWalker:
                     self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
                 elif ast_type == 'AugAssign':
-                    op = self.get_op(statement) 
+                    op = self.get_op(statement)
                     left = self.get_left(statement['target'])
-                    right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']), loc) 
+                    right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']), loc)
                     node = AssignmentNode(ast_type, left, right, loc)
                     self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
@@ -199,19 +200,20 @@ class AstWalker:
                     statement_objs.append(node)
                 elif ast_type == 'Assert':
                     if statement['test']['ast_type'] == 'Compare':
-                        node = AssertNode(self.get_left(statement['test']['left']), 
+                        node = AssertNode(self.get_left(statement['test']['left']),
                             self.get_right(statement['test']['right']),                    \
                             COMPARITORS[statement['test']['op']['ast_type']],              \
                             loc)
                         statement_objs.append(node)
                     elif statement['test']['ast_type'] == 'UnaryOp':
                         #TODO: add the COMPARITOR thing to the assert
-                        node = AssertNode(self.get_left(statement['test']['operand']), 
+                        node = AssertNode(self.get_left(statement['test']['operand']),
                             None,
                             COMPARITORS[statement['test']['op']['ast_type']],
                             loc)
                         statement_objs.append(node)
                 elif ast_type == 'If':
+                    # TODO: Fix this
                     print('this should be an if statement')
                     test = statement['test']
                     if test['op']['ast_type'] == 'Eq':
@@ -223,6 +225,15 @@ class AstWalker:
                         print(orelse)
                         node = IfStatementNode(left, right, test, body, orelse, loc)
                         statement_objs.append(node)
+                elif ast_type == 'For':
+                    left = self.get_left(statement['target'])
+                    # TODO: check what is considered iterable and apply for all cases
+                    iterable = CallNode(statement['iter']['func']['id'],                            \
+                            self.get_call_args(statement['iter']['args']),                                \
+                                    loc)
+                    body = self.parse_body(statement['body'])
+                    for_loop = ForNode(left, iterable, body, loc)
+                    statement_objs.append(for_loop)
                 elif ast_type == 'Return':
                     # TODO: Generalize for all constants not just Int
                     # TODO: change to nodes
@@ -234,46 +245,6 @@ class AstWalker:
                 pprint(statement)
                 raise e
         return statement_objs
-
-    def __parse_body_cfg(self, body: list) -> list:
-        statements = []
-        for statement in body:
-            ast_type = self.get_ast_type(statement)
-            print(ast_type) 
-            try:
-                if ast_type == 'Assign':
-                    statements.append('{} {} {}'.format(
-                            self.get_left(statement['target']), 
-                            AST_TYPES['Assign'],
-                            self.get_right(statement['value'])))
-                elif ast_type == 'AugAssign':
-                    op = self.get_op(statement) 
-                    statements.append('{} {} {}'.format(
-                            self.get_left(statement['target']), 
-                            AST_TYPES['AugAssign'][op],
-                            self.get_right(statement['value'])))
-                elif ast_type == 'AnnAssign':
-                    statements.append('{}:{} = {}'.format(self.get_left(statement['target']), \
-                        statement['annotation']['id'],                                        \
-                        self.get_right(statement['value'])))
-                elif ast_type == 'Expr':
-                    statements.append('{}({})'.format(statement['value']['func']['id'],                                        \
-                        self.get_func_args(statement['value']['args'])))
-                elif ast_type == 'Assert':
-                    if statement['test']['ast_type'] == 'Compare':
-                        statements.append('assert {} {} {}'.format(self.get_left(statement['test']['left']),
-                            COMPARITORS[statement['test']['op']['ast_type']],
-                            self.get_right(statement['test']['right'])))
-                    elif statement['test']['ast_type'] == 'UnaryOp':
-                        statements.append('assert {} {}'.format(COMPARITORS[statement['test']['op']['ast_type']],
-                            self.get_right(statement['test']['operand'])))
-                elif ast_type == 'Return':
-                    statements.append('return {}'.format(statement['value']['attr']))
-            except KeyError as e:
-                pprint(statement)
-                raise e
-        print(statements)
-        return statements
 
     def get_func_args(self, arg_list: list) -> str:
         ret = ''
@@ -332,7 +303,7 @@ class AstWalker:
             #return right['value']
             return ConstantNode(int(right['value']), loc)
         if ast_type == 'BinOp':
-            op = self.get_op(right) 
+            op = self.get_op(right)
             return BinaryOperatorNode(ast_type, op, self.get_right(right['left']), self.get_right(right['right']), loc)
         if ast_type == 'Subscript':
             left_var = self.get_left(right['value'])
@@ -340,7 +311,7 @@ class AstWalker:
             return SubscriptNode(left_var, ast_type, right, subscript, loc)
         if ast_type == 'Call':
             return PublicType(self.get_right(right['args'][0]))
-        
+
     def get_keyword(self, keyword: dict):
         loc = (keyword['col_offset'], keyword['end_col_offset'], keyword['lineno'])
         return KeywordNode(keyword['arg'], keyword['value']['ast_type'], self.get_right(keyword['value']), loc)
@@ -353,8 +324,6 @@ class AstWalker:
 
     def get_value(self, value: dict) -> str:
         pass
-    
-    
 
 # TODO: remove
 if __name__ == '__main__':
