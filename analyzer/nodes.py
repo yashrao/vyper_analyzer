@@ -120,8 +120,17 @@ class AnnAssignmentNode:
         self._problem = None
         self._loc = loc
 
-    def get_ast_type(self):
+    def get_var_type(self):
         return self._var_type
+
+    def get_ast_type(self):
+        return self._ast_type
+
+    def get_left(self):
+        return self._left
+
+    def get_right(self):
+        return self._right
 
     def __str__(self) -> str:
         return '<class \'AnnAssignmentNode\'(); {} {} {}>'.format(self._ast_type, self._left, self._right)

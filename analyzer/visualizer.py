@@ -70,9 +70,9 @@ class Visualizer:
                 labelloc='t')
         self._filename = filename
         self._parsed_ast = parsed_ast
-              
-    def get_func_label(self, node_name: str, 
-            decorator_list: list, 
+
+    def get_func_label(self, node_name: str,
+            decorator_list: list,
             args: list) -> str:
         for decorator in decorator_list:
             ret = '@{}\n'.format(decorator)
@@ -95,24 +95,25 @@ class Visualizer:
     def build_right(self, node_label, sg, right, prev, count):
         # If prev = None then it is the start of the tree
         if type(right) is BinaryOperatorNode:
+            count += 1
             node_label_statement = node_label + '_' + OPERATORS[right.get_op()] + str(count)
             sg.node(node_label_statement, label=OPERATORS[right.get_op()])
-            count += 1
             sg.edge(prev, node_label_statement)
             self.build_right(node_label, sg, right.get_left(), node_label_statement, count)
             self.build_right(node_label, sg, right.get_right(), node_label_statement, count)
         elif type(right) is ConstantNode:
             ## just return the string
+            count += 1
             node_label_statement = node_label + '_' + str(right.get_value()) + str(count)
             sg.node(node_label_statement, label=str(right.get_value()))
             sg.edge(prev, node_label_statement)
-            count += 1
         elif type(right) is VariableNode:
+            count += 1
             node_label_statement = node_label + '_' + right.get_identifier() + str(count)
             #self.add_var_type(right, right.get_identifier())
             sg.node(node_label_statement, label=right.get_identifier())
             sg.edge(prev, node_label_statement)
-            count += 1
+        print(count)
 
     def build_subscript_str(self, node) -> str:
         # Possible Nodes: Variable, Constant, Subscript, BinOp
@@ -203,14 +204,17 @@ class Visualizer:
                 sg.edge(if_node_label, if_test_node_label, label='Test')
                 self.build_right(if_test_node_label, sg, statement.get_left(), if_test_node_label, count)
                 self.build_right(if_test_node_label, sg, statement.get_right(), if_test_node_label, count)
+                print(statement.get_orelse())
+                print('')
+                print(statement.get_body())
                 then = self.visualize_ast_body(statement.get_body(), sg, node_label, count, True)
                 sg.edge(if_node_label, then, label='Then')
-                #if_else_node_label = node_label + '_' + identifier + str(count) + '_else' # lvalue
+                if_else_node_label = node_label + '_' + identifier + str(count) + '_else' # lvalue
                 # TODO: add a check for multiple if statements
-                #orelse = self.visualize_ast_body(statement.get_orelse(), sg, node_label, count, True)
-                #sg.edge(if_node_label, orelse, label='Else')
-                #def visualize_ast_body(self, body, sg, node_label, count):
-                #def build_right(self, node_label, sg, right, prev, count):
+                orelse = self.visualize_ast_body(statement.get_orelse(), sg, node_label, count, True)
+                sg.edge(if_node_label, orelse, label='Else')
+                # def visualize_ast_body(self, body, sg, node_label, count):
+                # def build_right(self, node_label, sg, right, prev, count):
             elif type(statement) is ForNode:
                 identifier = 'for'
                 for_node_label = node_label + '_' + identifier + str(count)  # lvalue
@@ -239,8 +243,8 @@ class Visualizer:
             if node is None or type(node) is not FunctionNode:
                 continue
             with self._graph.subgraph(name='cluster_' + node.get_name()) as sg:
-                node_label = self.get_func_label(node.get_name(), 
-                    node.get_decorator_list(), 
+                node_label = self.get_func_label(node.get_name(),
+                    node.get_decorator_list(),
                     node.get_arg_list())
                 sg.attr(label=node_label)
                 sg.attr(style='filled', color ='lightgrey')
@@ -259,16 +263,18 @@ class Visualizer:
                 return lval.get_identifier() + op + self.build_right_statement_cfg(right.get_right())
             elif type(lval) is SubscriptNode:
                 return lval.get_left().get_identifier() +                \
-                    self.build_subscript_str(lval.get_subscript()) 
+                    self.build_subscript_str(lval.get_subscript())
         #TODO: if right is a subscript 
         if type(right) is ConstantNode:
             return str(right.get_value())
         return right.get_identifier()
 
-    
     def visualize_cfg_new(self):
+        print('')
+        print('\n-- DEBUG: CFG')
         output_folder = self.create_output_folder_cfg()
         nodes = self._parsed_ast.get_body()
+        count = 0
         for node in nodes:
             if node is None or type(node) is not FunctionNode:
                 continue
@@ -281,7 +287,7 @@ class Visualizer:
                 body = node.get_body()
 
                 node_struct_str = '{'
-                
+
                 for i in range(len(body)):
                     statement = body[i]
                     node_struct_str += '{'
@@ -289,7 +295,7 @@ class Visualizer:
                         left = statement.get_left()
                         if type(left) is SubscriptNode:
                             identifier = left.get_left().get_identifier() +                \
-                                self.build_subscript_str(left.get_subscript()) 
+                                self.build_subscript_str(left.get_subscript())
                             right = self.build_right_statement_cfg(statement.get_right())
                             node_struct_str += identifier + ' = ' + right
                         elif type(left) is VariableNode:
@@ -315,34 +321,64 @@ class Visualizer:
                         print('lkek')
                         if statement.get_right() is not None:
                             node_struct_str += 'assert ' + self.build_right_statement_cfg(statement.get_left()) \
-                                    + ' ' + statement.get_comparitor() + ' '                                    \
-                                    + self.build_right_statement_cfg(statement.get_right())
+                                + ' ' + statement.get_comparitor() + ' '                                        \
+                                + self.build_right_statement_cfg(statement.get_right())
                         else:
                             node_struct_str += 'assert '                                                        \
-                                    + ' ' + statement.get_comparitor() + ' '                                    \
-                                    + self.build_right_statement_cfg(statement.get_left())
-                        
-                    #node_struct_str += body[i]
+                                + ' ' + statement.get_comparitor() + ' '                                        \
+                                + self.build_right_statement_cfg(statement.get_left())
+                    elif type(statement) is IfStatementNode:
+                        print('TODO: CFG IFSTATEMENTNODE')
+                        # Make a new box
+                        # Put if statement body in new box
+                        # Make new box for the rest of the code
+                        # can use count to keep track of main code boxes
+                        node_struct_str += '}}'
+                        #sg.edge(node_label, 'struct_' + node.get_name())
+
+                        sg.node_attr = {
+                            'shape': 'record',
+                            'style':'filled',
+                            'fillcolor':'lightgrey'
+                        }
+                        sg.node('struct_' + node.get_name() + str(count),
+                        r'{}'.format(node_struct_str))
+                        sg.edge(node_label, 'struct_' + node.get_name() + str(count))
+                        count += 1
+                        node_struct_str = '{'
+                        # Body of the ifstatement
+
+                    elif type(statement) is ForNode:
+                        print('TODO: CFG FORNODE')
+                    elif type(statement) is AnnAssignmentNode:
+                        node_struct_str += self.build_right_statement_cfg(statement.get_left())                 \
+                            + ': ' + statement.get_var_type() + ' = '                                           \
+                            + self.build_right_statement_cfg(statement.get_right())
+
+
                     if i != len(body) - 1:
                         node_struct_str += '}|'
                     else:
                         node_struct_str += '}'
-                sg.edge(node_label, 'struct_' + node.get_name())
 
                 node_struct_str += '}'
-
+                if count == 0:
+                    sg.edge(node_label, 'struct_' + node.get_name() + str(count))
+                else:
+                    sg.edge('struct_' + node.get_name() + str(count - 1),                          \
+                            'struct_' + node.get_name() + str(count))
                 sg.node_attr = {
-                    'shape': 'record', 
+                    'shape': 'record',
                     'style':'filled',
                     'fillcolor':'lightgrey'
                 }
-                sg.node('struct_' + node.get_name(), 
-                  r'{}'.format(node_struct_str)) 
+                sg.node('struct_' + node.get_name() + str(count),
+                  r'{}'.format(node_struct_str))
 
                 print(node_struct_str)
-                
+
         self._graph.render(output_folder + '/' + self._filename)
-        
+
     def create_output_folder_ast(self) -> str:
         OUTPUT_DIR = 'output'
         AST_DIR = 'ast'
@@ -351,7 +387,7 @@ class Visualizer:
         if not os.path.isdir(OUTPUT_DIR + '/' + AST_DIR):
             os.makedirs(OUTPUT_DIR + '/' + AST_DIR)
         return OUTPUT_DIR + '/' + AST_DIR
-        
+
     def create_output_folder_cfg(self) -> str:
         OUTPUT_DIR = 'output'
         CFG_DIR = 'cfg'
@@ -360,55 +396,6 @@ class Visualizer:
         if not os.path.isdir(OUTPUT_DIR + '/' + CFG_DIR):
             os.makedirs(OUTPUT_DIR + '/' + CFG_DIR)
         return OUTPUT_DIR + '/' + CFG_DIR
-
-    # List of statement nodes and function nodes
-    def visualize_cfg(self, nodes: list):
-        #TODO: change this so that it uses the new StatementNode instead
-        for node in nodes:
-            if node is None: # TODO: REMOVE THIS
-                continue
-            with self._graph.subgraph(name='cluster_' + node.get_name()) as sg:
-                node_label = self.get_func_label(node.get_name(), 
-                    node.get_decorator_list(), 
-                    node.get_arg_list()) 
-                sg.attr(label=node_label)
-                sg.node(node_label, 'ENTRY', shape='Mdiamond', fillcolor='white')
-
-                node_struct_str = '{'
-                print(node.get_body())
-                body = node.get_body()
-                for i in range(len(body)):
-                    node_struct_str += '{'
-                    node_struct_str += body[i]
-                    if i != len(body) - 1:
-                        node_struct_str += '}|'
-                    else:
-                        node_struct_str += '}'
-
-                node_struct_str += '}'
-                print(node_struct_str)
-
-                sg.node_attr = {
-                    'shape': 'record', 
-                    'style':'filled',
-                    'fillcolor':'lightgrey'
-                }
-                sg.node('struct_' + node.get_name(), 
-                  r'{}'.format(node_struct_str)) 
-                
-                returns = 'None'
-                if node.get_returns() != '':
-                    returns = node.get_returns()
-                sg.node(node.get_name() + '_exit', 
-                    'RETURN: ' + returns, 
-                    shape='Mdiamond', 
-                    fillcolor='white')
-                sg.edge(node_label, 'struct_' + node.get_name())
-                sg.edge('struct_' + node.get_name(), 
-                    node.get_name() + '_exit')
-                sg.edge_attr.update(color='blue', weight='100')
-        #self._graph.render(self._filename)
-        self._graph.render('test')
 
     ##
     def save_to_png(self):
