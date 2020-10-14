@@ -270,6 +270,12 @@ class Visualizer:
         #TODO: if right is a subscript 
         if type(right) is ConstantNode:
             return str(right.get_value())
+        if type(right) is CallNode:
+            # TODO: take into consideration commas and multiple params
+            params = ''
+            for param in right.get_param_list():
+                params += self.build_right_statement_cfg(param)
+            return '{}({})'.format(right.get_call(), params)
         return right.get_identifier()
 
     def struct_str_builder(self, prev, sg, node_label, body, count, start: bool) -> str:
@@ -325,10 +331,10 @@ class Visualizer:
                 # Make new box for the rest of the code
                 # can use count to keep track of main code boxes
                 # TODO: make recursive to get all cases
-                if_stment_str = 'if ' + self.build_right_statement_cfg(statement.get_left())
-                if_stment_str += ' ' + self.get_test_comparitor(statement.get_test())
-                if_stment_str += ' ' + self.build_right_statement_cfg(statement.get_right())
-                node_struct_str += if_stment_str + '}}'
+                if_stmt_str = 'if ' + self.build_right_statement_cfg(statement.get_left())
+                if_stmt_str += ' ' + self.get_test_comparitor(statement.get_test())
+                if_stmt_str += ' ' + self.build_right_statement_cfg(statement.get_right())
+                node_struct_str += if_stmt_str + '}}'
                 #sg.edge(node_label, 'struct_' + node.get_name())
 
                 sg.node_attr = {
@@ -353,6 +359,23 @@ class Visualizer:
 
             elif type(statement) is ForNode:
                 print('TODO: CFG FORNODE')
+                for_stmt_str = 'for ' + self.build_right_statement_cfg(statement.get_left())
+                print(statement.get_iter().get_call())
+                for_stmt_str += ' ' + self.build_right_statement_cfg(statement.get_iter())
+                node_struct_str += for_stmt_str + '}}'
+                #sg.edge(node_label, 'struct_' + node.get_name())
+
+                sg.node_attr = {
+                    'shape': 'record',
+                    'style':'filled',
+                    'fillcolor':'lightgrey'
+                }
+                sg.node(current_node_label,
+                r'{}'.format(node_struct_str))
+                count += 1
+                self.struct_str_builder(node_label, sg, node_label, statement.get_body(), count, False)
+                sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' do')
+                return
 
             elif type(statement) is AnnAssignmentNode:
                 node_struct_str += self.build_right_statement_cfg(statement.get_left())                 \
