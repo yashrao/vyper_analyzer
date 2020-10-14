@@ -137,6 +137,9 @@ class Visualizer:
         ret = identifier
         return ret
 
+    def get_test_comparitor(self, ast_dict: dict) -> str:
+        return COMPARITORS[ast_dict['op']['ast_type']]
+
     def visualize_ast_body(self, body, sg, node_label, count, prev=False):
         first = True
         root = None
@@ -199,7 +202,7 @@ class Visualizer:
                 sg.node(if_node_label, label='If')
                 count += 1
                 if_test_node_label = node_label + '_' + identifier + str(count) + '_test' # lvalue
-                sg.node(if_test_node_label, label=COMPARITORS[statement.get_test()['op']['ast_type']])
+                sg.node(if_test_node_label, label=self.get_test_comparitor(statement.get_test()))
                 count += 1
                 sg.edge(if_node_label, if_test_node_label, label='Test')
                 self.build_right(if_test_node_label, sg, statement.get_left(), if_test_node_label, count)
@@ -269,7 +272,115 @@ class Visualizer:
             return str(right.get_value())
         return right.get_identifier()
 
-    def visualize_cfg_new(self):
+    def struct_str_builder(self, prev, sg, node_label, body, count, start: bool) -> str:
+        current_node_label = 'struct_' + node_label + str(count)
+        prev = 'struct_' + node_label + str(count - 1)
+        node_struct_str = '{'
+        if start:
+            sg.edge(prev, current_node_label)
+
+        for i in range(len(body)):
+            statement = body[i]
+            node_struct_str += '{'
+            if type(statement) is AssignmentNode:
+                left = statement.get_left()
+                if type(left) is SubscriptNode:
+                    identifier = left.get_left().get_identifier() +                \
+                        self.build_subscript_str(left.get_subscript())
+                    right = self.build_right_statement_cfg(statement.get_right())
+                    node_struct_str += identifier + ' = ' + right
+                elif type(left) is VariableNode:
+                    right = self.build_right_statement_cfg(statement.get_right())
+                    node_struct_str += left.get_identifier() + ' = ' + right
+            elif type(statement) is CallNode:
+                identifier = statement.get_call()
+                print(identifier)
+                param_list = statement.get_param_list()
+                param_list_str = '('
+                for i in range(len(param_list)):
+                    param = param_list[i]
+                    if len(param_list) == 1:
+                        param_list_str += self.build_right_statement_cfg
+                    else:
+                        if i == len(param_list) - 1:
+                            param_list_str += self.build_right_statement_cfg(param)
+                        else:
+                            param_list_str += self.build_right_statement_cfg(param) + ', '
+                param_list_str += ')'
+                node_struct_str += identifier + param_list_str
+            elif type(statement) is AssertNode:
+                print('lkek')
+                if statement.get_right() is not None:
+                    node_struct_str += 'assert ' + self.build_right_statement_cfg(statement.get_left()) \
+                        + ' ' + statement.get_comparitor() + ' '                                        \
+                        + self.build_right_statement_cfg(statement.get_right())
+                else:
+                    node_struct_str += 'assert '                                                        \
+                        + ' ' + statement.get_comparitor() + ' '                                        \
+                        + self.build_right_statement_cfg(statement.get_left())
+            elif type(statement) is IfStatementNode:
+                print('TODO: CFG IFSTATEMENTNODE')
+                # Make a new box
+                # Put if statement body in new box
+                # Make new box for the rest of the code
+                # can use count to keep track of main code boxes
+                # TODO: make recursive to get all cases
+                if_stment_str = 'if ' + self.build_right_statement_cfg(statement.get_left())
+                if_stment_str += ' ' + self.get_test_comparitor(statement.get_test())
+                if_stment_str += ' ' + self.build_right_statement_cfg(statement.get_right())
+                node_struct_str += if_stment_str + '}}'
+                #sg.edge(node_label, 'struct_' + node.get_name())
+
+                sg.node_attr = {
+                    'shape': 'record',
+                    'style':'filled',
+                    'fillcolor':'lightgrey'
+                }
+                sg.node(current_node_label,
+                r'{}'.format(node_struct_str))
+                #sg.edge(node_label, 'struct_' + node_label + str(count))
+                #sg.edge(prev, current_node_label)
+                count += 1
+                # body of if statement
+                self.struct_str_builder(node_label, sg, node_label, statement.get_body(), count, False)
+                sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' then')
+                print(statement.get_orelse())
+                if statement.get_orelse() != None:
+                    count += 1
+                    self.struct_str_builder(node_label, sg, node_label, statement.get_orelse(), count, False)
+                    sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' else')
+                return
+
+            elif type(statement) is ForNode:
+                print('TODO: CFG FORNODE')
+
+            elif type(statement) is AnnAssignmentNode:
+                node_struct_str += self.build_right_statement_cfg(statement.get_left())                 \
+                    + ': ' + statement.get_var_type() + ' = '                                           \
+                    + self.build_right_statement_cfg(statement.get_right())
+
+
+            if i != len(body) - 1:
+                node_struct_str += '}|'
+            else:
+                node_struct_str += '}'
+
+        node_struct_str += '}'
+        #if count == 0:
+        #    sg.edge(prev, current_node_label)
+        #else:
+        #    sg.edge(prev, current_node_label)
+        sg.node_attr = {
+            'shape': 'record',
+            'style':'filled',
+            'fillcolor':'lightgrey'
+        }
+        sg.node('struct_' + node_label + str(count),
+            r'{}'.format(node_struct_str))
+        print('DEBUG: ' + node_struct_str)
+
+
+    def visualize_cfg(self):
         print('')
         print('\n-- DEBUG: CFG')
         output_folder = self.create_output_folder_cfg()
@@ -279,103 +390,15 @@ class Visualizer:
             if node is None or type(node) is not FunctionNode:
                 continue
             with self._graph.subgraph(name='cluster_' + node.get_name()) as sg:
-                node_label = self.get_func_label(node.get_name(), 
-                    node.get_decorator_list(), 
-                    node.get_arg_list()) 
-                sg.attr(label=node_label)
-                sg.node(node_label, 'ENTRY', shape='Mdiamond', fillcolor='white')
+                start_node_label = self.get_func_label(node.get_name(),
+                    node.get_decorator_list(),
+                    node.get_arg_list())
+                start_node_label_ = 'struct_' + start_node_label + str(count)
+                sg.attr(label=start_node_label)
+                sg.node(start_node_label_, 'ENTRY', shape='Mdiamond', fillcolor='white')
+                count += 1
                 body = node.get_body()
-
-                node_struct_str = '{'
-
-                for i in range(len(body)):
-                    statement = body[i]
-                    node_struct_str += '{'
-                    if type(statement) is AssignmentNode:
-                        left = statement.get_left()
-                        if type(left) is SubscriptNode:
-                            identifier = left.get_left().get_identifier() +                \
-                                self.build_subscript_str(left.get_subscript())
-                            right = self.build_right_statement_cfg(statement.get_right())
-                            node_struct_str += identifier + ' = ' + right
-                        elif type(left) is VariableNode:
-                            right = self.build_right_statement_cfg(statement.get_right())
-                            node_struct_str += left.get_identifier() + ' = ' + right
-                    elif type(statement) is CallNode:
-                        identifier = statement.get_call()
-                        print(identifier)
-                        param_list = statement.get_param_list()
-                        param_list_str = '('
-                        for i in range(len(param_list)):
-                            param = param_list[i]
-                            if len(param_list) == 1:
-                                param_list_str += self.build_right_statement_cfg
-                            else:
-                                if i == len(param_list) - 1:
-                                    param_list_str += self.build_right_statement_cfg(param)
-                                else:
-                                    param_list_str += self.build_right_statement_cfg(param) + ', '
-                        param_list_str += ')'
-                        node_struct_str += identifier + param_list_str
-                    elif type(statement) is AssertNode:
-                        print('lkek')
-                        if statement.get_right() is not None:
-                            node_struct_str += 'assert ' + self.build_right_statement_cfg(statement.get_left()) \
-                                + ' ' + statement.get_comparitor() + ' '                                        \
-                                + self.build_right_statement_cfg(statement.get_right())
-                        else:
-                            node_struct_str += 'assert '                                                        \
-                                + ' ' + statement.get_comparitor() + ' '                                        \
-                                + self.build_right_statement_cfg(statement.get_left())
-                    elif type(statement) is IfStatementNode:
-                        print('TODO: CFG IFSTATEMENTNODE')
-                        # Make a new box
-                        # Put if statement body in new box
-                        # Make new box for the rest of the code
-                        # can use count to keep track of main code boxes
-                        node_struct_str += '}}'
-                        #sg.edge(node_label, 'struct_' + node.get_name())
-
-                        sg.node_attr = {
-                            'shape': 'record',
-                            'style':'filled',
-                            'fillcolor':'lightgrey'
-                        }
-                        sg.node('struct_' + node.get_name() + str(count),
-                        r'{}'.format(node_struct_str))
-                        sg.edge(node_label, 'struct_' + node.get_name() + str(count))
-                        count += 1
-                        node_struct_str = '{'
-                        # Body of the ifstatement
-
-                    elif type(statement) is ForNode:
-                        print('TODO: CFG FORNODE')
-                    elif type(statement) is AnnAssignmentNode:
-                        node_struct_str += self.build_right_statement_cfg(statement.get_left())                 \
-                            + ': ' + statement.get_var_type() + ' = '                                           \
-                            + self.build_right_statement_cfg(statement.get_right())
-
-
-                    if i != len(body) - 1:
-                        node_struct_str += '}|'
-                    else:
-                        node_struct_str += '}'
-
-                node_struct_str += '}'
-                if count == 0:
-                    sg.edge(node_label, 'struct_' + node.get_name() + str(count))
-                else:
-                    sg.edge('struct_' + node.get_name() + str(count - 1),                          \
-                            'struct_' + node.get_name() + str(count))
-                sg.node_attr = {
-                    'shape': 'record',
-                    'style':'filled',
-                    'fillcolor':'lightgrey'
-                }
-                sg.node('struct_' + node.get_name() + str(count),
-                  r'{}'.format(node_struct_str))
-
-                print(node_struct_str)
+                self.struct_str_builder(start_node_label, sg, start_node_label, node.get_body(), count, True)
 
         self._graph.render(output_folder + '/' + self._filename)
 

@@ -86,11 +86,11 @@ class Interface:
             ast.walk(ast._ast, nodes)
             filename = self.get_filename(file)
             parsed_ast = ast.parse_ast(ast._ast) # process AST
-            
+
             if visualize:
                 visualizer = Visualizer(parsed_ast, ast.get_contract_name())
                 if visualize == 'cfg':
-                    visualizer.visualize_cfg_new()
+                    visualizer.visualize_cfg()
                 elif visualize == 'ast':
                     visualizer.visualize_ast()
             else:
