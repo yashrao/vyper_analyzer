@@ -20,6 +20,7 @@ from nodes import ConstantNode
 from nodes import KeywordNode
 from nodes import IfStatementNode
 from nodes import ForNode
+from nodes import AttributeNode
 
 AST_TYPES = {
     'AnnAssign': ':',
@@ -242,10 +243,15 @@ class Visualizer:
         """
         output_folder = self.create_output_folder_ast()
         nodes = self._parsed_ast.get_body()
+        self._graph.graph_attr['rankdir'] = 'TD'
+        self._graph.graph_attr['splines'] = 'curved'
+        #self._graph.graph_attr['ranksep'] = '1'
+        #self._graph.graph_attr['nodesep'] = '1'
         for node in nodes:
             if node is None or type(node) is not FunctionNode:
                 continue
             with self._graph.subgraph(name='cluster_' + node.get_name()) as sg:
+                sg.graph_attr['rank'] = 'same'
                 node_label = self.get_func_label(node.get_name(),
                     node.get_decorator_list(),
                     node.get_arg_list())
@@ -276,6 +282,14 @@ class Visualizer:
             for param in right.get_param_list():
                 params += self.build_right_statement_cfg(param)
             return '{}({})'.format(right.get_call(), params)
+        if type(right) is AttributeNode:
+            return build_right_statement_cfg(right.get_node())
+        if type(right) is SubscriptNode:
+            print('lol')
+            return ''
+        if right is None:
+            # TODO: fix this
+            return ''
         return right.get_identifier()
 
     def struct_str_builder(self, prev, sg, node_label, body, count, start: bool) -> str:
@@ -297,7 +311,12 @@ class Visualizer:
                     node_struct_str += identifier + ' = ' + right
                 elif type(left) is VariableNode:
                     right = self.build_right_statement_cfg(statement.get_right())
-                    node_struct_str += left.get_identifier() + ' = ' + right
+                    if type(left.get_identifier()) is AttributeNode:
+                        # This is when we have lots of attributes being accessed OR
+                        # when the var is an attribute
+                        node_struct_str += self.build_right_statement_cfg(left)
+                    else:
+                        node_struct_str += left.get_identifier() + ' = ' + right
             elif type(statement) is CallNode:
                 identifier = statement.get_call()
                 print(identifier)
@@ -306,7 +325,7 @@ class Visualizer:
                 for i in range(len(param_list)):
                     param = param_list[i]
                     if len(param_list) == 1:
-                        param_list_str += self.build_right_statement_cfg
+                        param_list_str += self.build_right_statement_cfg(param)
                     else:
                         if i == len(param_list) - 1:
                             param_list_str += self.build_right_statement_cfg(param)
@@ -355,7 +374,7 @@ class Visualizer:
                     count += 1
                     self.struct_str_builder(node_label, sg, node_label, statement.get_orelse(), count, False)
                     sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' else')
-                return
+                return (statement, count)
 
             elif type(statement) is ForNode:
                 print('TODO: CFG FORNODE')
@@ -368,14 +387,15 @@ class Visualizer:
                 sg.node_attr = {
                     'shape': 'record',
                     'style':'filled',
-                    'fillcolor':'lightgrey'
+                    'fillcolor':'grey'
                 }
                 sg.node(current_node_label,
                 r'{}'.format(node_struct_str))
                 count += 1
                 self.struct_str_builder(node_label, sg, node_label, statement.get_body(), count, False)
                 sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' do')
-                return
+                #sg.edge('struct_' + node_label + str(count), current_node_label, label=' if')
+                return (statement, count)
 
             elif type(statement) is AnnAssignmentNode:
                 node_struct_str += self.build_right_statement_cfg(statement.get_left())                 \
@@ -401,6 +421,7 @@ class Visualizer:
         sg.node('struct_' + node_label + str(count),
             r'{}'.format(node_struct_str))
         print('DEBUG: ' + node_struct_str)
+        return (None, None)
 
 
     def visualize_cfg(self):
@@ -412,16 +433,51 @@ class Visualizer:
         for node in nodes:
             if node is None or type(node) is not FunctionNode:
                 continue
+            self._graph.graph_attr['rankdir'] = 'TD'
+            self._graph.graph_attr['splines'] = 'line'
+            #self._graph.graph_attr['ranksep'] = '2'
+            self._graph.graph_attr['nodesep'] = '1'
             with self._graph.subgraph(name='cluster_' + node.get_name()) as sg:
+                #sg.graph_attr['splines'] = 'ortho'
                 start_node_label = self.get_func_label(node.get_name(),
                     node.get_decorator_list(),
                     node.get_arg_list())
+                #TODO: should really change the name of start_node_label and start_node_label_
                 start_node_label_ = 'struct_' + start_node_label + str(count)
                 sg.attr(label=start_node_label)
                 sg.node(start_node_label_, 'ENTRY', shape='Mdiamond', fillcolor='white')
                 count += 1
+                #res = self.struct_str_builder(start_node_label, sg, start_node_label, body, count, True)
+                res = ''
                 body = node.get_body()
-                self.struct_str_builder(start_node_label, sg, start_node_label, node.get_body(), count, True)
+                while res != None:
+                    try:
+                        res_statement, res_count = self.struct_str_builder(start_node_label, sg, start_node_label, body, count, True)
+                        body = body[body.index(res_statement) + 1:]
+                        print('=== RES_COUNT ===')
+                        print(res_count)
+                        print('=== RES ===')
+                        print(res_statement)
+                        print('=== BODY ===')
+                        print(body)
+                        if body == []:
+                            break
+                        #start_node_label = 'struct_' + start_node_label + str(res_count)
+                        count = res_count + 1
+                    except ValueError:
+                        break
+                    #if count == 0:::
+                    #    sg.edge(prev, current_node_label)
+                    #else:
+                    #    sg.edge(prev, current_node_label)
+                    #sg.node_attr = {
+                    #    'shape': 'record',
+                    #    'style':'filled',
+                    #    'fillcolor':'lightgrey'
+                    #}
+                    #sg.node('struct_' + node_label + str(count),
+                    #    r'{}'.format(node_struct_str))
+                    #print('DEBUG: ' + node_struct_str)
 
         self._graph.render(output_folder + '/' + self._filename)
 

@@ -336,27 +336,45 @@ class SubscriptNode:
 
 
 class ReturnNode:
-    def __init__(self, ast_type, identifier, value, loc):
-        self._ast_type = ast_type
-        self._identifier = identifier
-        self._value = value
+    def __init__(self, ret_node, loc):
+        self._ret_node = ret_node
         self._loc = loc
 
-    def get_value(self):
-        return self._value
-
-    def get_identifier(self) -> str:
-        return self._identifier
+    def get_return_node(self):
+        return self._ret_node
 
     def __str__(self):
-        return '<class \'ReturnNode\'; {}({}), Node:{}>'.format(self._ast_type, self._identifier, self._value)
+        return '<class \'ReturnNode\'; Ret({})>'.format(self._ret_node)
 
     def __repr__(self):
-        return '<class \'ReturnNode\'; {}({}), Node:{}>'.format(self._ast_type, self._identifier, self._value)
+        return '<class \'ReturnNode\'; Ret({})>'.format(self._ret_node)
 
     def resolve_type(self):
         print('Resolving ReturnNode')
         print('Done ReturnNode')
+
+class AttributeNode:
+    def __init__(self, node, next_node, loc):
+        self._node = node
+        self._next_node = next_node
+        self._loc = loc
+
+    def get_next_node(self):
+        return self._next_node
+
+    def get_node(self):
+        return self._node
+
+    def __str__(self):
+        return '<class \'AttributeNode\'; Attr({})>'.format(self._node)
+
+    def __repr__(self):
+        return '<class \'AttributeNode\'; Attr({})>'.format(self._node)
+
+    def resolve_type(self):
+        print('Resolving AttributeNode')
+        print('Done AttributeNode')
+
 
 
 class IfStatementNode:

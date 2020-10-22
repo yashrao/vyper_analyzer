@@ -17,6 +17,8 @@ from nodes import ConstantNode
 from nodes import KeywordNode
 from nodes import IfStatementNode
 from nodes import ForNode
+from nodes import ReturnNode
+from nodes import AttributeNode
 
 from nodes import ArrayType
 from nodes import PublicType
@@ -56,6 +58,8 @@ COMPARITORS = {
     'Gt': '\>',
     'GtE': '\>=',
     'Not': 'not',
+    'Eq': '==',
+    'NotEq': '!=',
 }
 
 
@@ -125,7 +129,7 @@ class AstWalker:
                     decorator_list_res.append(decorator['id'])
                 elif decorator['ast_type'] == 'Call':
                     # TODO: make sure this can get all the args for the non-rentrant decorator
-                    decorator_list_res.append(decorator['func']['id']) 
+                    decorator_list_res.append(decorator['func']['id'])
                 else:
                     print('ERROR: Unknown Decorator')
                     raise Exception
@@ -138,7 +142,7 @@ class AstWalker:
             return FunctionNode(name, body, is_external, decorator_list_res, args, returns, loc)
         elif ast_type == 'AnnAssign':
             #var_type = statement['annotation'] # TODO: turn into a node
-            var_type = self.get_right(statement['annotation'])
+            var_type = self.get_right(statement['annotation'], True)
             return AnnAssignmentNode(ast_type, var_type, self.get_left(statement['target']), self.get_right(statement['value']), loc)
 
     def get_call_args(self, args: list, keywords=None) -> list:
@@ -192,11 +196,18 @@ class AstWalker:
                     self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
                 elif ast_type == 'Expr':
-                    if 'keywords' in list(statement['value'].keys()):
-                        node = CallNode(statement['value']['func']['id'],                               \
-                            self.get_call_args(statement['value']['args'], statement['value']['keywords']), loc)
+                    if 'id' not in list(statement['value']['func'].keys()):
+                        if 'keywords' in list(statement['value'].keys()):
+                            node = CallNode(statement['value']['func']['value']['id'] + '.' + statement['value']['func']['attr'],                               \
+                                self.get_call_args(statement['value']['args'], statement['value']['keywords']), loc)
+                        else:
+                            node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']), loc)
                     else:
-                        node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']), loc)
+                        if 'keywords' in list(statement['value'].keys()):
+                            node = CallNode(statement['value']['func']['id'],                               \
+                                self.get_call_args(statement['value']['args'], statement['value']['keywords']), loc)
+                        else:
+                            node = CallNode(statement['value']['func']['id'], self.get_call_args(statement['value']['args']), loc)
                     statement_objs.append(node)
                 elif ast_type == 'Assert':
                     if statement['test']['ast_type'] == 'Compare':
@@ -216,13 +227,18 @@ class AstWalker:
                     # TODO: Fix this
                     print('this should be an if statement')
                     test = statement['test']
-                    if test['op']['ast_type'] == 'Eq':
+                    if 'op' not in list(test.keys()):
+                        # evals to boolean
+                        test_statement = self.get_right(test)
+                        body = self.parse_body(statement['body'])
+                        orelse = self.parse_body(statement['orelse'])
+                        node = IfStatementNode(test_statement, None, test, body, orelse, loc)
+                        statement_objs.append(node)
+                    elif test['op']['ast_type'] == 'Eq':
                         right = self.get_right(test['right'])
                         left = self.get_right(test['left'])
                         body = self.parse_body(statement['body'])
                         orelse = self.parse_body(statement['orelse'])
-                        print('kqpweiqpwiepqwieqiwe')
-                        print(orelse)
                         node = IfStatementNode(left, right, test, body, orelse, loc)
                         statement_objs.append(node)
                 elif ast_type == 'For':
@@ -237,10 +253,12 @@ class AstWalker:
                 elif ast_type == 'Return':
                     # TODO: Generalize for all constants not just Int
                     # TODO: change to nodes
-                    if statement['value']['ast_type'] == "Int":
-                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['value'], loc))
-                    else:
-                        statement_objs.append(StatementNode(ast_type, 'return', statement['value']['attr'], loc))
+                    right = self.get_right(statement['value'])
+                    print('')
+                    print(statement['value'])
+                    print('')
+                    print(right)
+                    statement_objs.append(right)
             except KeyError as e:
                 pprint(statement)
                 raise e
@@ -276,14 +294,31 @@ class AstWalker:
             left_var = self.get_left(left['value'])
             subscript = self.get_right(left['slice']['value'])
             return SubscriptNode(left_var, ast_type, left, subscript, loc)
-        elif ast_type == 'Attribute':
-            return VariableNode(left['value']['id'] + '.' + left['attr'], ast_type, left, loc)
         elif ast_type == 'Name':
             return VariableNode(left['id'], ast_type, left, loc)
         #return left['attr']
 
+    def get_attr(self, attr_ast) -> str:
+        # Takes in a Vyper Attribute AST node and recursively gets all the attributes
+        # value -> value -> value -> ... -> value:id
+        # e.g. self.foo.bar == value[value][value][id].value[value][attr].value[attr]
+        loc = (attr_ast['col_offset'], attr_ast['end_col_offset'], attr_ast['lineno'])
+        ast_type = attr_ast['ast_type']
+        #if ast_type == 'Subscript':
+        #    attr_ast = attr_ast['value']
+        #?if 'value' in list(attr_ast.keys()):
+        #    print('LEWL ====')
+        #    print(attr_ast)
+        #    return self.get_attr(attr_ast['value']) + '.' + attr_ast['attr']
+        #else:
+        #    return attr_ast['id']
+        if ast_type == 'Attribute'
+            return AttributeNode(self.get_right(attr_ast), self.get_attr(attr_ast['value']), loc)
+        else:
+            return self.get_right(attr_ast)
+
     ## TODO: Get rid of ast_type if statements
-    def get_right(self, right: dict):
+    def get_right(self, right: dict, type=False):
         #TODO: Unary operator needs to be done
         if right == None:
             return None
@@ -294,8 +329,8 @@ class AstWalker:
         if ast_type == 'Name':
             #(col_offset, end_col_offset, line_no)
             return VariableNode(right['id'], ast_type, right, loc)
-        if ast_type == 'Attribute':
-            return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right, loc)
+        #if ast_type == 'Attribute':
+        #    return VariableNode(right['value']['id'] + '.' + right['attr'], ast_type, right, loc)
         if ast_type == 'Int':
             #return VariableNode(right['value'], ast_type, right)
             return ConstantNode(right['value'], loc)
@@ -310,7 +345,26 @@ class AstWalker:
             subscript = self.get_right(right['slice']['value'])
             return SubscriptNode(left_var, ast_type, right, subscript, loc)
         if ast_type == 'Call':
-            return PublicType(self.get_right(right['args'][0]))
+            print('===')
+            pprint(right)
+            print('===')
+            if type:
+                return PublicType(self.get_right(right['args'][0]))
+            else:
+                #TODO: make sure it is able to take into account many attrs
+                if 'value' in list(right['func'].keys()):
+                    return CallNode(right['func']['attr'],                            \
+                            self.get_call_args(right['args']),                                \
+                                    loc)
+                else:
+                    return CallNode(right['func']['id'],                            \
+                            self.get_call_args(right['args']),                                \
+                                    loc)
+            #pprint(right)
+        if ast_type == 'Compare':
+            op = self.get_op(right)
+            return ReturnNode(BinaryOperatorNode(ast_type, op, self.get_right(right['left']), self.get_right(right['right']), loc), loc)
+        return None
 
     def get_keyword(self, keyword: dict):
         loc = (keyword['col_offset'], keyword['end_col_offset'], keyword['lineno'])

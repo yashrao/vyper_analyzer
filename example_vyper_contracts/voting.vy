@@ -176,4 +176,3 @@ def winningProposal() -> int128:
 @external
 def winnerName() -> bytes32:
     return self.proposals[self._winningProposal()].name
-

@@ -16,3 +16,11 @@ def branch():
     test_4: uint256 = 3
     
 
+#for i in range(10):
+#       test += i
+    #test_4: uint256 = 3
+    
+@external
+def test_fn():
+    test: uint256 = 0
+    test += 1
