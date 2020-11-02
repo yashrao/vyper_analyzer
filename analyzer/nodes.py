@@ -230,6 +230,18 @@ class AssertNode:
             pass
         print('Done AssertNode')
 
+class HashMapNode:
+    def __init__(self, items: tuple):
+        self._items = items
+
+    def get_items(self) -> tuple:
+        return self._items
+
+    def __str__(self):
+        return '<class \'HashMapNode\'; [{}]>'.format(self._items)
+
+    def __repr__(self):
+        return '<class \'HashMapNode\'; [{}]>'.format(self._items)
 
 class VariableNode:
     def __init__(self, identifier: str, var_type: str, var_dict: dict, loc):
@@ -325,7 +337,7 @@ class SubscriptNode:
         return self._subscript
 
     def __str__(self):
-        return '<class \'SubscriptNode\'; {}({})[{}]>'.format(self._left, self._var_type, self._subscript)
+        return '<class \'SubscriptNode\'; {}[{}]>'.format(self._left, self._subscript)
 
     def __repr__(self):
         return '<class \'SubscriptNode\'; {}({})[{}]>'.format(self._left, self._var_type, self._subscript)
@@ -365,11 +377,23 @@ class AttributeNode:
     def get_node(self):
         return self._node
 
-    def __str__(self):
-        return '<class \'AttributeNode\'; Attr({})>'.format(self._node)
+    def get_identifier(self):
+        if self._node != None:
+            return self._node.get_identifier()
 
-    def __repr__(self):
-        return '<class \'AttributeNode\'; Attr({})>'.format(self._node)
+    #def __str__(self):
+    #    return '<class \'AttributeNode\'; Attr({}).({})>'.format(self._node, self._next_node)
+
+    def __str__(self):
+        ret  = '{}'.format(self._node.get_identifier())
+        current = self._next_node
+        while current != None:
+            ret = '{}.'.format(current.get_identifier()) + ret
+            current = current.get_next_node()
+        return '<class \'AttributeNode\'; Attr({})>'.format(ret)
+
+    #def __repr__(self):
+    #    return '<class \'AttributeNode\'; Attr({})>'.format(self._node)
 
     def resolve_type(self):
         print('Resolving AttributeNode')

@@ -19,6 +19,7 @@ from nodes import IfStatementNode
 from nodes import ForNode
 from nodes import ReturnNode
 from nodes import AttributeNode
+from nodes import HashMapNode
 
 from nodes import ArrayType
 from nodes import PublicType
@@ -176,14 +177,14 @@ class AstWalker:
                 if ast_type == 'Assign':
                     left = self.get_left(statement['target'])
                     node = AssignmentNode(ast_type, left, self.get_right(statement['value']), loc)
-                    self.set_state_variable(statement['target'], left)
+                    #self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
                 elif ast_type == 'AugAssign':
                     op = self.get_op(statement)
                     left = self.get_left(statement['target'])
                     right = BinaryOperatorNode(ast_type, op, self.get_left(statement['target']), self.get_right(statement['value']), loc)
                     node = AssignmentNode(ast_type, left, right, loc)
-                    self.set_state_variable(statement['target'], left)
+                    #self.set_state_variable(statement['target'], left)
                     statement_objs.append(node)
                 elif ast_type == 'AnnAssign':
                     if statement['annotation']['ast_type'] != 'Subscript':
@@ -257,7 +258,7 @@ class AstWalker:
                     print('')
                     print(statement['value'])
                     print('')
-                    print(right)
+                    #print(right)
                     statement_objs.append(right)
             except KeyError as e:
                 pprint(statement)
@@ -280,22 +281,25 @@ class AstWalker:
         return statement['op']['ast_type']
 
     def get_aug_operator(self, ast_type: str) -> str:
-        return AST_TYPES['AugAssign'][ast_type] 
+        return AST_TYPES['AugAssign'][ast_type]
 
     # Get left hand side of a assignment
     def get_left(self, left: dict) -> list:
         ## TODO: make get_left take statement['target]
         ## TODO: Add BinOp
-        ast_type = left['ast_type']
-        loc = (left['col_offset'], left['end_col_offset'], left['lineno'])
-        if ast_type == 'Subscript':
+        return self.get_right(left)
+        #ast_type = left['ast_type']
+        #loc = (left['col_offset'], left['end_col_offset'], left['lineno'])
+        ##if ast_type == 'Subscript':
             #return self.get_left(left['value']) +  \
             #    '[' + self.get_right(left['slice']['value']) + ']
-            left_var = self.get_left(left['value'])
-            subscript = self.get_right(left['slice']['value'])
-            return SubscriptNode(left_var, ast_type, left, subscript, loc)
-        elif ast_type == 'Name':
-            return VariableNode(left['id'], ast_type, left, loc)
+        #    left_var = self.get_left(left['value'])
+        #    subscript = self.get_right(left['slice']['value'])
+        #    return SubscriptNode(left_var, ast_type, left, subscript, loc)
+        #elif ast_type == 'Name':
+        #    return VariableNode(left['id'], ast_type, left, loc)
+        #elif ast_type == 'Attribute':
+        #    return self.get_attr(left)
         #return left['attr']
 
     def get_attr(self, attr_ast) -> str:
@@ -312,10 +316,15 @@ class AstWalker:
         #    return self.get_attr(attr_ast['value']) + '.' + attr_ast['attr']
         #else:
         #    return attr_ast['id']
-        if ast_type == 'Attribute'
-            return AttributeNode(self.get_right(attr_ast), self.get_attr(attr_ast['value']), loc)
+        if ast_type == 'Attribute':
+            ret = AttributeNode(self.get_right(attr_ast), self.get_attr(attr_ast['value']), loc)
+            print('kelrkerlekrlkerlke')
+            print(ret)
+            print(attr_ast['attr'])
+            #return AttributeNode(self.get_right(attr_ast), self.get_attr(attr_ast['value']), loc)
+            return ret
         else:
-            return self.get_right(attr_ast)
+            return AttributeNode(self.get_right(attr_ast), None, loc)
 
     ## TODO: Get rid of ast_type if statements
     def get_right(self, right: dict, type=False):
@@ -324,7 +333,7 @@ class AstWalker:
             return None
 
         ast_type = right['ast_type']
-        print(right)
+        #print(right)
         loc = (right['col_offset'], right['end_col_offset'], right['lineno'])
         if ast_type == 'Name':
             #(col_offset, end_col_offset, line_no)
@@ -341,8 +350,24 @@ class AstWalker:
             op = self.get_op(right)
             return BinaryOperatorNode(ast_type, op, self.get_right(right['left']), self.get_right(right['right']), loc)
         if ast_type == 'Subscript':
+            #TODO: do the case where there is HashMap
             left_var = self.get_left(right['value'])
-            subscript = self.get_right(right['slice']['value'])
+            print('-==-=-===-=-')
+            print(left_var)
+            print('-==-=-===-=-')
+            #if type(left_var) is VariableNode:
+            if isinstance(left_var, VariableNode):
+                if left_var.get_identifier() == 'HashMap':
+                    # Then this is a hashmap
+                    tmp = []
+                    for element in right['slice']['elements']:
+                        print(element)
+                        tmp.append(self.get_right(element))
+                    return HashMapNode(tuple(tmp))
+            if right['slice']['ast_type'] == 'Name':
+                subscript = self.get_right(right['slice'])
+            else:
+                subscript = self.get_right(right['slice'])
             return SubscriptNode(left_var, ast_type, right, subscript, loc)
         if ast_type == 'Call':
             print('===')
@@ -364,6 +389,9 @@ class AstWalker:
         if ast_type == 'Compare':
             op = self.get_op(right)
             return ReturnNode(BinaryOperatorNode(ast_type, op, self.get_right(right['left']), self.get_right(right['right']), loc), loc)
+        if ast_type == 'Attribute':
+            var = VariableNode(right['attr'], ast_type, right, loc)
+            return AttributeNode(var, self.get_attr(right['value']), loc)
         return None
 
     def get_keyword(self, keyword: dict):

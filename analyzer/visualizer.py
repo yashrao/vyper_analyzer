@@ -4,7 +4,7 @@ Used for accessing files
 import os
 
 from graphviz import Digraph
-#from pprint import pprint
+from pprint import pprint
 
 from nodes import ContractNode
 from nodes import AssignmentNode
@@ -81,7 +81,9 @@ class Visualizer:
         for arg in args:
             # checking if unit is array type or not
             if 'slice' in arg['annotation'].keys():
-                slice_val = arg['annotation']['slice']['value']['value'] #TODO: generalize into a function
+                #pprint(arg)
+                #slice_val = arg['annotation']['slice']['value']['value'] #TODO: generalize into a function
+                slice_val = arg['annotation']['slice']['value'] #TODO: generalize into a function
                 arg_id = '{}[{}] {}'.format(arg['annotation']['value']['id'], slice_val, arg['arg'])
             else:
                 arg_id = '{} {}'.format(arg['annotation']['id'], arg['arg'])
@@ -120,17 +122,8 @@ class Visualizer:
         # Possible Nodes: Variable, Constant, Subscript, BinOp
         subscript_str = '['
         node_type = type(node)
-        if node_type is VariableNode:
-            subscript_str += node.get_identifier()
-        #TODO: the below needs to be tested
-        elif node_type is ConstantNode:
-            subscript_str += str(node.get_value())
-        elif node_type is SubscriptNode:
-            subscript_str += node.get_left() + self.build_subscript_str(node.get_subscript())
-        elif node_type is BinaryOperatorNode:
-            subscript_str += self.build_subscript_str(node.get_left()) +   \
-                OPERATORS[node.get_op()] +                  \
-                self.build_subscript_str(node.get_right())
+        print(node_type)
+        subscript_str += self.build_right_statement_cfg(node)
         return subscript_str + ']'
 
     def add_var_type(self, node, identifier) -> str:
@@ -159,7 +152,7 @@ class Visualizer:
                     tmp = node_label + '=' + '_' + str(count)
                     count += 1
                     identifier = left.get_left().get_identifier() +                \
-                        self.build_subscript_str(left.get_subscript()) 
+                        self.build_subscript_str(left.get_subscript())
                     node_label_statement = node_label + '_' + identifier + str(count) # lvalue
                     identifier = self.add_var_type(left.get_left(), identifier)
                     sg.node(node_label_statement, label=identifier) # lvalue must be variablenode
@@ -268,9 +261,13 @@ class Visualizer:
             print(right)
             op = OPERATORS[right.get_op()]
             lval = right.get_left()
+            if type(lval) is AttributeNode:
+                print('oolalal')
             if type(lval) is VariableNode:
                 return lval.get_identifier() + op + self.build_right_statement_cfg(right.get_right())
             elif type(lval) is SubscriptNode:
+                #return lval.get_left().get_identifier() +                \
+                #    self.build_subscript_str(lval.get_subscript())
                 return lval.get_left().get_identifier() +                \
                     self.build_subscript_str(lval.get_subscript())
         #TODO: if right is a subscript 
@@ -279,17 +276,30 @@ class Visualizer:
         if type(right) is CallNode:
             # TODO: take into consideration commas and multiple params
             params = ''
+            print('lkerkerlerke===')
+            print(right.get_param_list())
             for param in right.get_param_list():
                 params += self.build_right_statement_cfg(param)
             return '{}({})'.format(right.get_call(), params)
         if type(right) is AttributeNode:
-            return build_right_statement_cfg(right.get_node())
+            ret  = '{}'.format(right.get_node().get_identifier())
+            current = right.get_next_node()
+            while current != None:
+                if type(current.get_node()) is SubscriptNode:
+                    ret = '{}.'.format(current.get_node().get_left().get_identifier() +                \
+                        self.build_subscript_str(current.get_node().get_subscript())) + ret
+                else:
+                    ret = '{}.'.format(current.get_identifier()) + ret
+                current = current.get_next_node()
+            return ret
+            #return self.build_right_statement_cfg(right.get_node())
         if type(right) is SubscriptNode:
-            print('lol')
-            return ''
+            return self.build_right_statement_cfg(right.get_left()) +                \
+                self.build_subscript_str(right.get_subscript())
         if right is None:
             # TODO: fix this
             return ''
+        #return right.get_identifier()
         return right.get_identifier()
 
     def struct_str_builder(self, prev, sg, node_label, body, count, start: bool) -> str:
@@ -454,30 +464,11 @@ class Visualizer:
                     try:
                         res_statement, res_count = self.struct_str_builder(start_node_label, sg, start_node_label, body, count, True)
                         body = body[body.index(res_statement) + 1:]
-                        print('=== RES_COUNT ===')
-                        print(res_count)
-                        print('=== RES ===')
-                        print(res_statement)
-                        print('=== BODY ===')
-                        print(body)
                         if body == []:
                             break
-                        #start_node_label = 'struct_' + start_node_label + str(res_count)
                         count = res_count + 1
                     except ValueError:
                         break
-                    #if count == 0:::
-                    #    sg.edge(prev, current_node_label)
-                    #else:
-                    #    sg.edge(prev, current_node_label)
-                    #sg.node_attr = {
-                    #    'shape': 'record',
-                    #    'style':'filled',
-                    #    'fillcolor':'lightgrey'
-                    #}
-                    #sg.node('struct_' + node_label + str(count),
-                    #    r'{}'.format(node_struct_str))
-                    #print('DEBUG: ' + node_struct_str)
 
         self._graph.render(output_folder + '/' + self._filename)
 
