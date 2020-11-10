@@ -132,7 +132,10 @@ class Visualizer:
         return ret
 
     def get_test_comparitor(self, ast_dict: dict) -> str:
-        return COMPARITORS[ast_dict['op']['ast_type']]
+        try:
+            return COMPARITORS[ast_dict['op']['ast_type']]
+        except KeyError:
+            return ''
 
     def visualize_ast_body(self, body, sg, node_label, count, prev=False):
         first = True
@@ -360,10 +363,9 @@ class Visualizer:
                 # Make new box for the rest of the code
                 # can use count to keep track of main code boxes
                 # TODO: make recursive to get all cases
-                if_stmt_str = 'if ' + self.build_right_statement_cfg(statement.get_left())
-                if_stmt_str += ' ' + self.get_test_comparitor(statement.get_test())
-                if_stmt_str += ' ' + self.build_right_statement_cfg(statement.get_right())
-                node_struct_str += if_stmt_str + '}}'
+                node_struct_str = node_struct_str[:-2]
+                print(node_struct_str)
+                node_struct_str += '}}'
                 #sg.edge(node_label, 'struct_' + node.get_name())
 
                 sg.node_attr = {
@@ -373,38 +375,65 @@ class Visualizer:
                 }
                 sg.node(current_node_label,
                 r'{}'.format(node_struct_str))
+
+                if_stmt_str = '{if ' + self.build_right_statement_cfg(statement.get_left())
+                if_stmt_str += ' ' + self.get_test_comparitor(statement.get_test())
+                if_stmt_str += ' ' + self.build_right_statement_cfg(statement.get_right()) + '}'
+                count += 1
+
+                if_stmt_label = 'struct_' + node_label + str(count)
+                sg.node(if_stmt_label,
+                r'{}'.format(if_stmt_str))
+                sg.edge(prev, if_stmt_label)
+
                 #sg.edge(node_label, 'struct_' + node_label + str(count))
                 #sg.edge(prev, current_node_label)
                 count += 1
                 # body of if statement
-                self.struct_str_builder(node_label, sg, node_label, statement.get_body(), count, False)
-                sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' then')
+                _, count = self.struct_str_builder(node_label, sg, node_label, statement.get_body(), count, False)
+                # struct_str_builder(prev, sg, node_label, body, count, start: bool)      
+                sg.edge(if_stmt_label, 'struct_' + node_label + str(count), label=' then')
                 print(statement.get_orelse())
-                if statement.get_orelse() != None:
+                if statement.get_orelse() != None and statement.get_orelse() != []:
                     count += 1
                     self.struct_str_builder(node_label, sg, node_label, statement.get_orelse(), count, False)
-                    sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' else')
+                    sg.edge(if_stmt_label, 'struct_' + node_label + str(count), label=' else')
                 return (statement, count)
 
             elif type(statement) is ForNode:
                 print('TODO: CFG FORNODE')
-                for_stmt_str = 'for ' + self.build_right_statement_cfg(statement.get_left())
-                print(statement.get_iter().get_call())
-                for_stmt_str += ' ' + self.build_right_statement_cfg(statement.get_iter())
-                node_struct_str += for_stmt_str + '}}'
-                #sg.edge(node_label, 'struct_' + node.get_name())
+                for_stmt_label_sg = 'for' + str(count)
+                with sg.subgraph(name='cluster_for_' + for_stmt_label_sg) as sg_sg:
+                    sg_sg.attr(style='filled, dashed', fillcolor='lightgrey', color='forestgreen', label='For loop')
+                    node_struct_str = node_struct_str[:-2] + '}}'
+                    for_stmt_str = 'for ' + self.build_right_statement_cfg(statement.get_left())
+                    print(statement.get_iter().get_call())
+                    for_stmt_str += ' ' + self.build_right_statement_cfg(statement.get_iter())
+                    #sg.edge(node_label, 'struct_' + node.get_name())
 
-                sg.node_attr = {
-                    'shape': 'record',
-                    'style':'filled',
-                    'fillcolor':'grey'
-                }
-                sg.node(current_node_label,
-                r'{}'.format(node_struct_str))
-                count += 1
-                self.struct_str_builder(node_label, sg, node_label, statement.get_body(), count, False)
-                sg.edge(current_node_label, 'struct_' + node_label + str(count), label=' do')
-                #sg.edge('struct_' + node_label + str(count), current_node_label, label=' if')
+                    sg.node_attr = {
+                        'shape': 'record',
+                        'style':'filled',
+                        'fillcolor':'grey'
+                    }
+                    sg_sg.node_attr = {
+                        'shape': 'record',
+                        'style':'filled',
+                        'fillcolor':'grey',
+                    }
+                    sg.node(current_node_label,
+                    r'{}'.format(node_struct_str))
+                    count += 1
+
+                    for_stmt_label = 'struct_' + node_label + str(count)
+                    sg.node(for_stmt_label,
+                    r'{}'.format(for_stmt_str))
+                    sg.edge(current_node_label, for_stmt_label)
+                    count += 1
+
+                    _, count = self.struct_str_builder(for_stmt_label, sg_sg, node_label, statement.get_body(), count, False)
+                    #sg_sg.edge(for_stmt_label, 'struct_' + node_label + str(count), label=' do')
+                    #sg.edge('struct_' + node_label + str(count), current_node_label, label=' if')
                 return (statement, count)
 
             elif type(statement) is AnnAssignmentNode:
@@ -419,10 +448,7 @@ class Visualizer:
                 node_struct_str += '}'
 
         node_struct_str += '}'
-        #if count == 0:
-        #    sg.edge(prev, current_node_label)
-        #else:
-        #    sg.edge(prev, current_node_label)
+
         sg.node_attr = {
             'shape': 'record',
             'style':'filled',
@@ -431,7 +457,7 @@ class Visualizer:
         sg.node('struct_' + node_label + str(count),
             r'{}'.format(node_struct_str))
         print('DEBUG: ' + node_struct_str)
-        return (None, None)
+        return (None, count)
 
 
     def visualize_cfg(self):
